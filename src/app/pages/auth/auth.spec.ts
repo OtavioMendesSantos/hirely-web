@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
@@ -18,6 +20,9 @@ describe('Auth', () => {
   let routerMock: {
     navigate: ReturnType<typeof vi.fn>;
   };
+  let snackBarMock: {
+    open: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     authServiceMock = {
@@ -30,7 +35,10 @@ describe('Auth', () => {
       navigate: vi.fn(),
     };
 
-    vi.spyOn(window, 'alert').mockImplementation(() => {});
+    snackBarMock = {
+      open: vi.fn(),
+    };
+
     vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await TestBed.configureTestingModule({
@@ -38,6 +46,7 @@ describe('Auth', () => {
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
+        { provide: MatSnackBar, useValue: snackBarMock },
       ],
     }).compileComponents();
 
@@ -104,10 +113,17 @@ describe('Auth', () => {
     });
 
     it('should alert error message when login fails with error.message', async () => {
-      const mockError = {
-        error: { message: 'Invalid credentials' },
-      };
-      authServiceMock.login.mockReturnValue(throwError(() => mockError));
+      const mockHttpError = new HttpErrorResponse({
+        error: {
+          error: {
+            code: 401,
+            message: 'Invalid email or password',
+            status: 'UNAUTHENTICATED',
+          },
+        },
+        status: 401,
+      });
+      authServiceMock.login.mockReturnValue(throwError(() => mockHttpError));
 
       component.email = 'test@example.com';
       component.password = 'wrong';
@@ -115,16 +131,16 @@ describe('Auth', () => {
       await component.onLogin();
 
       expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrong');
-      expect(window.alert).toHaveBeenCalledWith('Login failed: Invalid credentials');
+      expect(snackBarMock.open).toHaveBeenCalledWith('Invalid email or password', 'Close', { duration: 3000 });
     });
 
     it('should alert fallback error message when login fails without error.message', async () => {
-      const mockError = { message: 'Network error' };
+      const mockError = { error: null, message: 'Network error' };
       authServiceMock.login.mockReturnValue(throwError(() => mockError));
 
       await component.onLogin();
 
-      expect(window.alert).toHaveBeenCalledWith('Login failed: Network error');
+      expect(snackBarMock.open).toHaveBeenCalledWith('Network error', 'Close', { duration: 3000 });
     });
   });
 
@@ -147,10 +163,17 @@ describe('Auth', () => {
     });
 
     it('should alert error message when register fails', async () => {
-      const mockError = {
-        error: { message: 'Email already exists' },
-      };
-      authServiceMock.register.mockReturnValue(throwError(() => mockError));
+      const mockHttpError = new HttpErrorResponse({
+        error: {
+          error: {
+            code: 409,
+            message: 'Email already exists',
+            status: 'ALREADY_EXISTS',
+          },
+        },
+        status: 409,
+      });
+      authServiceMock.register.mockReturnValue(throwError(() => mockHttpError));
 
       component.name = 'New User';
       component.email = 'new@example.com';
@@ -159,16 +182,16 @@ describe('Auth', () => {
       await component.onRegister();
 
       expect(authServiceMock.register).toHaveBeenCalledWith('New User', 'new@example.com', 'secret');
-      expect(window.alert).toHaveBeenCalledWith('Register: Email already exists');
+      expect(snackBarMock.open).toHaveBeenCalledWith('Email already exists', 'Close', { duration: 3000 });
     });
 
     it('should alert fallback error message when register fails without error.message', async () => {
-      const mockError = { message: 'Server unavailable' };
+      const mockError = { error: null, message: 'Server unavailable' };
       authServiceMock.register.mockReturnValue(throwError(() => mockError));
 
       await component.onRegister();
 
-      expect(window.alert).toHaveBeenCalledWith('Register: Server unavailable');
+      expect(snackBarMock.open).toHaveBeenCalledWith('Server unavailable', 'Close', { duration: 3000 });
     });
   });
 });

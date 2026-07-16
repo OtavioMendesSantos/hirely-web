@@ -1,43 +1,57 @@
 <div class="auth-container">
-  <div class="auth-box">
-    <h2>{{ isLoginMode() ? 'Entrar no Sistema' : 'Criar Nova Conta' }}</h2>
+  <mat-card class="auth-box">
+    <mat-card-header class="auth-header">
+      <mat-card-title>{{ isLoginMode() ? 'Entrar no Sistema' : 'Criar Nova Conta' }}</mat-card-title>
+    </mat-card-header>
 
-    @if (isLoginMode()) {
-    <form (ngSubmit)="onLogin()">
-      <div class="form-group">
-        <label for="login-email">E-mail</label>
-        <input id="login-email" type="email" [(ngModel)]="email" name="email" required />
-      </div>
-      <div class="form-group">
-        <label for="login-password">Senha</label>
-        <input
-          id="login-password"
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          required
-        />
-      </div>
-      <button type="submit">Entrar</button>
-    </form>
-    <p class="toggle-text">Não tem uma conta? <a (click)="toggleMode()">Cadastre-se aqui</a></p>
-    } @else {
-    <form (ngSubmit)="onRegister()">
-      <div class="form-group">
-        <label for="reg-name">Nome Completo</label>
-        <input id="reg-name" type="text" [(ngModel)]="name" name="name" required />
-      </div>
-      <div class="form-group">
-        <label for="reg-email">E-mail</label>
-        <input id="reg-email" type="email" [(ngModel)]="email" name="email" required />
-      </div>
-      <div class="form-group">
-        <label for="reg-password">Senha</label>
-        <input id="reg-password" type="password" [(ngModel)]="password" name="password" required />
-      </div>
-      <button type="submit">Criar Conta</button>
-    </form>
-    <p class="toggle-text">Já tem uma conta? <a (click)="toggleMode()">Faça login aqui</a></p>
-    }
-  </div>
+    <mat-card-content>
+      @if (isLoginMode()) {
+      <form (ngSubmit)="onLogin()" class="auth-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>E-mail</mat-label>
+          <input matInput id="login-email" type="email" [(ngModel)]="email" name="email" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input
+            matInput
+            id="login-password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" class="full-width submit-btn">
+          Entrar
+        </button>
+      </form>
+      <p class="toggle-text">Não tem uma conta? <a (click)="toggleMode()">Cadastre-se aqui</a></p>
+      } @else {
+      <form (ngSubmit)="onRegister()" class="auth-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome Completo</mat-label>
+          <input matInput id="reg-name" type="text" [(ngModel)]="name" name="name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>E-mail</mat-label>
+          <input matInput id="reg-email" type="email" [(ngModel)]="email" name="email" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input matInput id="reg-password" type="password" [(ngModel)]="password" name="password" required />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" class="full-width submit-btn">
+          Criar Conta
+        </button>
+      </form>
+      <p class="toggle-text">Já tem uma conta? <a (click)="toggleMode()">Faça login aqui</a></p>
+      }
+    </mat-card-content>
+  </mat-card>
 </div>

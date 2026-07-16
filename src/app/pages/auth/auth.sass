@@ -2,58 +2,36 @@
   display: flex
   justify-content: center
   align-items: center
-  height: 100vh
+  min-height: 100vh
   background-color: #f5f5f5
+  padding: 1.5rem
+  box-sizing: border-box
 
 .auth-box
-  background: white
-  padding: 2.5rem
+  padding: 1.5rem
   border-radius: 12px
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1)
   width: 100%
-  max-width: 400px
+  max-width: 420px
 
-h2
+.auth-header
+  justify-content: center
   margin-bottom: 1.5rem
-  text-align: center
-  color: #333
 
-.form-group
-  margin-bottom: 1.2rem
+  mat-card-title
+    font-size: 1.5rem
+    font-weight: bold
+    text-align: center
+
+.auth-form
   display: flex
   flex-direction: column
 
-label
-  font-size: 0.9rem
-  margin-bottom: 0.4rem
-  color: #666
-
-input
-  padding: 0.75rem
-  border: 1px solid #ddd
-  border-radius: 6px
-  font-size: 1rem
-  transition: border-color 0.2s
-
-  &:focus
-    border-color: #007bff
-    outline: none
-
-button
+.full-width
   width: 100%
-  padding: 0.8rem
-  background-color: #007bff
-  color: white
-  border: none
-  border-radius: 6px
-  font-size: 1rem
-  font-weight: bold
-  cursor: pointer
-  margin-top: 1rem
-  transition: background-color 0.2s
+  margin-bottom: 0.5rem
 
-  &:hover
-    background-color: #0056b3
+.submit-btn
+  margin-top: 0.5rem
 
 .toggle-text
   text-align: center
@@ -62,7 +40,7 @@ button
   color: #666
 
 a
-  color: #007bff
+  color: var(--mat-sys-primary, #007bff)
   cursor: pointer
   font-weight: bold
   text-decoration: none
