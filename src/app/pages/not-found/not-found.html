@@ -1,17 +1,17 @@
 <div class="not-found-container">
-  <mat-card class="not-found-card">
-    <mat-card-content class="card-content">
+  <section hlmCard class="not-found-card w-full max-w-lg mx-auto p-8 shadow-lg bg-card text-center flex flex-col items-center">
+    <div hlmCardContent class="card-content flex flex-col items-center p-0">
       <div class="error-code">404</div>
-      <h1 class="error-title">Página não encontrada</h1>
-      <p class="error-description">
+      <h1 class="error-title text-2xl font-bold mb-2">Página não encontrada</h1>
+      <p class="error-description text-muted-foreground mb-6 max-w-md">
         Desculpe, mas não conseguimos encontrar a página que você está procurando. Ela pode ter sido removida, renomeada ou está temporariamente indisponível.
       </p>
-      <div class="action-buttons">
-        <a mat-flat-button color="primary" routerLink="/">
-          <mat-icon>home</mat-icon>
+      <div class="action-buttons flex justify-center w-full">
+        <a hlmBtn variant="default" routerLink="/" class="inline-flex items-center gap-2 px-6 py-2">
+          <ng-icon name="lucideHome" class="text-base" />
           Voltar para o início
         </a>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </section>
 </div>

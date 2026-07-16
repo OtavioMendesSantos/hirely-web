@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
@@ -8,6 +7,7 @@ import { vi } from 'vitest';
 import { Auth } from './auth';
 import { AuthService } from '../../core/auth';
 import { User } from '../../core/models/user.model';
+import { toast } from '@spartan-ng/brain/sonner';
 
 describe('Auth', () => {
   let component: Auth;
@@ -19,9 +19,6 @@ describe('Auth', () => {
   };
   let routerMock: {
     navigate: ReturnType<typeof vi.fn>;
-  };
-  let snackBarMock: {
-    open: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -35,18 +32,14 @@ describe('Auth', () => {
       navigate: vi.fn(),
     };
 
-    snackBarMock = {
-      open: vi.fn(),
-    };
-
     vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(toast, 'error').mockImplementation(() => '');
 
     await TestBed.configureTestingModule({
       imports: [Auth],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
-        { provide: MatSnackBar, useValue: snackBarMock },
       ],
     }).compileComponents();
 
@@ -131,7 +124,7 @@ describe('Auth', () => {
       await component.onLogin();
 
       expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrong');
-      expect(snackBarMock.open).toHaveBeenCalledWith('Invalid email or password', 'Close', { duration: 3000 });
+      expect(toast.error).toHaveBeenCalledWith('Invalid email or password', { duration: 3000 });
     });
 
     it('should alert fallback error message when login fails without error.message', async () => {
@@ -140,7 +133,7 @@ describe('Auth', () => {
 
       await component.onLogin();
 
-      expect(snackBarMock.open).toHaveBeenCalledWith('Network error', 'Close', { duration: 3000 });
+      expect(toast.error).toHaveBeenCalledWith('Network error', { duration: 3000 });
     });
   });
 
@@ -182,7 +175,7 @@ describe('Auth', () => {
       await component.onRegister();
 
       expect(authServiceMock.register).toHaveBeenCalledWith('New User', 'new@example.com', 'secret');
-      expect(snackBarMock.open).toHaveBeenCalledWith('Email already exists', 'Close', { duration: 3000 });
+      expect(toast.error).toHaveBeenCalledWith('Email already exists', { duration: 3000 });
     });
 
     it('should alert fallback error message when register fails without error.message', async () => {
@@ -191,7 +184,7 @@ describe('Auth', () => {
 
       await component.onRegister();
 
-      expect(snackBarMock.open).toHaveBeenCalledWith('Server unavailable', 'Close', { duration: 3000 });
+      expect(toast.error).toHaveBeenCalledWith('Server unavailable', { duration: 3000 });
     });
   });
 });

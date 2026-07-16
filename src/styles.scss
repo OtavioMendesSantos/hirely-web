@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;600&display=swap');
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import "@spartan-ng/brain/hlm-tailwind-preset.css";
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+  color-scheme: light;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius: 0.25rem;
+  --background: #f8f9ff;
+  --foreground: #121c28;
+  --card: #ffffff;
+  --card-foreground: #121c28;
+  --popover: #ffffff;
+  --popover-foreground: #121c28;
+  --primary: #b70011;
+  --primary-foreground: #ffffff;
+  --secondary: #FFE4E6;
+  --secondary-foreground: #b02d29;
+  --muted: #F9FAFB;
+  --muted-foreground: #5c403c;
+  --accent: #e5eeff;
+  --accent-foreground: #121c28;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #b70011;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #121c28;
+  --sidebar-primary: #b70011;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5eeff;
+  --sidebar-accent-foreground: #121c28;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #b70011;
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --background: #121c28;
+  --foreground: #f8f9ff;
+  --card: #27313e;
+  --card-foreground: #f8f9ff;
+  --popover: #27313e;
+  --popover-foreground: #f8f9ff;
+  --primary: #ffb4ab;
+  --primary-foreground: #410002;
+  --secondary: #690007;
+  --secondary-foreground: #ffdad6;
+  --muted: #27313e;
+  --muted-foreground: #d0c3c5;
+  --accent: #27313e;
+  --accent-foreground: #f8f9ff;
+  --destructive: #ffdad6;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #ffb4ab;
+  --sidebar: #27313e;
+  --sidebar-foreground: #f8f9ff;
+  --sidebar-primary: #ffb4ab;
+  --sidebar-primary-foreground: #410002;
+  --sidebar-accent: #27313e;
+  --sidebar-accent-foreground: #f8f9ff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #ffb4ab;
+}
+
+@theme {
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #d1dbec;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eef4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dfe9fa;
+  --color-surface-container-highest: #d9e3f4;
+  --color-on-surface: #121c28;
+  --color-on-surface-variant: #5c403c;
+  --color-inverse-surface: #27313e;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #916f6b;
+  --color-outline-variant: #e6bdb8;
+  --color-surface-tint: #bf0715;
+  --color-primary: #b70011;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #dc2626;
+  --color-on-primary-container: #fff6f5;
+  --color-inverse-primary: #ffb4ab;
+  --color-secondary: #b02d29;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ff665c;
+  --color-on-secondary-container: #690007;
+  --color-tertiary: #605758;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #796f70;
+  --color-on-tertiary-container: #fff5f5;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-background: #f8f9ff;
+  --color-on-background: #121c28;
+  --color-surface-variant: #d9e3f4;
+  --color-ruby-accent: #BE123C;
+  --color-soft-pink: #FFE4E6;
+  --color-border-subtle: #E5E7EB;
+  --color-surface-muted: #F9FAFB;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Hanken Grotesk', sans-serif;
+    @apply tracking-tight;
+  }
+}

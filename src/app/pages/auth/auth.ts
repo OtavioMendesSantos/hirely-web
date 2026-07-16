@@ -2,22 +2,22 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmInputImports } from '@spartan-ng/helm/input';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { toast } from '@spartan-ng/brain/sonner';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
   imports: [
     FormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
+    ...HlmCardImports,
+    ...HlmInputImports,
+    ...HlmLabelImports,
+    ...HlmButtonImports,
   ],
   templateUrl: './auth.html',
   styleUrl: './auth.sass',
@@ -25,7 +25,6 @@ import { MatButtonModule } from '@angular/material/button';
 export class Auth {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private snackBar = inject(MatSnackBar);
 
   isLoginMode = signal(true);
 
@@ -52,7 +51,7 @@ export class Auth {
       },
       error: ({ error, message }: HttpErrorResponse) => {
         const msg = error?.error?.message ?? message;
-        this.snackBar.open(msg, 'Close', { duration: 3000 });
+        toast.error(msg, { duration: 3000 });
       },
     });
   }
@@ -65,7 +64,7 @@ export class Auth {
       },
       error: ({ error, message }: HttpErrorResponse) => {
         const msg = error?.error?.message ?? message;
-        this.snackBar.open(msg, 'Close', { duration: 3000 });
+        toast.error(msg, { duration: 3000 });
       },
     });
   }

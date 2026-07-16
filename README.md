@@ -1,59 +1,46 @@
-# HirelyWeb
+# Hirely Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.6.
+Interface web para o **Hirely**, uma plataforma moderna de gestão de vagas e recrutamento. O projeto é construído como uma Single Page Application (SPA) reativa focado em performance e excelente usabilidade.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🛠️ Tecnologias Utilizadas
 
+- **[Angular 22](https://angular.dev/)** — Framework web (Standalone Components, Signals e Roteamento moderno)
+- **[TypeScript](https://www.typescriptlang.org/)** — Tipagem estática e segurança de código
+- **[Angular Material](https://material.angular.dev/)** — Biblioteca de componentes de interface visual baseados no Material Design
+- **[SASS](https://sass-lang.com/)** — Pré-processador de estilos (sintaxe indentada `.sass` e `.scss`)
+- **[Vitest](https://vitest.dev/)** — Framework moderno e veloz de testes unitários
+
+---
+
+## 🚀 Como Rodar o Projeto
+
+### Prerequisitos
+- **Node.js** (versão LTS recomendada: 20+ ou 22+)
+- **npm** ou **Angular CLI (`ng`)**
+
+### 1. Instalar as dependências
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### 2. Iniciar o servidor de desenvolvimento
 ```bash
-ng generate component component-name
+npm start
+# ou executando: ng serve
 ```
+Após iniciar, abra o navegador em `http://localhost:4200/`. A aplicação é recarregada automaticamente a cada alteração no código.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🧪 Outros Comandos Úteis
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Rodar Testes Unitários:**
+  ```bash
+  npm test
+  ```
+- **Gerar Build de Produção (`dist/`):**
+  ```bash
+  npm run build
+  ```
