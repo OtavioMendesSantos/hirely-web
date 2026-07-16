@@ -1,50 +1,241 @@
-<div class="auth-container">
-  <section hlmCard class="auth-box w-full max-w-md mx-auto p-6 shadow-lg bg-card">
-    <div hlmCardHeader class="auth-header mb-4">
-      <h3 hlmCardTitle class="text-xl font-bold text-center">{{ isLoginMode() ? 'Entrar no Sistema' : 'Criar Nova Conta' }}</h3>
+<div class="auth-container min-h-screen flex lg:grid lg:grid-cols-2 bg-surface text-on-surface">
+  @if (isLoginMode()) {
+    <!-- COLUNA DA ESQUERDA: FORMULÁRIO DE LOGIN -->
+    <div class="w-full flex flex-col justify-center px-6 py-12 sm:px-12 md:px-20 lg:px-24 xl:px-32 min-h-screen bg-surface">
+      <div class="max-w-md w-full mx-auto">
+        <!-- Logo & Header -->
+        <div class="mb-8">
+          <h1 class="text-3xl sm:text-4xl font-heading font-bold text-primary tracking-tight mb-4">Hirely</h1>
+          <h2 class="text-2xl font-heading font-bold text-on-surface mb-1">Welcome back</h2>
+          <p class="text-sm text-on-surface-variant">Please enter your details to sign in.</p>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form (ngSubmit)="onLogin()" class="flex flex-col gap-5">
+          <div class="flex flex-col gap-1.5">
+            <label for="login-email" class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">EMAIL ADDRESS</label>
+            <input
+              id="login-email"
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              placeholder="you@company.com"
+              class="h-10 w-full px-3.5 py-2 rounded border border-border-subtle bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center">
+              <label for="login-password" class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">PASSWORD</label>
+              <a (click)="onInProgress('Forgot password?')" class="text-xs font-semibold text-primary hover:underline cursor-pointer">Forgot password?</a>
+            </div>
+            <input
+              id="login-password"
+              type="password"
+              [(ngModel)]="password"
+              name="password"
+              required
+              placeholder="••••••••"
+              class="h-10 w-full px-3.5 py-2 rounded border border-border-subtle bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+          </div>
+
+          <div class="flex items-center gap-2.5 my-1">
+            <input
+              type="checkbox"
+              id="remember"
+              (change)="onInProgress('Remember for 30 days')"
+              class="h-4 w-4 rounded border-border-subtle text-primary focus:ring-primary cursor-pointer accent-primary"
+            />
+            <label for="remember" class="text-sm text-on-surface-variant cursor-pointer select-none">Remember for 30 days</label>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-colors shadow-sm flex items-center justify-center text-sm"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <!-- Social Buttons Component (Google & LinkedIn com ícones componentizados) -->
+        <app-social-auth-buttons (socialClick)="onInProgress($event + ' Login')" />
+
+        <!-- Toggle Mode -->
+        <p class="mt-8 text-center text-sm text-on-surface-variant">
+          Don't have an account?
+          <a (click)="toggleMode()" class="font-bold text-primary hover:underline cursor-pointer ml-1">Sign up</a>
+        </p>
+      </div>
     </div>
 
-    <div hlmCardContent>
-      @if (isLoginMode()) {
-      <form (ngSubmit)="onLogin()" class="auth-form flex flex-col gap-4">
-        <div class="flex flex-col gap-1.5">
-          <label hlmLabel for="login-email">E-mail</label>
-          <input hlmInput id="login-email" type="email" [(ngModel)]="email" name="email" required />
+    <!-- COLUNA DA DIREITA: INFORMATIVA (Removida no Mobile: hidden lg:flex) -->
+    <div class="hidden lg:flex w-full flex-col justify-center items-center bg-surface-container-low p-12 xl:p-16 border-l border-border-subtle relative overflow-hidden min-h-screen">
+      <div class="w-full max-w-lg flex flex-col items-center">
+        <!-- Mockup Visual construído pura e exclusivamente com o System Design Crimson Task Flow (sem imagens) -->
+        <div class="w-full bg-surface-container-lowest rounded-lg border border-border-subtle shadow-drag p-6 mb-10 relative">
+          <!-- Top Bar -->
+          <div class="flex items-center justify-between mb-6 pb-4 border-b border-border-subtle">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs shadow-sm">H</div>
+              <span class="font-heading font-bold text-sm text-on-surface">Welcome to Hirely</span>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-soft-pink text-primary text-xs font-semibold">Active Tasks</span>
+          </div>
+
+          <!-- Mini Kanban Board Preview -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-3.5 bg-surface-muted rounded border border-border-subtle">
+              <div class="text-[11px] font-semibold tracking-wider uppercase text-on-surface-variant mb-2.5">INTERVIEWING</div>
+              <div class="p-3 bg-surface-container-lowest rounded border border-border-subtle border-l-2 border-l-primary shadow-sm mb-2.5">
+                <div class="text-xs font-bold text-on-surface">Senior Frontend Engineer</div>
+                <div class="text-[10px] text-on-surface-variant mt-1">Google • High Priority</div>
+              </div>
+              <div class="p-3 bg-surface-container-lowest rounded border border-border-subtle border-l-2 border-l-primary shadow-sm">
+                <div class="text-xs font-bold text-on-surface">Tech Lead Angular</div>
+                <div class="text-[10px] text-on-surface-variant mt-1">Stripe • Remote</div>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-surface-muted rounded border border-border-subtle">
+              <div class="text-[11px] font-semibold tracking-wider uppercase text-on-surface-variant mb-2.5">OFFER RECEIVED</div>
+              <div class="p-3 bg-soft-pink rounded border border-ruby-accent/30 border-l-2 border-l-ruby-accent shadow-sm">
+                <div class="text-xs font-bold text-ruby-accent">Staff Software Engineer</div>
+                <div class="text-[10px] text-on-surface-variant mt-1 font-medium">$180k - $210k • Offer ready</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="flex flex-col gap-1.5">
-          <label hlmLabel for="login-password">Senha</label>
-          <input hlmInput id="login-password" type="password" [(ngModel)]="password" name="password" required />
-        </div>
-
-        <button hlmBtn variant="default" type="submit" class="w-full mt-2 submit-btn">
-          Entrar
-        </button>
-      </form>
-      <p class="toggle-text mt-4 text-center text-sm text-muted-foreground">Não tem uma conta? <a (click)="toggleMode()" class="text-primary hover:underline cursor-pointer font-medium">Cadastre-se aqui</a></p>
-      } @else {
-      <form (ngSubmit)="onRegister()" class="auth-form flex flex-col gap-4">
-        <div class="flex flex-col gap-1.5">
-          <label hlmLabel for="reg-name">Nome Completo</label>
-          <input hlmInput id="reg-name" type="text" [(ngModel)]="name" name="name" required />
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label hlmLabel for="reg-email">E-mail</label>
-          <input hlmInput id="reg-email" type="email" [(ngModel)]="email" name="email" required />
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label hlmLabel for="reg-password">Senha</label>
-          <input hlmInput id="reg-password" type="password" [(ngModel)]="password" name="password" required />
-        </div>
-
-        <button hlmBtn variant="default" type="submit" class="w-full mt-2 submit-btn">
-          Criar Conta
-        </button>
-      </form>
-      <p class="toggle-text mt-4 text-center text-sm text-muted-foreground">Já tem uma conta? <a (click)="toggleMode()" class="text-primary hover:underline cursor-pointer font-medium">Faça login aqui</a></p>
-      }
+        <!-- Textos Informativos -->
+        <h3 class="text-2xl font-heading font-bold text-on-surface text-center mb-2">Streamline your hiring</h3>
+        <p class="text-sm sm:text-base text-on-surface-variant text-center max-w-md leading-relaxed">
+          The definitive platform for professional recruitment pipelines and candidate tracking.
+        </p>
+      </div>
     </div>
-  </section>
+  } @else {
+    <!-- MODO REGISTRO: COLUNA DA ESQUERDA (INFORMATIVA - Removida no Mobile) -->
+    <div class="hidden lg:flex w-full flex-col justify-center items-center bg-surface-container-low p-12 xl:p-16 border-r border-border-subtle relative overflow-hidden min-h-screen order-2 lg:order-1">
+      <div class="w-full max-w-lg flex flex-col justify-center">
+        <!-- Brand & Informative Copy -->
+        <div class="flex items-center gap-2.5 mb-8">
+          <div class="w-8 h-8 rounded bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shadow-sm">H</div>
+          <span class="font-heading font-bold text-xl text-primary">Hirely</span>
+        </div>
+
+        <h3 class="text-3xl font-heading font-bold text-on-surface leading-tight mb-4 max-w-md">
+          Start organizing your career pipeline today.
+        </h3>
+        <p class="text-base text-on-surface-variant leading-relaxed mb-10 max-w-md">
+          Join thousands of professionals using Hirely to track applications, prepare for interviews, and land their dream jobs with clarity and focus.
+        </p>
+
+        <!-- Mini Pipeline Status Card (System Design puro, sem imagens) -->
+        <div class="w-full max-w-md bg-surface-container-lowest rounded-lg p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">Pipeline Overview</span>
+            <span class="px-2.5 py-1 rounded-full bg-soft-pink text-primary text-xs font-bold">Live Tracking</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 mt-1">
+            <div class="p-3 rounded bg-surface-muted border border-border-subtle text-center">
+              <div class="text-lg font-bold font-heading text-primary">18</div>
+              <div class="text-[10px] text-on-surface-variant font-semibold mt-0.5 uppercase">Applied</div>
+            </div>
+            <div class="p-3 rounded bg-surface-muted border border-border-subtle text-center">
+              <div class="text-lg font-bold font-heading text-on-surface">4</div>
+              <div class="text-[10px] text-on-surface-variant font-semibold mt-0.5 uppercase">Interviews</div>
+            </div>
+            <div class="p-3 rounded bg-soft-pink border border-ruby-accent/20 text-center">
+              <div class="text-lg font-bold font-heading text-ruby-accent">2</div>
+              <div class="text-[10px] text-ruby-accent font-semibold mt-0.5 uppercase">Offers</div>
+            </div>
+          </div>
+
+          <!-- Trusted Banner -->
+          <div class="flex items-center gap-3 mt-3 pt-4 border-t border-border-subtle">
+            <div class="flex -space-x-2 overflow-hidden">
+              <div class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-primary text-primary-foreground font-bold flex items-center justify-center text-[10px]">JD</div>
+              <div class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-secondary text-secondary-foreground font-bold flex items-center justify-center text-[10px]">AS</div>
+              <div class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-ruby-accent text-white font-bold flex items-center justify-center text-[10px]">ML</div>
+            </div>
+            <span class="text-xs font-semibold text-on-surface">Trusted by 10,000+ job seekers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO REGISTRO: COLUNA DA DIREITA (FORMULÁRIO DE CADASTRO) -->
+    <div class="w-full flex flex-col justify-center px-6 py-12 sm:px-12 md:px-20 lg:px-24 xl:px-32 min-h-screen bg-surface order-1 lg:order-2">
+      <div class="max-w-md w-full mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-3xl sm:text-4xl font-heading font-bold text-primary tracking-tight mb-4">Hirely</h1>
+          <h2 class="text-2xl font-heading font-bold text-on-surface mb-1">Create an account</h2>
+          <p class="text-sm text-on-surface-variant">Enter your details to get started.</p>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <form (ngSubmit)="onRegister()" class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label for="reg-name" class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">FULL NAME</label>
+            <input
+              id="reg-name"
+              type="text"
+              [(ngModel)]="name"
+              name="name"
+              required
+              placeholder="John Doe"
+              class="h-10 w-full px-3.5 py-2 rounded border border-border-subtle bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="reg-email" class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">EMAIL</label>
+            <input
+              id="reg-email"
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              class="h-10 w-full px-3.5 py-2 rounded border border-border-subtle bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="reg-password" class="text-xs font-semibold uppercase tracking-wider text-on-surface/80">PASSWORD</label>
+            <input
+              id="reg-password"
+              type="password"
+              [(ngModel)]="password"
+              name="password"
+              required
+              placeholder="••••••••"
+              class="h-10 w-full px-3.5 py-2 rounded border border-border-subtle bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+            <p class="text-xs text-on-surface-variant mt-0.5">Must be at least 8 characters.</p>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full h-10 mt-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded transition-colors shadow-sm flex items-center justify-center text-sm"
+          >
+            Create Account
+          </button>
+        </form>
+
+        <!-- Social Buttons Component (idêntico à seção do login e com ícones componentizados) -->
+        <app-social-auth-buttons (socialClick)="onInProgress($event + ' Sign up')" />
+
+        <!-- Toggle Mode -->
+        <p class="mt-8 text-center text-sm text-on-surface-variant">
+          Already have an account?
+          <a (click)="toggleMode()" class="font-bold text-primary hover:underline cursor-pointer ml-1">Log in</a>
+        </p>
+      </div>
+    </div>
+  }
 </div>

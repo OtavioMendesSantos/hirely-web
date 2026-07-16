@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { Auth } from './auth';
-import { AuthService } from '../../core/auth';
+import { AuthService } from '../../core/services/auth';
 import { User } from '../../core/models/user.model';
 import { toast } from '@spartan-ng/brain/sonner';
 
@@ -40,6 +40,7 @@ describe('Auth', () => {
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
       ],
     }).compileComponents();
 
