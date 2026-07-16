@@ -3,11 +3,11 @@ import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
-import { AuthService } from './services/auth';
-import { environment } from '../../environments/environment';
-import { User } from './models/user.model';
+import { AuthService } from './auth';
+import { environment } from '../../../environments/environment';
+import { User } from '../models/user.model';
 
-describe('AuthService (core)', () => {
+describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
   let router: Router;
