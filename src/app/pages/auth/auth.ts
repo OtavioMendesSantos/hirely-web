@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-auth',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 export class Auth {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   isLoginMode = signal(true);
 
@@ -37,7 +39,10 @@ export class Auth {
         console.log('Login successful', this.authService.currentUser);
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => alert('Login failed: ' + (err.error?.message || err.message)),
+      error: ({ error, message }) => {
+        const msg = error?.error?.message ?? message;
+        this.snackBar.open(msg, 'Close', { duration: 3000 });
+      },
     });
   }
 
@@ -47,7 +52,10 @@ export class Auth {
         console.log('Register successful');
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => alert('Register: ' + (err.error?.message || err.message)),
+      error: ({ error, message }) => {
+        const msg = error?.error?.message ?? message;
+        this.snackBar.open(msg, 'Close', { duration: 3000 });
+      },
     });
   }
 }
