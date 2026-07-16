@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.sass'
 })
 export class App {
-  protected readonly title = signal('hirely-web');
+  protected readonly title = signal('Hirely');
 }
