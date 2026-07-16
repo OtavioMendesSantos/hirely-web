@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "npm"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -29,7 +29,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.sass"]
+            "styles": ["src/material-theme.scss", "src/styles.sass"]
           },
           "configurations": {
             "production": {
