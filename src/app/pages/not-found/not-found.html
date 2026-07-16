@@ -1,17 +1,70 @@
-<div class="not-found-container">
-  <section hlmCard class="not-found-card w-full max-w-lg mx-auto p-8 shadow-lg bg-card text-center flex flex-col items-center">
-    <div hlmCardContent class="card-content flex flex-col items-center p-0">
-      <div class="error-code">404</div>
-      <h1 class="error-title text-2xl font-bold mb-2">Página não encontrada</h1>
-      <p class="error-description text-muted-foreground mb-6 max-w-md">
-        Desculpe, mas não conseguimos encontrar a página que você está procurando. Ela pode ter sido removida, renomeada ou está temporariamente indisponível.
+<div class="min-h-screen flex flex-col bg-surface text-on-surface relative overflow-hidden">
+  <!-- Componentized Header -->
+  <app-header />
+
+  <!-- Animated / Grid Background -->
+  <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
+    <svg class="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid-pattern" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#dc2626" stroke-width="0.8" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+    </svg>
+  </div>
+
+  <!-- Content Canvas -->
+  <main class="flex-grow flex flex-col items-center justify-center px-4 sm:px-8 text-center py-24 z-10 relative">
+    <div class="flex flex-col items-center max-w-xl mx-auto">
+      <h1 class="error-code text-[110px] sm:text-[140px] md:text-[160px] leading-none font-heading font-black tracking-tighter text-primary mb-4 select-none">
+        404
+      </h1>
+      <h2 class="error-title font-heading text-xl sm:text-2xl font-bold text-on-surface mb-2">
+        Looks like you lost your way in the pipeline.
+      </h2>
+      <p class="error-description font-body text-base text-on-surface-variant max-w-md mb-8">
+        The page you are looking for doesn't exist or has been moved.
       </p>
-      <div class="action-buttons flex justify-center w-full">
-        <a hlmBtn variant="default" routerLink="/" class="inline-flex items-center gap-2 px-6 py-2">
-          <ng-icon name="lucideHome" class="text-base" />
-          Voltar para o início
-        </a>
+
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+        @if (isLoggedIn()) {
+          <a
+            hlmBtn
+            variant="default"
+            size="lg"
+            routerLink="/dashboard"
+            class="font-semibold text-xs uppercase tracking-wider px-6 py-6 shadow-sm inline-flex items-center gap-2.5 cursor-pointer"
+          >
+            <ng-icon name="lucideLayoutDashboard" class="text-base" />
+            <span>BACK TO DASHBOARD</span>
+          </a>
+          <a
+            hlmBtn
+            variant="outline"
+            size="lg"
+            routerLink="/"
+            class="font-semibold text-xs uppercase tracking-wider px-6 py-6 shadow-sm inline-flex items-center gap-2.5 cursor-pointer"
+          >
+            <ng-icon name="lucideHome" class="text-base" />
+            <span>GO TO HOME</span>
+          </a>
+        } @else {
+          <a
+            hlmBtn
+            variant="default"
+            size="lg"
+            routerLink="/"
+            class="font-semibold text-xs uppercase tracking-wider px-6 py-6 shadow-sm inline-flex items-center gap-2.5 cursor-pointer"
+          >
+            <ng-icon name="lucideHome" class="text-base" />
+            <span>GO TO HOME</span>
+          </a>
+        }
       </div>
     </div>
-  </section>
+  </main>
+
+  <!-- Componentized Footer -->
+  <app-footer />
 </div>

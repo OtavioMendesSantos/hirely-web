@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { Dashboard } from './dashboard';
-import { AuthService } from '../../core/auth';
+import { AuthService } from '../../core/services/auth';
 import { User } from '../../core/models/user.model';
+import { vi } from 'vitest';
 
 describe('Dashboard', () => {
   it('should create and display hello with user name when user is logged in', async () => {
@@ -14,11 +16,19 @@ describe('Dashboard', () => {
     };
     const authServiceMock = {
       currentUser: signal<User | null>(mockUser),
+      logout: vi.fn(),
     };
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('jwt_token');
+    }
 
     await TestBed.configureTestingModule({
       imports: [Dashboard],
-      providers: [{ provide: AuthService, useValue: authServiceMock }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(Dashboard);
@@ -29,17 +39,25 @@ describe('Dashboard', () => {
     expect(component.currentUser).toEqual(mockUser);
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('p')?.textContent?.trim()).toContain('hello Otavio');
+    expect(compiled.querySelector('[hlmCardTitle]')?.textContent?.trim()).toContain('Hello Otavio');
   });
 
   it('should handle null user when not logged in', async () => {
     const authServiceMock = {
       currentUser: signal<User | null>(null),
+      logout: vi.fn(),
     };
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('jwt_token');
+    }
 
     await TestBed.configureTestingModule({
       imports: [Dashboard],
-      providers: [{ provide: AuthService, useValue: authServiceMock }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(Dashboard);
@@ -50,6 +68,6 @@ describe('Dashboard', () => {
     expect(component.currentUser).toBeNull();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('p')?.textContent?.trim()).toBe('hello');
+    expect(compiled.querySelector('[hlmCardTitle]')?.textContent?.trim()).toBe('Hello');
   });
 });

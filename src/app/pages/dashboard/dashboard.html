@@ -1,1 +1,16 @@
-<p>hello {{ currentUser?.name }}</p>
+<div class="min-h-screen flex flex-col bg-surface text-on-surface">
+  <!-- Componentized Header -->
+  <app-header />
+
+  <!-- Dashboard Main Content -->
+  <main class="flex-grow p-6 sm:p-12 md:p-20 max-w-7xl mx-auto w-full">
+    <section hlmCard class="p-6 bg-surface-container-lowest border border-border-subtle shadow-sm">
+      <div hlmCardHeader class="p-0">
+        <h3 hlmCardTitle class="text-xl font-heading font-bold text-on-surface">Hello {{ currentUser?.name }}</h3>
+      </div>
+    </section>
+  </main>
+
+  <!-- Componentized Footer -->
+  <app-footer />
+</div>
