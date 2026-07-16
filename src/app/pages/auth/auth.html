@@ -1,0 +1,43 @@
+<div class="auth-container">
+  <div class="auth-box">
+    <h2>{{ isLoginMode() ? 'Entrar no Sistema' : 'Criar Nova Conta' }}</h2>
+
+    @if (isLoginMode()) {
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="login-email">E-mail</label>
+        <input id="login-email" type="email" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="login-password">Senha</label>
+        <input
+          id="login-password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
+      </div>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="toggle-text">Não tem uma conta? <a (click)="toggleMode()">Cadastre-se aqui</a></p>
+    } @else {
+    <form (ngSubmit)="onRegister()">
+      <div class="form-group">
+        <label for="reg-name">Nome Completo</label>
+        <input id="reg-name" type="text" [(ngModel)]="name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-email">E-mail</label>
+        <input id="reg-email" type="email" [(ngModel)]="email" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Senha</label>
+        <input id="reg-password" type="password" [(ngModel)]="password" name="password" required />
+      </div>
+      <button type="submit">Criar Conta</button>
+    </form>
+    <p class="toggle-text">Já tem uma conta? <a (click)="toggleMode()">Faça login aqui</a></p>
+    }
+  </div>
+</div>
