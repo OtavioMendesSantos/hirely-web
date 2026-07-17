@@ -15,7 +15,7 @@ export class App {
   protected readonly title = signal('Hirely');
   private authService = inject(AuthService);
   private readonly themeService = inject(ThemeService);
-  
+
   constructor() {
     if (typeof localStorage !== 'undefined' && localStorage.getItem('jwt_token')) {
       this.authService.checkAuth().subscribe({
