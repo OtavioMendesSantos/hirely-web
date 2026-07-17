@@ -17,11 +17,11 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
         routerLink="/"
         class="font-heading text-primary flex cursor-pointer items-center gap-2.5 text-xl font-bold tracking-tight transition-opacity hover:opacity-90"
       >
-        <div
-          class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded text-sm font-bold shadow-sm"
-        >
-          H
-        </div>
+        <img
+          src="hirely_logo.png"
+          alt="Hirely Logo"
+          class="h-8 w-auto object-contain"
+        />
         <span>Hirely</span>
       </a>
 
