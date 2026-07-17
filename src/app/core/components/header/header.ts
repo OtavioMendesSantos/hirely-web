@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth';
-import { ThemeService } from '../../../core/services/theme';
+import { AuthService } from '../../services/auth';
+import { ThemeService } from '../../services/theme';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';

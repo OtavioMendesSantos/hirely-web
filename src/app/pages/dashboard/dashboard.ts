@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth';
-import { HeaderComponent } from '../../shared/components/header/header';
+import { HeaderComponent } from '../../core/components/header/header';
 import { FooterComponent } from '../../shared/components/footer/footer';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 

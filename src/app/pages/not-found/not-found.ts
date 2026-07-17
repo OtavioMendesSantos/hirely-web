@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HeaderComponent } from '../../shared/components/header/header';
+import { HeaderComponent } from '../../core/components/header/header';
 import { FooterComponent } from '../../shared/components/footer/footer';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideHome, lucideLayoutDashboard } from '@ng-icons/lucide';

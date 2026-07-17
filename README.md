@@ -15,6 +15,23 @@ Interface web moderna para o **Hirely**, uma plataforma de recrutamento e gestã
 
 ---
 
+## 🏗️ Arquitetura & Propósito dos Diretórios
+
+O projeto segue estritamente o modelo de separação de responsabilidades recomendado pela documentação oficial do Angular e boas práticas de design moderno (*Domain-Driven / Standalone*):
+
+### 🧠 `core/` — O Sistema Nervoso Central (*Stateful / Singletons*)
+Destinado exclusivamente à **inteligência transversal** que a aplicação inteira compartilha. É o local das instâncias únicas (*Singletons* com `providedIn: 'root'`), gerenciamento de estado reativo (*Signals* globais), interceptadores de rede, proteção de rotas (*Guards*) e dos **componentes de Shell estrutural** (como o cabeçalho global). 
+> **Regra de Ouro:** Qualquer componente que precise consumir ou alterar o estado global (ex: saber se o usuário está logado, alternar temas ou fazer logout) pertence conceitualmente ao `core/`, pois é reativo, inteligente e acoplado ao ecossistema da aplicação.
+
+### 🧱 `shared/` — Peças de UI & Componentes "Burros" (*Stateless / Presentational*)
+Destinado exclusivamente a **componentes visuais puros**, diretivas, ícones e primitivas de UI (*Dumb Components*). 
+> **Regra de Ouro:** É totalmente previsível, isolado e agnóstico de regras de negócio. Um componente em `shared/` nunca injeta serviços de estado global ou faz chamadas de API. Ele se comunica com o restante do sistema única e exclusivamente por parâmetros de entrada (`input()`) e eventos de saída (`output()`).
+
+### 🎯 `pages/` — Funcionalidades & Rotas (*Feature-Scoped Smart Components*)
+Onde vivem as rotas e funcionalidades encapsuladas (como Autenticação, Dashboard ou Landing Page). Lógicas inteligentes específicas de uma funcionalidade — como salvar uma tarefa ou validar um formulário de edição — **não vão para o `core/`**; elas permanecem isoladas no escopo de sua própria página/funcionalidade.
+
+---
+
 ## 🚀 Como Rodar o Projeto
 
 ### Pré-requisitos

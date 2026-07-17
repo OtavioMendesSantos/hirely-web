@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { HeaderComponent } from './header';
-import { AuthService } from '../../../core/services/auth';
+import { AuthService } from '../../services/auth';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
 
