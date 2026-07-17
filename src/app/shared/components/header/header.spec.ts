@@ -22,10 +22,7 @@ describe('HeaderComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
@@ -34,7 +31,9 @@ describe('HeaderComponent', () => {
 
   afterEach(() => {
     // Cleanup any lingering overlay elements from document.body after tests
-    document.querySelectorAll('hlm-alert-dialog-content, hlm-alert-dialog-overlay').forEach(el => el.remove());
+    document
+      .querySelectorAll('hlm-alert-dialog-content, hlm-alert-dialog-overlay')
+      .forEach((el) => el.remove());
   });
 
   it('should create and show brand Hirely and login/register buttons when not logged in', async () => {
@@ -62,7 +61,9 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const triggerBtn = fixture.nativeElement.querySelector('button[hlmAlertDialogTrigger]') as HTMLButtonElement;
+    const triggerBtn = fixture.nativeElement.querySelector(
+      'button[hlmAlertDialogTrigger]'
+    ) as HTMLButtonElement;
     expect(triggerBtn).toBeTruthy();
     triggerBtn.click();
     fixture.detectChanges();
@@ -86,7 +87,9 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const triggerBtn = fixture.nativeElement.querySelector('button[hlmAlertDialogTrigger]') as HTMLButtonElement;
+    const triggerBtn = fixture.nativeElement.querySelector(
+      'button[hlmAlertDialogTrigger]'
+    ) as HTMLButtonElement;
     expect(triggerBtn).toBeTruthy();
     triggerBtn.click();
     fixture.detectChanges();

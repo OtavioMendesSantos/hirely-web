@@ -21,9 +21,15 @@ describe('authGuard', () => {
     const store: Record<string, string> = {};
     const localStorageMock = {
       getItem: (key: string) => store[key] || null,
-      setItem: (key: string, value: string) => { store[key] = value; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { for (const k in store) delete store[k]; },
+      setItem: (key: string, value: string) => {
+        store[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        for (const k in store) delete store[k];
+      },
     };
     Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
@@ -33,10 +39,7 @@ describe('authGuard', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     });
 
     router = TestBed.inject(Router);
@@ -52,7 +55,12 @@ describe('authGuard', () => {
 
   it('should return true immediately when currentUser is not null', () => {
     localStorage.setItem('jwt_token', 'valid-token');
-    authServiceMock.currentUser.set({ id: '1', name: 'User', email: 'user@example.com', createdAt: '2026-01-01' });
+    authServiceMock.currentUser.set({
+      id: '1',
+      name: 'User',
+      email: 'user@example.com',
+      createdAt: '2026-01-01',
+    });
 
     const result = executeGuard({} as any, {} as any);
     expect(result).toBe(true);
@@ -61,7 +69,9 @@ describe('authGuard', () => {
 
   it('should call checkAuth when jwt_token exists and currentUser is null, returning true on success', async () => {
     localStorage.setItem('jwt_token', 'valid-token');
-    authServiceMock.checkAuth.mockReturnValue(of({ id: '1', name: 'User', email: 'user@example.com', createdAt: '2026-01-01' }));
+    authServiceMock.checkAuth.mockReturnValue(
+      of({ id: '1', name: 'User', email: 'user@example.com', createdAt: '2026-01-01' })
+    );
 
     const result$ = executeGuard({} as any, {} as any) as any;
     const canActivate = await firstValueFrom(result$);

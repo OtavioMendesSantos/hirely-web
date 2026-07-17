@@ -16,18 +16,20 @@ describe('AuthService', () => {
     const store: Record<string, string> = {};
     const localStorageMock = {
       getItem: (key: string) => store[key] || null,
-      setItem: (key: string, value: string) => { store[key] = value; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { for (const k in store) delete store[k]; },
+      setItem: (key: string, value: string) => {
+        store[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        for (const k in store) delete store[k];
+      },
     };
     Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
     TestBed.configureTestingModule({
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideRouter([]),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
 
     service = TestBed.inject(AuthService);
@@ -44,7 +46,12 @@ describe('AuthService', () => {
   });
 
   it('should call /v1/users/me on checkAuth and set currentUser upon success', () => {
-    const mockUser: User = { id: '1', name: 'Otavio', email: 'otavio@example.com', createdAt: '2026-01-01' };
+    const mockUser: User = {
+      id: '1',
+      name: 'Otavio',
+      email: 'otavio@example.com',
+      createdAt: '2026-01-01',
+    };
 
     service.checkAuth().subscribe((user: User) => {
       expect(user).toEqual(mockUser);

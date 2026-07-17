@@ -152,7 +152,11 @@ describe('Auth', () => {
 
       await component.onRegister();
 
-      expect(authServiceMock.register).toHaveBeenCalledWith('New User', 'new@example.com', 'secret');
+      expect(authServiceMock.register).toHaveBeenCalledWith(
+        'New User',
+        'new@example.com',
+        'secret'
+      );
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
@@ -175,7 +179,11 @@ describe('Auth', () => {
 
       await component.onRegister();
 
-      expect(authServiceMock.register).toHaveBeenCalledWith('New User', 'new@example.com', 'secret');
+      expect(authServiceMock.register).toHaveBeenCalledWith(
+        'New User',
+        'new@example.com',
+        'secret'
+      );
       expect(toast.error).toHaveBeenCalledWith('Email already exists', { duration: 3000 });
     });
 

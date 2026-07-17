@@ -19,10 +19,7 @@ describe('NotFound', () => {
 
     await TestBed.configureTestingModule({
       imports: [NotFound],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NotFound);
@@ -34,8 +31,12 @@ describe('NotFound', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.error-code')?.textContent?.trim()).toBe('404');
-    expect(compiled.querySelector('.error-title')?.textContent?.trim()).toBe('Looks like you lost your way in the pipeline.');
-    expect(compiled.textContent).toContain("The page you are looking for doesn't exist or has been moved.");
+    expect(compiled.querySelector('.error-title')?.textContent?.trim()).toBe(
+      'Looks like you lost your way in the pipeline.'
+    );
+    expect(compiled.textContent).toContain(
+      "The page you are looking for doesn't exist or has been moved."
+    );
   });
 
   it('should display only GO TO HOME when user is not logged in', async () => {

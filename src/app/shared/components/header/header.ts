@@ -9,10 +9,19 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
   standalone: true,
   imports: [RouterLink, ...HlmButtonImports, ...HlmAlertDialogImports],
   template: `
-    <header class="w-full bg-surface/90 backdrop-blur-md border-b border-border-subtle px-6 sm:px-12 md:px-20 py-4 flex items-center justify-between sticky top-0 z-50">
+    <header
+      class="bg-surface/90 border-border-subtle sticky top-0 z-50 flex w-full items-center justify-between border-b px-6 py-4 backdrop-blur-md sm:px-12 md:px-20"
+    >
       <!-- Hirely num canto -->
-      <a routerLink="/" class="flex items-center gap-2.5 text-xl font-heading font-bold tracking-tight text-primary hover:opacity-90 transition-opacity cursor-pointer">
-        <div class="w-8 h-8 rounded bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm shadow-sm">H</div>
+      <a
+        routerLink="/"
+        class="font-heading text-primary flex cursor-pointer items-center gap-2.5 text-xl font-bold tracking-tight transition-opacity hover:opacity-90"
+      >
+        <div
+          class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded text-sm font-bold shadow-sm"
+        >
+          H
+        </div>
         <span>Hirely</span>
       </a>
 
@@ -21,7 +30,7 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
         @if (isLoggedIn()) {
           <a
             routerLink="/dashboard"
-            class="text-sm font-semibold text-on-surface hover:text-primary transition-colors px-3 py-2 cursor-pointer"
+            class="text-on-surface hover:text-primary cursor-pointer px-3 py-2 text-sm font-semibold transition-colors"
           >
             Dashboard
           </a>
@@ -32,20 +41,27 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
               variant="outline"
               size="sm"
               type="button"
-              class="border-border-subtle hover:bg-surface-muted text-on-surface font-semibold px-4 py-2 rounded transition-colors cursor-pointer"
+              class="border-border-subtle hover:bg-surface-muted text-on-surface cursor-pointer rounded px-4 py-2 font-semibold transition-colors"
             >
               Log Out
             </button>
             <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
               <hlm-alert-dialog-header>
-                <h2 hlmAlertDialogTitle class="font-heading font-bold text-on-surface">Confirm Log Out</h2>
-                <p hlmAlertDialogDescription class="font-body text-on-surface-variant leading-relaxed">
+                <h2 hlmAlertDialogTitle class="font-heading text-on-surface font-bold">
+                  Confirm Log Out
+                </h2>
+                <p
+                  hlmAlertDialogDescription
+                  class="font-body text-on-surface-variant leading-relaxed"
+                >
                   Are you sure you want to log out of your account?
                 </p>
               </hlm-alert-dialog-header>
               <hlm-alert-dialog-footer>
                 <button hlmAlertDialogCancel type="button">Cancel</button>
-                <button hlmAlertDialogAction type="button" (click)="ctx.close(); confirmLogout()">Log Out</button>
+                <button hlmAlertDialogAction type="button" (click)="ctx.close(); confirmLogout()">
+                  Log Out
+                </button>
               </hlm-alert-dialog-footer>
             </hlm-alert-dialog-content>
           </hlm-alert-dialog>
@@ -53,7 +69,7 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
           <a
             routerLink="/auth"
             [queryParams]="{ mode: 'login' }"
-            class="text-sm font-semibold text-on-surface hover:text-primary transition-colors px-3 py-2 cursor-pointer"
+            class="text-on-surface hover:text-primary cursor-pointer px-3 py-2 text-sm font-semibold transition-colors"
           >
             Log In
           </a>
@@ -62,7 +78,7 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
             size="sm"
             routerLink="/auth"
             [queryParams]="{ mode: 'register' }"
-            class="font-semibold px-4 py-2 rounded transition-colors shadow-sm cursor-pointer"
+            class="cursor-pointer rounded px-4 py-2 font-semibold shadow-sm transition-colors"
           >
             Sign Up
           </a>

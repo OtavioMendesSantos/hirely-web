@@ -3,14 +3,17 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css';
-@import "@spartan-ng/brain/hlm-tailwind-preset.css";
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
 /* You can add global styles to this file, and also import other style files */
 
 :root {
   color-scheme: light;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-heading: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-heading:
+    'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   --radius: 0.25rem;
   --background: #f8f9ff;
@@ -21,16 +24,16 @@
   --popover-foreground: #121c28;
   --primary: #b70011;
   --primary-foreground: #ffffff;
-  --secondary: #FFE4E6;
+  --secondary: #ffe4e6;
   --secondary-foreground: #b02d29;
-  --muted: #F9FAFB;
+  --muted: #f9fafb;
   --muted-foreground: #5c403c;
   --accent: #e5eeff;
   --accent-foreground: #121c28;
   --destructive: #ba1a1a;
   --destructive-foreground: #ffffff;
-  --border: #E5E7EB;
-  --input: #E5E7EB;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
   --ring: #b70011;
   --sidebar: #ffffff;
   --sidebar-foreground: #121c28;
@@ -38,7 +41,7 @@
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e5eeff;
   --sidebar-accent-foreground: #121c28;
-  --sidebar-border: #E5E7EB;
+  --sidebar-border: #e5e7eb;
   --sidebar-ring: #b70011;
 }
 
@@ -109,10 +112,10 @@
   --color-background: #f8f9ff;
   --color-on-background: #121c28;
   --color-surface-variant: #d9e3f4;
-  --color-ruby-accent: #BE123C;
-  --color-soft-pink: #FFE4E6;
-  --color-border-subtle: #E5E7EB;
-  --color-surface-muted: #F9FAFB;
+  --color-ruby-accent: #be123c;
+  --color-soft-pink: #ffe4e6;
+  --color-border-subtle: #e5e7eb;
+  --color-surface-muted: #f9fafb;
 }
 
 @layer base {
@@ -124,7 +127,12 @@
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Hanken Grotesk', sans-serif;
     @apply tracking-tight;
   }

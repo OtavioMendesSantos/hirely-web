@@ -27,7 +27,7 @@ export class AuthService {
             localStorage.setItem('jwt_token', response.token);
           }
           this.currentUser.set(response.user);
-        }),
+        })
       );
   }
 
@@ -40,23 +40,21 @@ export class AuthService {
             localStorage.setItem('jwt_token', response.token);
           }
           this.currentUser.set(response.user);
-        }),
+        })
       );
   }
 
   checkAuth() {
-    return this.http
-      .get<User>(`${environment.apiUrl}/users/me`)
-      .pipe(
-        tap((user) => {
-          this.currentUser.set(user);
-        }),
-        catchError((error) => {
-          this.logout();
-          this.router.navigate(['/auth']);
-          return throwError(() => error);
-        }),
-      );
+    return this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
+      tap((user) => {
+        this.currentUser.set(user);
+      }),
+      catchError((error) => {
+        this.logout();
+        this.router.navigate(['/auth']);
+        return throwError(() => error);
+      })
+    );
   }
 
   logout() {

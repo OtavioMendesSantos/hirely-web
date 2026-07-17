@@ -7,7 +7,7 @@ import { AuthService } from './core/services/auth';
   selector: 'app-root',
   imports: [RouterOutlet, ...HlmToasterImports],
   templateUrl: './app.html',
-  styleUrl: './app.sass'
+  styleUrl: './app.sass',
 })
 export class App {
   protected readonly title = signal('Hirely');
