@@ -23,7 +23,7 @@ import { SocialAuthButtonsComponent } from './components/social-auth-buttons/soc
     SocialAuthButtonsComponent,
   ],
   templateUrl: './auth.html',
-  styleUrl: './auth.sass',
+  styleUrl: './auth.scss',
 })
 export class Auth {
   private authService = inject(AuthService);

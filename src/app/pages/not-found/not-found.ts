@@ -13,7 +13,7 @@ import { lucideHome, lucideLayoutDashboard } from '@ng-icons/lucide';
   imports: [RouterLink, ...HlmButtonImports, HeaderComponent, FooterComponent, NgIcon],
   providers: [provideIcons({ lucideHome, lucideLayoutDashboard })],
   templateUrl: './not-found.html',
-  styleUrl: './not-found.sass',
+  styleUrl: './not-found.scss',
 })
 export class NotFound {
   private authService = inject(AuthService);

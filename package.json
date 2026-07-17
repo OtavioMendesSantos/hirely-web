@@ -8,8 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "format": "prettier --write \"src/**/*.{ts,js,json,css,scss,sass}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,js,json,css,scss,sass}\""
+    "format": "prettier --write \"src/**/*.{ts,js,json,css,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json,css,scss}\""
   },
   "private": true,
   "dependencies": {

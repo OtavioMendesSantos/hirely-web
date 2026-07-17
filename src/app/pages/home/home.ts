@@ -9,6 +9,5 @@ import { FooterComponent } from '../../shared/components/footer/footer';
   standalone: true,
   imports: [RouterLink, HeaderComponent, FooterComponent, ...HlmButtonImports],
   templateUrl: './home.html',
-  styleUrl: './home.sass',
 })
 export class Home {}

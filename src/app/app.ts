@@ -8,7 +8,6 @@ import { ThemeService } from './core/services/theme';
   selector: 'app-root',
   imports: [RouterOutlet, ...HlmToasterImports],
   templateUrl: './app.html',
-  styleUrl: './app.sass',
   standalone: true,
 })
 export class App {

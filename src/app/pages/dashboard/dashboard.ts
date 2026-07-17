@@ -9,7 +9,6 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
   standalone: true,
   imports: [HeaderComponent, FooterComponent, ...HlmCardImports],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.sass',
 })
 export class Dashboard {
   private authService = inject(AuthService);
