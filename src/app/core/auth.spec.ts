@@ -28,6 +28,21 @@ describe('AuthService (core)', () => {
     };
     Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
+    const sessionStore: Record<string, string> = {};
+    const sessionStorageMock = {
+      getItem: (key: string) => sessionStore[key] || null,
+      setItem: (key: string, value: string) => {
+        sessionStore[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete sessionStore[key];
+      },
+      clear: () => {
+        for (const k in sessionStore) delete sessionStore[k];
+      },
+    };
+    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
@@ -43,6 +58,36 @@ describe('AuthService (core)', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should store token in localStorage when login is called with rememberMe=true', () => {
+    const mockUser: User = { id: '1', name: 'Otavio', email: 'otavio@example.com', createdAt: '2026-01-01' };
+    sessionStorage.setItem('jwt_token', 'old-session-token');
+
+    service.login('otavio@example.com', 'secret', true).subscribe();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
+    expect(req.request.body).toEqual({ email: 'otavio@example.com', password: 'secret', rememberMe: true });
+    req.flush({ token: 'new-local-token', user: mockUser });
+
+    expect(localStorage.getItem('jwt_token')).toBe('new-local-token');
+    expect(sessionStorage.getItem('jwt_token')).toBeNull();
+    expect(service.getToken()).toBe('new-local-token');
+  });
+
+  it('should store token in sessionStorage when login is called with rememberMe=false', () => {
+    const mockUser: User = { id: '1', name: 'Otavio', email: 'otavio@example.com', createdAt: '2026-01-01' };
+    localStorage.setItem('jwt_token', 'old-local-token');
+
+    service.login('otavio@example.com', 'secret', false).subscribe();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
+    expect(req.request.body).toEqual({ email: 'otavio@example.com', password: 'secret', rememberMe: false });
+    req.flush({ token: 'new-session-token', user: mockUser });
+
+    expect(sessionStorage.getItem('jwt_token')).toBe('new-session-token');
+    expect(localStorage.getItem('jwt_token')).toBeNull();
+    expect(service.getToken()).toBe('new-session-token');
   });
 
   it('should call /v1/users/me on checkAuth and set currentUser upon success', () => {
@@ -63,13 +108,15 @@ describe('AuthService (core)', () => {
     req.flush(mockUser);
   });
 
-  it('should logout and redirect to /auth when checkAuth fails', () => {
+  it('should logout and remove token from both localStorage and sessionStorage', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     localStorage.setItem('jwt_token', 'invalid-token');
+    sessionStorage.setItem('jwt_token', 'invalid-token-session');
 
     service.checkAuth().subscribe({
       error: () => {
         expect(localStorage.getItem('jwt_token')).toBeNull();
+        expect(sessionStorage.getItem('jwt_token')).toBeNull();
         expect(service.currentUser()).toBeNull();
         expect(navigateSpy).toHaveBeenCalledWith(['/auth']);
       },

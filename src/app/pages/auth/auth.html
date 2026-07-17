@@ -51,7 +51,8 @@
               hlmInput
               type="checkbox"
               id="remember"
-              (change)="onInProgress('Remember for 30 days')"
+              [(ngModel)]="rememberMe"
+              name="rememberMe"
               class="h-4 w-4 rounded border-border-subtle text-primary focus:ring-primary cursor-pointer accent-primary"
             />
             <label hlmLabel for="remember" class="text-sm text-on-surface-variant cursor-pointer select-none">Remember for 30 days</label>

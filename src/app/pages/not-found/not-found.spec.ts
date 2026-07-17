@@ -6,11 +6,12 @@ import { signal } from '@angular/core';
 
 describe('NotFound', () => {
   let fixture: ComponentFixture<NotFound>;
-  let authServiceMock: { currentUser: ReturnType<typeof signal> };
+  let authServiceMock: { currentUser: ReturnType<typeof signal>; getToken: any };
 
   beforeEach(async () => {
     authServiceMock = {
       currentUser: signal(null),
+      getToken: vi.fn().mockReturnValue(null),
     };
 
     if (typeof localStorage !== 'undefined') {

@@ -9,6 +9,9 @@ describe('App', () => {
     if (typeof localStorage !== 'undefined') {
       localStorage.clear();
     }
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.clear();
+    }
 
     await TestBed.configureTestingModule({
       imports: [App],

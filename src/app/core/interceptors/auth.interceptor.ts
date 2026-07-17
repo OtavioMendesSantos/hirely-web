@@ -1,9 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { getTokenFromStorage } from '../services/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  if (typeof localStorage !== 'undefined' && req.url.startsWith(environment.apiUrl)) {
-    const token = localStorage.getItem('jwt_token');
+  if (req.url.startsWith(environment.apiUrl)) {
+    const token = getTokenFromStorage();
     if (token) {
       req = req.clone({
         setHeaders: {
@@ -14,3 +15,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
   return next(req);
 };
+

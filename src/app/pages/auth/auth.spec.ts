@@ -16,6 +16,7 @@ describe('Auth', () => {
     login: ReturnType<typeof vi.fn>;
     register: ReturnType<typeof vi.fn>;
     currentUser: ReturnType<typeof signal<User | null>>;
+    getToken: ReturnType<typeof vi.fn>;
   };
   let routerMock: {
     navigate: ReturnType<typeof vi.fn>;
@@ -26,6 +27,7 @@ describe('Auth', () => {
       login: vi.fn(),
       register: vi.fn(),
       currentUser: signal<User | null>(null),
+      getToken: vi.fn().mockReturnValue(null),
     };
 
     routerMock = {
@@ -61,10 +63,15 @@ describe('Auth', () => {
     expect(component.isLoginMode()).toBe(true);
   });
 
+  it('should default rememberMe to true', () => {
+    expect(component.rememberMe).toBe(true);
+  });
+
   it('should toggle mode and clear form', () => {
     component.name = 'Test Name';
     component.email = 'test@example.com';
     component.password = '123456';
+    component.rememberMe = false;
 
     component.toggleMode();
 
@@ -72,6 +79,7 @@ describe('Auth', () => {
     expect(component.name).toBe('');
     expect(component.email).toBe('');
     expect(component.password).toBe('');
+    expect(component.rememberMe).toBe(true);
 
     component.toggleMode();
     expect(component.isLoginMode()).toBe(true);
@@ -81,12 +89,14 @@ describe('Auth', () => {
     component.name = 'Test Name';
     component.email = 'test@example.com';
     component.password = '123456';
+    component.rememberMe = false;
 
     component.clearForm();
 
     expect(component.name).toBe('');
     expect(component.email).toBe('');
     expect(component.password).toBe('');
+    expect(component.rememberMe).toBe(true);
   });
 
   describe('onLogin', () => {
@@ -102,7 +112,24 @@ describe('Auth', () => {
 
       await component.onLogin();
 
-      expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'secret');
+      expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'secret', true);
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+    });
+
+    it('should pass rememberMe false when checkbox is unchecked', async () => {
+      const mockResponse = {
+        token: 'fake-token',
+        user: { id: '1', name: 'Test User', email: 'test@example.com', createdAt: '2026-01-01' },
+      };
+      authServiceMock.login.mockReturnValue(of(mockResponse));
+
+      component.email = 'test@example.com';
+      component.password = 'secret';
+      component.rememberMe = false;
+
+      await component.onLogin();
+
+      expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'secret', false);
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
@@ -124,7 +151,7 @@ describe('Auth', () => {
 
       await component.onLogin();
 
-      expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrong');
+      expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrong', true);
       expect(toast.error).toHaveBeenCalledWith('Invalid email or password', { duration: 3000 });
     });
 
@@ -155,7 +182,8 @@ describe('Auth', () => {
       expect(authServiceMock.register).toHaveBeenCalledWith(
         'New User',
         'new@example.com',
-        'secret'
+        'secret',
+        true
       );
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
@@ -182,7 +210,8 @@ describe('Auth', () => {
       expect(authServiceMock.register).toHaveBeenCalledWith(
         'New User',
         'new@example.com',
-        'secret'
+        'secret',
+        true
       );
       expect(toast.error).toHaveBeenCalledWith('Email already exists', { duration: 3000 });
     });

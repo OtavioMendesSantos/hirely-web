@@ -8,12 +8,13 @@ import { vi } from 'vitest';
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
-  let authServiceMock: { currentUser: ReturnType<typeof signal>; logout: any };
+  let authServiceMock: { currentUser: ReturnType<typeof signal>; logout: any; getToken: any };
 
   beforeEach(async () => {
     authServiceMock = {
       currentUser: signal(null),
       logout: vi.fn(),
+      getToken: vi.fn().mockReturnValue(null),
     };
 
     if (typeof localStorage !== 'undefined') {

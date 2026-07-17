@@ -16,10 +16,11 @@ export class App {
   private readonly themeService = inject(ThemeService);
 
   constructor() {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('jwt_token')) {
+    if (this.authService.getToken()) {
       this.authService.checkAuth().subscribe({
         error: () => {},
       });
     }
   }
 }
+

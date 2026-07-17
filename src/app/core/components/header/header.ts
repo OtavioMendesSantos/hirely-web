@@ -119,7 +119,7 @@ export class HeaderComponent {
 
   isLoggedIn = computed(() => {
     const user = this.authService.currentUser();
-    const token = typeof localStorage !== 'undefined' ? localStorage.getItem('jwt_token') : null;
+    const token = this.authService.getToken();
     return user !== null || !!token;
   });
 

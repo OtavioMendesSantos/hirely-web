@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('jwt_token') : null;
+  const token = authService.getToken();
   if (!token) {
     router.navigate(['/auth']);
     return false;

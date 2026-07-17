@@ -24,6 +24,21 @@ describe('authInterceptor', () => {
     };
     Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
+    const sessionStore: Record<string, string> = {};
+    const sessionStorageMock = {
+      getItem: (key: string) => sessionStore[key] || null,
+      setItem: (key: string, value: string) => {
+        sessionStore[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete sessionStore[key];
+      },
+      clear: () => {
+        for (const k in sessionStore) delete sessionStore[k];
+      },
+    };
+    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
@@ -46,6 +61,16 @@ describe('authInterceptor', () => {
 
     const req = httpMock.expectOne(`${environment.apiUrl}/users/me`);
     expect(req.request.headers.get('Authorization')).toBe('Bearer my-fake-token');
+    req.flush({});
+  });
+
+  it('should attach Authorization header when jwt_token exists in sessionStorage and url starts with apiUrl', () => {
+    sessionStorage.setItem('jwt_token', 'my-session-token');
+
+    http.get(`${environment.apiUrl}/users/me`).subscribe();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/users/me`);
+    expect(req.request.headers.get('Authorization')).toBe('Bearer my-session-token');
     req.flush({});
   });
 

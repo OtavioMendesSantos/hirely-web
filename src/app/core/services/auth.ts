@@ -10,6 +10,18 @@ interface AuthResponse {
   user: User;
 }
 
+export function getTokenFromStorage(): string | null {
+  if (typeof localStorage !== 'undefined') {
+    const token = localStorage.getItem('jwt_token');
+    if (token) return token;
+  }
+  if (typeof sessionStorage !== 'undefined') {
+    const token = sessionStorage.getItem('jwt_token');
+    if (token) return token;
+  }
+  return null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,27 +30,45 @@ export class AuthService {
   private router = inject(Router);
   currentUser = signal<User | null>(null);
 
-  login(email: string, password: string) {
+  getToken(): string | null {
+    return getTokenFromStorage();
+  }
+
+  private saveToken(token: string, rememberMe: boolean) {
+    if (rememberMe) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('jwt_token', token);
+      }
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('jwt_token');
+      }
+    } else {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('jwt_token', token);
+      }
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('jwt_token');
+      }
+    }
+  }
+
+  login(email: string, password: string, rememberMe = true) {
     return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/users:login`, { email, password })
+      .post<AuthResponse>(`${environment.apiUrl}/users:login`, { email, password, rememberMe })
       .pipe(
         tap((response) => {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('jwt_token', response.token);
-          }
+          this.saveToken(response.token, rememberMe);
           this.currentUser.set(response.user);
         })
       );
   }
 
-  register(name: string, email: string, password: string) {
+  register(name: string, email: string, password: string, rememberMe = true) {
     return this.http
       .post<AuthResponse>(`${environment.apiUrl}/users`, { name, email, password })
       .pipe(
         tap((response) => {
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('jwt_token', response.token);
-          }
+          this.saveToken(response.token, rememberMe);
           this.currentUser.set(response.user);
         })
       );
@@ -60,6 +90,9 @@ export class AuthService {
   logout() {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('jwt_token');
+    }
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem('jwt_token');
     }
     this.currentUser.set(null);
   }

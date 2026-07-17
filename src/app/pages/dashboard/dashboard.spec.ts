@@ -17,6 +17,7 @@ describe('Dashboard', () => {
     const authServiceMock = {
       currentUser: signal<User | null>(mockUser),
       logout: vi.fn(),
+      getToken: vi.fn().mockReturnValue(null),
     };
 
     if (typeof localStorage !== 'undefined') {
@@ -43,6 +44,7 @@ describe('Dashboard', () => {
     const authServiceMock = {
       currentUser: signal<User | null>(null),
       logout: vi.fn(),
+      getToken: vi.fn().mockReturnValue(null),
     };
 
     if (typeof localStorage !== 'undefined') {

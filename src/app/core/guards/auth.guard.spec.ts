@@ -15,6 +15,7 @@ describe('authGuard', () => {
   let authServiceMock: {
     currentUser: ReturnType<typeof signal<User | null>>;
     checkAuth: ReturnType<typeof vi.fn>;
+    getToken: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -33,9 +34,33 @@ describe('authGuard', () => {
     };
     Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
+    const sessionStore: Record<string, string> = {};
+    const sessionStorageMock = {
+      getItem: (key: string) => sessionStore[key] || null,
+      setItem: (key: string, value: string) => {
+        sessionStore[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete sessionStore[key];
+      },
+      clear: () => {
+        for (const k in sessionStore) delete sessionStore[k];
+      },
+    };
+    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
     authServiceMock = {
       currentUser: signal<User | null>(null),
       checkAuth: vi.fn(),
+      getToken: vi.fn().mockImplementation(() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('jwt_token')) {
+          return localStorage.getItem('jwt_token');
+        }
+        if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('jwt_token')) {
+          return sessionStorage.getItem('jwt_token');
+        }
+        return null;
+      }),
     };
 
     TestBed.configureTestingModule({
@@ -45,7 +70,7 @@ describe('authGuard', () => {
     router = TestBed.inject(Router);
   });
 
-  it('should redirect to /auth and return false when jwt_token is not in localStorage', () => {
+  it('should redirect to /auth and return false when jwt_token is not in localStorage or sessionStorage', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     const result = executeGuard({} as any, {} as any);
 
@@ -53,8 +78,22 @@ describe('authGuard', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/auth']);
   });
 
-  it('should return true immediately when currentUser is not null', () => {
+  it('should return true immediately when currentUser is not null and token exists in localStorage', () => {
     localStorage.setItem('jwt_token', 'valid-token');
+    authServiceMock.currentUser.set({
+      id: '1',
+      name: 'User',
+      email: 'user@example.com',
+      createdAt: '2026-01-01',
+    });
+
+    const result = executeGuard({} as any, {} as any);
+    expect(result).toBe(true);
+    expect(authServiceMock.checkAuth).not.toHaveBeenCalled();
+  });
+
+  it('should return true immediately when currentUser is not null and token exists in sessionStorage', () => {
+    sessionStorage.setItem('jwt_token', 'valid-session-token');
     authServiceMock.currentUser.set({
       id: '1',
       name: 'User',

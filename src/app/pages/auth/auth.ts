@@ -35,6 +35,7 @@ export class Auth {
   name = '';
   email = '';
   password = '';
+  rememberMe = true;
 
   constructor() {
     this.route.queryParams.subscribe((params) => {
@@ -55,6 +56,7 @@ export class Auth {
     this.name = '';
     this.email = '';
     this.password = '';
+    this.rememberMe = true;
   }
 
   onInProgress(feature: string) {
@@ -62,7 +64,7 @@ export class Auth {
   }
 
   async onLogin() {
-    this.authService.login(this.email, this.password).subscribe({
+    this.authService.login(this.email, this.password, this.rememberMe).subscribe({
       next: () => {
         console.log('Login successful', this.authService.currentUser);
         this.router.navigate(['/dashboard']);
@@ -75,7 +77,7 @@ export class Auth {
   }
 
   async onRegister() {
-    this.authService.register(this.name, this.email, this.password).subscribe({
+    this.authService.register(this.name, this.email, this.password, this.rememberMe).subscribe({
       next: () => {
         console.log('Register successful');
         this.router.navigate(['/dashboard']);
