@@ -9,6 +9,7 @@ Interface web moderna para o **Hirely**, uma plataforma de recrutamento e gestã
 - **[Angular 22](https://angular.dev/)** — Framework web de última geração (*Standalone Components*, *Signals*, *Control Flow* moderno e *Inject functions*).
 - **[TypeScript](https://www.typescriptlang.org/)** — Tipagem estática robusta e segurança de código.
 - **[Spartan / Helm](https://spartan.ng/)** — Biblioteca de componentes acessíveis e customizáveis (baseados no padrão *shadcn/ui* para Angular com Brain & Helm).
+  - [SimUI.dev](https://simui.dev/) - Framework de componentes UI acessíveis e customizáveis para Angular.
 - **[Tailwind CSS](https://tailwindcss.com/)** + **[SASS](https://sass-lang.com/)** — Estilização utilitária e overrides de tokens `@theme` e CSS Variables de alta precisão.
 - **[@ng-icons/core & lucide](https://ng-icons.github.io/ng-icons/)** — Conjunto de ícones vetoriais otimizados por árvore de injeção (*Lucide Icons*).
 - **[Vitest](https://vitest.dev/)** — Framework de testes unitários ultrarrápido integrado com o ecossistema Angular.
