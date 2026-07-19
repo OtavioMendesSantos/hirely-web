@@ -37,7 +37,10 @@ describe('authInterceptor', () => {
         for (const k in sessionStore) delete sessionStore[k];
       },
     };
-    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+    Object.defineProperty(globalThis, 'sessionStorage', {
+      value: sessionStorageMock,
+      writable: true,
+    });
 
     TestBed.configureTestingModule({
       providers: [

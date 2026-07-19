@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../core/services/auth';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { HlmCardImports } from '@spartan-ng/helm/card';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-profile',
   standalone: true,
   imports: [AppLayoutComponent, ...HlmCardImports],
-  templateUrl: './dashboard.html',
+  templateUrl: './profile.html',
 })
-export class Dashboard {
+export class Profile {
   private authService = inject(AuthService);
-  currentUser = this.authService.currentUser();
+  currentUser = this.authService.currentUser;
 }

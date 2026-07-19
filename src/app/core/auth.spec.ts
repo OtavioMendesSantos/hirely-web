@@ -41,7 +41,10 @@ describe('AuthService (core)', () => {
         for (const k in sessionStore) delete sessionStore[k];
       },
     };
-    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+    Object.defineProperty(globalThis, 'sessionStorage', {
+      value: sessionStorageMock,
+      writable: true,
+    });
 
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
@@ -61,13 +64,22 @@ describe('AuthService (core)', () => {
   });
 
   it('should store token in localStorage when login is called with rememberMe=true', () => {
-    const mockUser: User = { id: '1', name: 'Otavio', email: 'otavio@example.com', createdAt: '2026-01-01' };
+    const mockUser: User = {
+      id: '1',
+      name: 'Otavio',
+      email: 'otavio@example.com',
+      createdAt: '2026-01-01',
+    };
     sessionStorage.setItem('jwt_token', 'old-session-token');
 
     service.login('otavio@example.com', 'secret', true).subscribe();
 
     const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
-    expect(req.request.body).toEqual({ email: 'otavio@example.com', password: 'secret', rememberMe: true });
+    expect(req.request.body).toEqual({
+      email: 'otavio@example.com',
+      password: 'secret',
+      rememberMe: true,
+    });
     req.flush({ token: 'new-local-token', user: mockUser });
 
     expect(localStorage.getItem('jwt_token')).toBe('new-local-token');
@@ -76,13 +88,22 @@ describe('AuthService (core)', () => {
   });
 
   it('should store token in sessionStorage when login is called with rememberMe=false', () => {
-    const mockUser: User = { id: '1', name: 'Otavio', email: 'otavio@example.com', createdAt: '2026-01-01' };
+    const mockUser: User = {
+      id: '1',
+      name: 'Otavio',
+      email: 'otavio@example.com',
+      createdAt: '2026-01-01',
+    };
     localStorage.setItem('jwt_token', 'old-local-token');
 
     service.login('otavio@example.com', 'secret', false).subscribe();
 
     const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
-    expect(req.request.body).toEqual({ email: 'otavio@example.com', password: 'secret', rememberMe: false });
+    expect(req.request.body).toEqual({
+      email: 'otavio@example.com',
+      password: 'secret',
+      rememberMe: false,
+    });
     req.flush({ token: 'new-session-token', user: mockUser });
 
     expect(sessionStorage.getItem('jwt_token')).toBe('new-session-token');

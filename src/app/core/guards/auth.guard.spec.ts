@@ -47,7 +47,10 @@ describe('authGuard', () => {
         for (const k in sessionStore) delete sessionStore[k];
       },
     };
-    Object.defineProperty(globalThis, 'sessionStorage', { value: sessionStorageMock, writable: true });
+    Object.defineProperty(globalThis, 'sessionStorage', {
+      value: sessionStorageMock,
+      writable: true,
+    });
 
     authServiceMock = {
       currentUser: signal<User | null>(null),

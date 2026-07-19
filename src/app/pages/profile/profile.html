@@ -1,0 +1,26 @@
+<app-layout pageTitle="Profile">
+  <section hlmCard class="p-6 sm:p-8 bg-surface-container-lowest border border-border-subtle shadow-sm rounded-xl max-w-3xl">
+    <div hlmCardHeader class="p-0 mb-6 border-b border-border-subtle pb-4">
+      <h3 hlmCardTitle class="text-xl font-heading font-bold text-on-surface">
+        Profile & Preferences
+      </h3>
+      <p class="text-sm text-on-surface-variant mt-1">
+        Manage your personal information, workspace settings, and notification preferences.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Full Name</label>
+        <div class="text-base font-medium text-on-surface bg-surface-container-low px-3 py-2 rounded-md border border-border-subtle/60">
+          {{ currentUser()?.name || 'Recruiter User' }}
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Email Address</label>
+        <div class="text-base font-medium text-on-surface bg-surface-container-low px-3 py-2 rounded-md border border-border-subtle/60">
+          {{ currentUser()?.email || 'recruiter@hirely.com' }}
+        </div>
+      </div>
+    </div>
+  </section>
+</app-layout>
