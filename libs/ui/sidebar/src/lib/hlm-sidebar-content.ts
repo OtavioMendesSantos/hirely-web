@@ -1,5 +1,6 @@
-import { Directive } from '@angular/core';
-import { classes } from '@spartan-ng/helm/utils';
+import { Directive, input } from '@angular/core';
+import { classes, hlm } from '@spartan-ng/helm/utils';
+import type { ClassValue } from 'clsx';
 
 @Directive({
   selector: '[hlmSidebarContent],hlm-sidebar-content',
@@ -9,10 +10,13 @@ import { classes } from '@spartan-ng/helm/utils';
   },
 })
 export class HlmSidebarContent {
+  public readonly userClass = input<ClassValue>('', { alias: 'class' });
   constructor() {
-    classes(
-      () =>
-        'no-scrollbar gap-0 flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden'
+    classes(() =>
+      hlm(
+        'no-scrollbar gap-0 flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+        this.userClass()
+      )
     );
   }
 }
