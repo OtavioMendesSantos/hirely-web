@@ -1,0 +1,84 @@
+<div
+  class="bg-surface flex min-h-screen w-full flex-col justify-center px-6 py-12 sm:px-12 md:px-20 lg:px-24 xl:px-32"
+>
+  <div class="mx-auto w-full max-w-md">
+    <div class="mb-8">
+      <a
+        routerLink="/"
+        class="font-heading text-primary mb-4 inline-flex cursor-pointer items-center gap-2.5 text-3xl font-bold tracking-tight transition-opacity hover:opacity-90 sm:text-4xl"
+      >
+        <img src="hirely_logo.png" alt="Hirely Logo" class="h-8 w-auto object-contain sm:h-10" />
+        <span>Hirely</span>
+      </a>
+      <h2 class="font-heading text-on-surface mb-1 text-2xl font-bold">Welcome back</h2>
+      <p class="text-on-surface-variant text-sm">Please enter your details to sign in.</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()" class="flex flex-col gap-4">
+      <hlm-field>
+        <label hlmFieldLabel for="login-email">Email</label>
+        <input
+          hlmInput
+          id="login-email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          placeholder="your@email.com"
+        />
+      </hlm-field>
+
+      <hlm-field>
+        <label hlmFieldLabel for="login-password">
+          Password
+          <a
+            (click)="onInProgress('Forgot password?')"
+            class="text-primary ml-auto cursor-pointer text-xs font-semibold hover:underline"
+          >
+            Forgot password?
+          </a>
+        </label>
+        <input
+          hlmInput
+          id="login-password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          placeholder="••••••••"
+        />
+      </hlm-field>
+
+      <div class="flex items-center gap-2.5">
+        <input
+          hlmInput
+          type="checkbox"
+          id="remember"
+          [(ngModel)]="rememberMe"
+          name="rememberMe"
+          class="accent-primary size-4 cursor-pointer rounded"
+        />
+        <label
+          hlmLabel
+          for="remember"
+          class="text-on-surface-variant cursor-pointer text-sm select-none"
+        >
+          Remember for 30 days
+        </label>
+      </div>
+
+      <button hlmBtn type="submit" class="w-full">Sign in</button>
+    </form>
+
+    <app-social-auth-buttons (socialClick)="onInProgress($event + ' Login')" />
+
+    <p class="text-on-surface-variant mt-8 text-center text-sm">
+      Don't have an account?
+      <a
+        (click)="toggleMode.emit()"
+        class="text-primary ml-1 cursor-pointer font-bold hover:underline"
+        >Sign up</a
+      >
+    </p>
+  </div>
+</div>

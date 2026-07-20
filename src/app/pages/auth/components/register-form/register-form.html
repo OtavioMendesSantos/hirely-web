@@ -1,0 +1,70 @@
+<div
+  class="bg-surface flex min-h-screen w-full flex-col justify-center px-6 py-12 sm:px-12 md:px-20 lg:px-24 xl:px-32"
+>
+  <div class="mx-auto w-full max-w-md">
+    <div class="mb-8">
+      <a
+        routerLink="/"
+        class="font-heading text-primary mb-4 inline-flex cursor-pointer items-center gap-2.5 text-3xl font-bold tracking-tight transition-opacity hover:opacity-90 sm:text-4xl"
+      >
+        <img src="hirely_logo.png" alt="Hirely Logo" class="h-8 w-auto object-contain sm:h-10" />
+        <span>Hirely</span>
+      </a>
+      <h2 class="font-heading text-on-surface mb-1 text-2xl font-bold">Create an account</h2>
+      <p class="text-on-surface-variant text-sm">Enter your details to get started.</p>
+    </div>
+
+    <form (ngSubmit)="onRegister()" class="flex flex-col gap-4">
+      <hlm-field>
+        <label hlmFieldLabel for="reg-name">Full name</label>
+        <input
+          hlmInput
+          id="reg-name"
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          required
+          placeholder="John Doe"
+        />
+      </hlm-field>
+
+      <hlm-field>
+        <label hlmFieldLabel for="reg-email">Email</label>
+        <input
+          hlmInput
+          id="reg-email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          placeholder="you@example.com"
+        />
+      </hlm-field>
+
+      <hlm-field>
+        <label hlmFieldLabel for="reg-password">Password</label>
+        <input
+          hlmInput
+          id="reg-password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          placeholder="••••••••"
+        />
+        <hlm-field-description>Must be at least 8 characters.</hlm-field-description>
+      </hlm-field>
+
+      <button hlmBtn type="submit" class="w-full">Create account</button>
+    </form>
+
+    <app-social-auth-buttons (socialClick)="onInProgress($event + ' Sign up')" />
+
+    <p class="text-on-surface-variant mt-8 text-center text-sm">
+      Already have an account?
+      <a (click)="toggleMode.emit()" class="text-primary ml-1 cursor-pointer font-bold hover:underline"
+        >Log in</a
+      >
+    </p>
+  </div>
+</div>

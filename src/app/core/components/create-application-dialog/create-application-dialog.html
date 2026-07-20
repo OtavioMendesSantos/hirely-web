@@ -1,0 +1,174 @@
+<div class="flex min-h-0 flex-1 flex-col">
+  <hlm-dialog-header>
+    <h3 hlmDialogTitle class="font-heading text-primary flex items-center gap-2 text-lg font-bold">
+      <ng-icon name="lucideBriefcase" class="size-5 shrink-0" />
+      <span>New Job Application</span>
+    </h3>
+    <p hlmDialogDescription>
+      Track a new candidacy by specifying the role, company details, initial status, and notes.
+      Click create when you're done.
+    </p>
+  </hlm-dialog-header>
+
+  <div class="flex max-h-[60vh] min-h-0 flex-1 flex-col gap-4 overflow-y-auto py-2">
+    @if (errorMessage()) {
+    <div
+      class="border-destructive/30 bg-destructive/10 text-destructive shrink-0 rounded-lg border px-3.5 py-2.5 text-xs font-medium"
+    >
+      {{ errorMessage() }}
+    </div>
+    }
+
+    <form
+      id="create-app-form"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-4 p-1"
+    >
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <hlm-field>
+          <label hlmFieldLabel for="company_name" class="flex items-center gap-1.5 text-xs">
+            <span>Company Name</span>
+            <span class="text-destructive">*</span>
+          </label>
+          <input
+            id="company_name"
+            hlmInput
+            type="text"
+            formControlName="company_name"
+            placeholder="e.g. Hirely Corp, Google"
+          />
+          @if (form.get('company_name')?.invalid && form.get('company_name')?.touched) {
+          <hlm-field-error>Company name is required</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field>
+          <label hlmFieldLabel for="job_title" class="flex items-center gap-1.5 text-xs">
+            <span>Job Title / Role</span>
+            <span class="text-destructive">*</span>
+          </label>
+          <input
+            id="job_title"
+            hlmInput
+            type="text"
+            formControlName="job_title"
+            placeholder="e.g. Senior Backend Engineer"
+          />
+          @if (form.get('job_title')?.invalid && form.get('job_title')?.touched) {
+          <hlm-field-error>Job title is required</hlm-field-error>
+          }
+        </hlm-field>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <hlm-field>
+          <label hlmFieldLabel for="status" class="text-xs"> Initial Status </label>
+          <select
+            id="status"
+            hlmInput
+            formControlName="status"
+            class="bg-surface text-on-surface cursor-pointer font-medium"
+          >
+            <option value="TO_APPLY">To Apply</option>
+            <option value="APPLIED">Applied</option>
+            <option value="INTERVIEW">Interviewing</option>
+            <option value="OFFER">Offer Received</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </hlm-field>
+
+        <hlm-field>
+          <label hlmFieldLabel for="applied_at" class="text-xs"> Applied Date </label>
+          <input id="applied_at" hlmInput type="date" formControlName="applied_at" />
+        </hlm-field>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4">
+        <hlm-field>
+          <label hlmFieldLabel for="job_url" class="text-xs"> Job Posting URL </label>
+          <input
+            id="job_url"
+            hlmInput
+            type="url"
+            formControlName="job_url"
+            placeholder="https://..."
+          />
+        </hlm-field>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <hlm-field>
+          <label hlmFieldLabel for="location" class="text-xs"> Work Modality </label>
+          <select
+            id="location"
+            hlmInput
+            formControlName="location"
+            class="bg-surface text-on-surface cursor-pointer font-medium"
+          >
+            <option value="">Select modality...</option>
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+          </select>
+        </hlm-field>
+
+        <hlm-field>
+          <label hlmFieldLabel for="salary_range" class="text-xs"> Salary Range </label>
+          <input
+            id="salary_range"
+            hlmInput
+            type="text"
+            formControlName="salary_range"
+            placeholder="e.g. $120k - $150k/year"
+          />
+        </hlm-field>
+      </div>
+
+      <hlm-field>
+        <label hlmFieldLabel for="job_description" class="text-xs">
+          Job Description / Key Requirements
+        </label>
+        <textarea
+          id="job_description"
+          hlmTextarea
+          rows="3"
+          formControlName="job_description"
+          placeholder="Paste tech stack, requirements, or responsibilities..."
+        ></textarea>
+      </hlm-field>
+
+      <hlm-field>
+        <label hlmFieldLabel for="notes" class="text-xs"> Initial Notes & Referrals </label>
+        <textarea
+          id="notes"
+          hlmTextarea
+          rows="2"
+          formControlName="notes"
+          placeholder="e.g. Referred by Tech Lead via LinkedIn, scheduled initial call..."
+        ></textarea>
+      </hlm-field>
+    </form>
+  </div>
+
+  <hlm-dialog-footer>
+    <button hlmBtn variant="outline" type="button" (click)="closeDialog()" hlmDialogClose>
+      Cancel
+    </button>
+    <button
+      hlmBtn
+      type="submit"
+      form="create-app-form"
+      [disabled]="form.invalid || isSubmitting()"
+      class="gap-2"
+    >
+      @if (isSubmitting()) {
+      <ng-icon name="lucideLoader2" class="size-4 shrink-0 animate-spin" />
+      <span>Creating...</span>
+      } @else {
+      <ng-icon name="lucidePlus" class="size-4 shrink-0" />
+      <span>Create Application</span>
+      }
+    </button>
+  </hlm-dialog-footer>
+</div>

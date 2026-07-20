@@ -23,7 +23,7 @@ import { AppSidebarComponent } from '../app-sidebar/app-sidebar';
           <button
             hlmSidebarTrigger
             aria-label="Toggle Sidebar"
-            class="-ms-1 text-on-surface hover:text-primary transition-colors cursor-pointer"
+            class="text-on-surface hover:text-primary -ms-1 cursor-pointer transition-colors"
           >
             <span class="sr-only">Toggle Sidebar</span>
           </button>

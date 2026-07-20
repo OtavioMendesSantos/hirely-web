@@ -162,6 +162,8 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
   }
   body {
     @apply bg-background text-foreground;
@@ -176,5 +178,24 @@
   h6 {
     font-family: 'Hanken Grotesk', sans-serif;
     @apply tracking-tight;
+  }
+
+  /* Global Webkit Scrollbars styled with main primary color */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--ring);
   }
 }
