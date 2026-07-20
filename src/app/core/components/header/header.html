@@ -1,0 +1,61 @@
+<header
+  class="bg-surface/90 border-border-subtle sticky top-0 z-50 flex w-full items-center justify-between border-b px-6 py-4 backdrop-blur-md sm:px-12 md:px-20"
+>
+  <!-- Hirely Brand -->
+  <a
+    routerLink="/"
+    class="font-heading text-primary flex cursor-pointer items-center gap-2.5 text-xl font-bold tracking-tight transition-opacity hover:opacity-90"
+  >
+    <img src="hirely_logo.png" alt="Hirely Logo" class="h-8 w-auto object-contain" />
+    <span>Hirely</span>
+  </a>
+
+  <!-- Actions & Navigation -->
+  <div class="flex items-center gap-3">
+    @if (isLoggedIn()) {
+    <a
+      routerLink="/dashboard"
+      class="text-on-surface hover:text-primary cursor-pointer px-3 py-2 text-sm font-semibold transition-colors"
+    >
+      Dashboard
+    </a>
+    <app-user-menu variant="header" side="bottom" align="end" />
+    } @else {
+    <!-- Theme Switcher for non-logged users -->
+    <button
+      hlmBtn
+      variant="ghost"
+      size="icon"
+      type="button"
+      (click)="themeService.toggleTheme()"
+      [title]="'Theme: ' + themeService.theme()"
+      class="text-on-surface hover:bg-surface-muted hover:text-primary flex cursor-pointer items-center justify-center rounded-full transition-colors"
+    >
+      @switch (themeService.theme()) { @case ('light') {
+      <ng-icon name="lucideSun" class="text-base" />
+      } @case ('dark') {
+      <ng-icon name="lucideMoon" class="text-base" />
+      } @default {
+      <ng-icon name="lucideMonitor" class="text-base" />
+      } }
+    </button>
+
+    <a
+      routerLink="/auth"
+      [queryParams]="{ mode: 'login' }"
+      class="text-on-surface hover:text-primary cursor-pointer px-3 py-2 text-sm font-semibold transition-colors"
+    >
+      Log In
+    </a>
+    <a
+      hlmBtn
+      size="sm"
+      routerLink="/auth"
+      [queryParams]="{ mode: 'register' }"
+      class="cursor-pointer rounded px-4 py-2 font-semibold shadow-sm transition-colors"
+    >
+      Sign Up
+    </a>
+    }
+  </div>
+</header>
