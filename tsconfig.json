@@ -26,7 +26,8 @@
       "@spartan-ng/helm/tooltip": ["./libs/ui/tooltip/src/index.ts"],
       "@spartan-ng/helm/menubar": ["./libs/ui/menubar/src/index.ts"],
       "@spartan-ng/helm/dropdown-menu": ["./libs/ui/dropdown-menu/src/index.ts"],
-      "@spartan-ng/helm/breadcrumb": ["./libs/ui/breadcrumb/src/index.ts"]
+      "@spartan-ng/helm/breadcrumb": ["./libs/ui/breadcrumb/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./libs/ui/dialog/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
