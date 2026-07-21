@@ -16,6 +16,18 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'applications/:id',
+    loadComponent: () =>
+      import('./pages/application-detail/application-detail').then((c) => c.ApplicationDetailPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'dashboard/applications/:id',
+    loadComponent: () =>
+      import('./pages/application-detail/application-detail').then((c) => c.ApplicationDetailPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'metrics',
     loadComponent: () => import('./pages/metrics/metrics').then((c) => c.Metrics),
     canActivate: [authGuard],
