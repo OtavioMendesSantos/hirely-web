@@ -1,0 +1,7 @@
+<app-layout [pageTitle]="pageTitle()" [breadcrumbItems]="breadcrumbItems()">
+  <app-application-detail-content
+    [applicationId]="applicationId()"
+    [isModal]="false"
+    (applicationLoaded)="onApplicationLoaded($event)"
+  />
+</app-layout>

@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from './auth';
 import {
   Application,
+  ApplicationEvent,
   ApplicationStatsResponse,
   CreateApplicationRequest,
   ListApplicationsResponse,
@@ -118,5 +119,28 @@ export class ApplicationService {
           this.applications.update((list) => list.filter((app) => app.id !== applicationId));
         })
       );
+  }
+
+  getApplication(applicationId: string) {
+    const uid = this.userId;
+    if (!uid) {
+      throw new Error('User not authenticated');
+    }
+
+    return this.http.get<Application>(
+      `${environment.apiUrl}/users/${uid}/applications/${applicationId}`
+    );
+  }
+
+  addEvent(applicationId: string, description: string) {
+    const uid = this.userId;
+    if (!uid) {
+      throw new Error('User not authenticated');
+    }
+
+    return this.http.post<ApplicationEvent>(
+      `${environment.apiUrl}/users/${uid}/applications/${applicationId}/events`,
+      { description }
+    );
   }
 }

@@ -1,0 +1,494 @@
+@if (loading()) {
+<div class="flex flex-col gap-6">
+  <div
+    hlmCard
+    class="border-l-primary bg-surface-container-lowest border border-l-4 p-6 shadow-sm sm:p-7"
+  >
+    <div class="flex flex-col justify-between gap-6 md:flex-row md:items-start">
+      <div class="flex items-start gap-4 sm:gap-5">
+        <hlm-skeleton class="size-14 sm:size-16 shrink-0 rounded-2xl" />
+
+        <div class="flex min-w-0 flex-col gap-2 pt-1">
+          <hlm-skeleton class="h-8 w-64 sm:w-80 rounded-lg" />
+
+          <div class="flex items-center gap-2 pt-1">
+            <hlm-skeleton class="h-4 w-32 rounded" />
+            <hlm-skeleton class="h-4 w-24 rounded" />
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <hlm-skeleton class="h-6 w-20 rounded-md" />
+            <hlm-skeleton class="h-6 w-28 rounded-md" />
+            <hlm-skeleton class="h-6 w-32 rounded-md" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+        <hlm-skeleton class="h-9 w-20 rounded-lg" />
+        <hlm-skeleton class="h-9 w-28 rounded-lg" />
+        <hlm-skeleton class="h-9 w-20 rounded-lg" />
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="flex flex-col gap-6 lg:col-span-1">
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <div class="border-border-subtle/60 border-b pb-3">
+          <hlm-skeleton class="h-6 w-20 rounded-md" />
+        </div>
+
+        <div class="flex flex-col gap-5 pt-1">
+          <div class="flex flex-col gap-1.5">
+            <hlm-skeleton class="h-3 w-20 rounded" />
+            <hlm-skeleton class="h-4 w-32 rounded" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <hlm-skeleton class="h-3 w-24 rounded" />
+            <hlm-skeleton class="h-6 w-24 rounded-md" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <hlm-skeleton class="h-3 w-24 rounded" />
+            <hlm-skeleton class="h-4 w-28 rounded" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <hlm-skeleton class="h-3 w-20 rounded" />
+            <hlm-skeleton class="h-4 w-36 rounded" />
+          </div>
+        </div>
+      </div>
+
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <div class="border-border-subtle/60 border-b pb-3">
+          <hlm-skeleton class="h-6 w-44 rounded-md" />
+        </div>
+
+        <div class="flex flex-col gap-3 pt-1">
+          <hlm-skeleton class="h-3 w-16 rounded" />
+          <hlm-skeleton class="h-4 w-full rounded" />
+          <hlm-skeleton class="h-4 w-[90%] rounded" />
+          <hlm-skeleton class="h-4 w-[75%] rounded" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:col-span-2">
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-6 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <div class="border-border-subtle/60 flex items-center justify-between border-b pb-4">
+          <div class="flex items-center gap-2.5">
+            <hlm-skeleton class="size-8 rounded-lg" />
+            <hlm-skeleton class="h-6 w-20 rounded-md" />
+          </div>
+        </div>
+
+        <div
+          class="bg-surface-muted/60 border-border-subtle flex items-center gap-3 rounded-xl border p-3.5"
+        >
+          <hlm-skeleton class="h-9 flex-1 rounded-lg" />
+          <hlm-skeleton class="h-9 w-24 rounded-lg" />
+        </div>
+
+        <div class="relative flex flex-col gap-6 ps-2 pt-2">
+          <div class="relative flex items-start gap-4">
+            <hlm-skeleton class="size-8 shrink-0 rounded-full" />
+            <div
+              class="bg-surface-muted/30 border-border-subtle/50 flex flex-1 flex-col gap-2 rounded-xl border p-4"
+            >
+              <div class="flex items-center justify-between">
+                <hlm-skeleton class="h-4 w-32 rounded" />
+                <hlm-skeleton class="h-3 w-24 rounded" />
+              </div>
+              <hlm-skeleton class="mt-1 h-4 w-full rounded" />
+              <hlm-skeleton class="h-4 w-4/5 rounded" />
+            </div>
+          </div>
+
+          <div class="relative flex items-start gap-4">
+            <hlm-skeleton class="size-8 shrink-0 rounded-full" />
+            <div
+              class="bg-surface-muted/30 border-border-subtle/50 flex flex-1 flex-col gap-2 rounded-xl border p-4"
+            >
+              <div class="flex items-center justify-between">
+                <hlm-skeleton class="h-4 w-40 rounded" />
+                <hlm-skeleton class="h-3 w-24 rounded" />
+              </div>
+              <hlm-skeleton class="mt-1 h-4 w-3/4 rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else if (errorMessage()) {
+<div
+  class="border-destructive/30 bg-destructive/10 text-destructive mx-auto max-w-lg rounded-2xl border p-6 text-center shadow-sm"
+>
+  <p class="font-heading text-base font-bold">{{ errorMessage() }}</p>
+  <button
+    hlmBtn
+    variant="outline"
+    size="sm"
+    (click)="loadApplication()"
+    class="mt-4 font-semibold"
+  >
+    <ng-icon name="lucideRefreshCw" data-icon="inline-start" />
+    Retry Loading
+  </button>
+</div>
+} @else if (application(); as app) {
+<div class="flex flex-col gap-6">
+  <div
+    hlmCard
+    class="border-l-primary bg-surface-container-lowest border border-l-4 p-6 shadow-sm sm:p-7"
+  >
+    <div class="flex flex-col justify-between gap-6 md:flex-row md:items-start">
+      <div class="flex items-start gap-4 sm:gap-5">
+        <div
+          class="bg-primary/10 border-primary/20 text-primary flex size-14 shrink-0 items-center justify-center rounded-2xl border shadow-xs sm:size-16"
+        >
+          <ng-icon name="lucideBuilding" class="size-7 sm:size-8" />
+        </div>
+
+        <div class="flex min-w-0 flex-col gap-1.5">
+          <h1 class="font-heading text-on-surface text-2xl font-bold tracking-tight sm:text-3xl">
+            {{ app.jobTitle }}
+          </h1>
+
+          <div
+            class="text-on-surface-variant flex flex-wrap items-center gap-2 text-sm font-semibold"
+          >
+            <span>{{ app.companyName }}</span>
+            @if (app.location) {
+            <span class="text-border-subtle">•</span>
+            <span class="flex items-center gap-1">
+              <ng-icon name="lucideMapPin" class="text-primary/80 size-3.5 shrink-0" />
+              <span>{{ app.location }}</span>
+            </span>
+            }
+          </div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              class="bg-primary/15 border-primary/30 text-primary inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-bold tracking-wider uppercase"
+            >
+              {{ app.status }}
+            </span>
+
+            @if (app.salaryRange) {
+            <span
+              class="bg-surface-muted border-border-subtle text-on-surface-variant inline-flex items-center gap-1 rounded-md border px-2.5 py-0.5 text-xs font-medium"
+            >
+              <ng-icon name="lucideDollarSign" class="size-3.5 shrink-0" />
+              <span>{{ app.salaryRange }}</span>
+            </span>
+            } @if (app.appliedAt) {
+            <span
+              class="bg-surface-muted border-border-subtle text-on-surface-variant inline-flex items-center gap-1 rounded-md border px-2.5 py-0.5 text-xs font-medium"
+            >
+              <ng-icon name="lucideCalendar" class="size-3.5 shrink-0" />
+              <span>Applied {{ app.appliedAt | date : 'mediumDate' }}</span>
+            </span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          type="button"
+          (click)="openEditDialog()"
+          class="cursor-pointer gap-2 font-semibold shadow-xs"
+        >
+          <ng-icon name="lucideEdit" class="size-4 shrink-0" />
+          <span>Edit</span>
+        </button>
+
+        @if (app.jobUrl) {
+        <a
+          hlmBtn
+          variant="default"
+          size="sm"
+          [href]="app.jobUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cursor-pointer gap-2 font-semibold shadow-xs"
+        >
+          <span>View Posting</span>
+          <ng-icon name="lucideExternalLink" class="size-4 shrink-0" />
+        </a>
+        }
+
+        <button
+          hlmBtn
+          variant="destructive"
+          size="sm"
+          type="button"
+          (click)="openDeleteConfirm()"
+          class="cursor-pointer gap-2 font-semibold shadow-xs"
+        >
+          <ng-icon name="lucideTrash2" class="size-4 shrink-0" />
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="flex flex-col gap-6 lg:col-span-1">
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <h2
+          class="font-heading border-border-subtle/60 text-on-surface border-b pb-3 text-lg font-bold"
+        >
+          Details
+        </h2>
+
+        <div class="flex flex-col gap-4 text-sm">
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Applied Date
+            </span>
+            <span class="text-on-surface font-semibold">
+              {{ app.appliedAt ? (app.appliedAt | date : 'mediumDate') : 'Not specified' }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Current Stage
+            </span>
+            <div class="mt-0.5">
+              <span
+                class="bg-primary/10 border-primary/20 text-primary inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-bold"
+              >
+                • {{ app.status }}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Work Modality
+            </span>
+            <span class="text-on-surface font-semibold">
+              {{ app.location || 'Not specified' }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Salary Range
+            </span>
+            <span class="text-on-surface font-semibold">
+              {{ app.salaryRange || 'Not specified' }}
+            </span>
+          </div>
+
+          @if (app.jobUrl) {
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Posting URL
+            </span>
+            <a
+              [href]="app.jobUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary inline-flex items-center gap-1.5 truncate font-semibold hover:underline"
+            >
+              <span class="truncate">{{ app.jobUrl }}</span>
+              <ng-icon name="lucideExternalLink" class="size-3.5 shrink-0" />
+            </a>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <h2
+          class="font-heading border-border-subtle/60 text-on-surface border-b pb-3 text-lg font-bold"
+        >
+          Notes & Description
+        </h2>
+
+        <div class="flex flex-col gap-4">
+          @if (app.notes) {
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Notes
+            </span>
+            <p
+              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
+            >
+              {{ app.notes }}
+            </p>
+          </div>
+          } @if (app.jobDescription) {
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Job Description
+            </span>
+            <p
+              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
+            >
+              {{ app.jobDescription }}
+            </p>
+          </div>
+          } @if (!app.notes && !app.jobDescription) {
+          <p class="text-on-surface-variant/60 py-4 text-center text-xs italic">
+            No notes or job description added yet.
+          </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:col-span-2">
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-6 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <div
+          class="border-border-subtle/60 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center"
+        >
+          <div class="flex items-center gap-2.5">
+            <div
+              class="bg-primary/10 border-primary/20 text-primary flex size-8 shrink-0 items-center justify-center rounded-lg border"
+            >
+              <ng-icon name="lucideMessageSquare" class="size-4.5" />
+            </div>
+            <h2 class="font-heading text-on-surface text-lg font-bold">Activity</h2>
+          </div>
+        </div>
+
+        <div
+          class="bg-surface-muted/60 border-border-subtle flex flex-col gap-3 rounded-xl border p-3.5 sm:flex-row sm:items-center"
+        >
+          <input
+            hlmInput
+            type="text"
+            [(ngModel)]="newNoteText"
+            (keyup.enter)="addNote()"
+            placeholder="Add a timeline note or status log..."
+            class="bg-surface-container-lowest flex-1 text-sm shadow-xs"
+          />
+          <button
+            hlmBtn
+            size="sm"
+            type="button"
+            (click)="addNote()"
+            [disabled]="!newNoteText() || isAddingNote()"
+            class="self-end font-semibold sm:self-auto"
+          >
+            @if (isAddingNote()) {
+            <hlm-spinner data-icon="inline-start" />
+            Adding...
+            } @else {
+            <ng-icon name="lucidePlus" data-icon="inline-start" />
+            Add Note
+            }
+          </button>
+        </div>
+
+        <!-- Timeline List -->
+        <div class="flex flex-col pt-2">
+          @if (!app.events || app.events.length === 0) {
+          <div class="py-12 text-center">
+            <p class="text-on-surface-variant/70 text-sm font-medium">
+              No activity events recorded.
+            </p>
+            <p class="text-on-surface-variant/50 mt-1 text-xs">
+              Add your first note above to start logging candidacy updates.
+            </p>
+          </div>
+          } @else {
+          <div class="relative flex flex-col gap-6 ps-2">
+            @for (event of app.events; track event.id; let last = $last) {
+            <div class="relative flex items-start gap-4">
+              <!-- Vertical Connecting Line -->
+              @if (!last) {
+              <div class="bg-border-subtle/80 absolute top-8 bottom-0 left-4 -ms-px w-0.5"></div>
+              }
+
+              <div
+                class="bg-surface-container-lowest border-border-subtle text-primary z-10 flex size-8 shrink-0 items-center justify-center rounded-full border shadow-xs"
+              >
+                <ng-icon [name]="getEventIcon(event)" class="size-4" />
+              </div>
+
+              <div
+                class="bg-surface-muted/50 border-border-subtle/70 hover:border-border-subtle flex flex-1 flex-col gap-1 rounded-xl border p-4 transition-colors"
+              >
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="font-heading text-on-surface text-sm font-bold">
+                    {{ getEventTitle(event) }}
+                  </span>
+                  <span class="text-on-surface-variant/70 text-xs font-medium">
+                    {{ event.createdAt | date : 'medium' }}
+                  </span>
+                </div>
+
+                <p
+                  class="text-on-surface-variant font-body mt-1 text-sm leading-relaxed whitespace-pre-wrap"
+                >
+                  @if (event.previousStatus && event.newStatus) { Moved from
+                  <strong class="text-on-surface">{{ event.previousStatus }}</strong> to
+                  <strong class="text-primary">{{ event.newStatus }}</strong>
+                  } @else { {{ event.description }} }
+                </p>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hlm-alert-dialog
+  #deleteDialog
+  [state]="isDeleteConfirmOpen() ? 'open' : 'closed'"
+  (stateChanged)="onDeleteDialogStateChanged($event)"
+>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle class="font-heading text-on-surface font-bold">Delete Application</h2>
+      <p hlmAlertDialogDescription class="font-body text-on-surface-variant leading-relaxed">
+        Are you sure you want to delete your candidacy for
+        <strong class="text-on-surface">{{ app.jobTitle }}</strong> at
+        <strong class="text-on-surface">{{ app.companyName }}</strong>? This action will permanently
+        remove all associated notes and timeline history.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel type="button" (click)="cancelDelete()">Cancel</button>
+      <button hlmAlertDialogAction type="button" (click)="ctx.close(); confirmDelete()">
+        Delete Application
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+}

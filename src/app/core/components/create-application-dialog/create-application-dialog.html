@@ -1,12 +1,20 @@
 <div class="flex min-h-0 flex-1 flex-col">
   <hlm-dialog-header>
     <h3 hlmDialogTitle class="font-heading text-primary flex items-center gap-2 text-lg font-bold">
-      <ng-icon name="lucideBriefcase" class="size-5 shrink-0" />
-      <span>New Job Application</span>
+      @if (isEditMode()) {
+        <ng-icon name="lucideEdit" class="size-5 shrink-0" />
+        <span>Edit Job Application</span>
+      } @else {
+        <ng-icon name="lucideBriefcase" class="size-5 shrink-0" />
+        <span>New Job Application</span>
+      }
     </h3>
     <p hlmDialogDescription>
-      Track a new candidacy by specifying the role, company details, initial status, and notes.
-      Click create when you're done.
+      @if (isEditMode()) {
+        Update the details, status or notes of your candidacy.
+      } @else {
+        Track a new candidacy by specifying the role, company details, initial status, and notes.
+      }
     </p>
   </hlm-dialog-header>
 
@@ -63,7 +71,9 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <hlm-field>
-          <label hlmFieldLabel for="status" class="text-xs"> Initial Status </label>
+          <label hlmFieldLabel for="status" class="text-xs">
+            @if (isEditMode()) { Current Status } @else { Initial Status }
+          </label>
           <select
             id="status"
             hlmInput
@@ -139,7 +149,7 @@
       </hlm-field>
 
       <hlm-field>
-        <label hlmFieldLabel for="notes" class="text-xs"> Initial Notes & Referrals </label>
+        <label hlmFieldLabel for="notes" class="text-xs"> Notes & Referrals </label>
         <textarea
           id="notes"
           hlmTextarea
@@ -160,15 +170,20 @@
       type="submit"
       form="create-app-form"
       [disabled]="form.invalid || isSubmitting()"
-      class="gap-2"
     >
       @if (isSubmitting()) {
-      <ng-icon name="lucideLoader2" class="size-4 shrink-0 animate-spin" />
-      <span>Creating...</span>
+      <hlm-spinner data-icon="inline-start" />
+      @if (isEditMode()) { Saving... } @else { Creating... }
       } @else {
-      <ng-icon name="lucidePlus" class="size-4 shrink-0" />
-      <span>Create Application</span>
+      @if (isEditMode()) {
+      <ng-icon name="lucideEdit" data-icon="inline-start" />
+      Save Changes
+      } @else {
+      <ng-icon name="lucidePlus" data-icon="inline-start" />
+      Create Application
+      }
       }
     </button>
   </hlm-dialog-footer>
 </div>
+

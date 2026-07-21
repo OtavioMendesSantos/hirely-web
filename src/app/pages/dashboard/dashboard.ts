@@ -1,5 +1,5 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePlus, lucideBriefcase, lucideBuilding, lucideMapPin } from '@ng-icons/lucide';
 import { HlmCardImports } from '@spartan-ng/helm/card';
@@ -16,6 +16,7 @@ import { CreateApplicationDialogComponent } from '../../core/components/create-a
   standalone: true,
   imports: [
     AppLayoutComponent,
+    RouterLink,
     ...HlmCardImports,
     ...HlmButtonImports,
     ...HlmDialogImports,
