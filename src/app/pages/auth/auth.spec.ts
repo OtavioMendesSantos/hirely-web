@@ -14,6 +14,7 @@ describe('Auth', () => {
   let authServiceMock: {
     login: ReturnType<typeof vi.fn>;
     register: ReturnType<typeof vi.fn>;
+    getToken: ReturnType<typeof vi.fn>;
     currentUser: ReturnType<typeof signal<User | null>>;
   };
   let routerMock: {
@@ -24,6 +25,7 @@ describe('Auth', () => {
     authServiceMock = {
       login: vi.fn(),
       register: vi.fn(),
+      getToken: vi.fn().mockReturnValue(null),
       currentUser: signal<User | null>(null),
     };
 
@@ -76,5 +78,11 @@ describe('Auth', () => {
       'In progress: "Test Feature" estará disponível em breve!',
       { duration: 3500 }
     );
+  });
+
+  it('should redirect to dashboard on init when user is logged in', () => {
+    authServiceMock.currentUser.set({ id: '1', name: 'Otavio' } as any);
+    component.ngOnInit();
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard'], { replaceUrl: true });
   });
 });

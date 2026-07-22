@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { AuthService } from '../../core/services/auth';
 import { LoginFormComponent } from './components/login-form/login-form';
 import { RegisterFormComponent } from './components/register-form/register-form';
 import { LoginShowcaseComponent } from './components/login-showcase/login-showcase';
@@ -18,12 +19,25 @@ import { RegisterShowcaseComponent } from './components/register-showcase/regist
   templateUrl: './auth.html',
   styleUrl: './auth.scss',
 })
-export class Auth {
+export class Auth implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
   isLoginMode = signal(true);
+  isLoggedIn = computed(() => {
+    const user = this.authService.currentUser();
+    const token = this.authService.getToken();
+    return user !== null || !!token;
+  });
 
   constructor() {
+    effect(() => {
+      if (this.isLoggedIn()) {
+        this.router.navigate(['/dashboard'], { replaceUrl: true });
+      }
+    });
+
     this.route.queryParams.subscribe((params) => {
       if (params['mode'] === 'register') {
         this.isLoginMode.set(false);
@@ -31,6 +45,12 @@ export class Auth {
         this.isLoginMode.set(true);
       }
     });
+  }
+
+  ngOnInit() {
+    if (this.isLoggedIn()) {
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
+    }
   }
 
   toggleMode() {

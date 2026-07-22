@@ -3,7 +3,7 @@
 >
   <!-- Hirely Brand -->
   <a
-    routerLink="/"
+    [routerLink]="isLoggedIn() ? '/dashboard' : '/'"
     class="font-heading text-primary flex cursor-pointer items-center gap-2.5 text-xl font-bold tracking-tight transition-opacity hover:opacity-90"
   >
     <img src="hirely_logo.png" alt="Hirely Logo" class="h-8 w-auto object-contain" />
