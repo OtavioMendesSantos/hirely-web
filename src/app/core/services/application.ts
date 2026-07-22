@@ -6,8 +6,11 @@ import { AuthService } from './auth';
 import {
   Application,
   ApplicationEvent,
+  ApplicationQueryParams,
   ApplicationStatsResponse,
   CreateApplicationRequest,
+  GroupedApplications,
+  GroupedApplicationsResponse,
   ListApplicationsResponse,
   UpdateApplicationRequest,
 } from '../models/application.model';
@@ -20,6 +23,16 @@ export class ApplicationService {
   private authService = inject(AuthService);
 
   readonly applications = signal<Application[]>([]);
+  readonly groupedApplications = signal<GroupedApplications>({
+    TO_APPLY: [],
+    APPLIED: [],
+    INTERVIEW: [],
+    OFFER: [],
+    ACCEPTED: [],
+    REJECTED: [],
+    OTHER: [],
+  });
+  readonly nextPageToken = signal<string | undefined>(undefined);
   readonly stats = signal<ApplicationStatsResponse | null>(null);
   readonly loading = signal<boolean>(false);
 
@@ -42,6 +55,50 @@ export class ApplicationService {
         tap({
           next: (res) => {
             this.applications.set(res.applications || []);
+            this.loading.set(false);
+          },
+          error: () => {
+            this.loading.set(false);
+          },
+        })
+      );
+  }
+
+  loadGroupedApplications(params?: ApplicationQueryParams) {
+    const uid = this.userId;
+    if (!uid) return;
+
+    this.loading.set(true);
+    let httpParams = new HttpParams();
+    if (params?.status) httpParams = httpParams.set('status', params.status);
+    if (params?.tag_ids && params.tag_ids.length > 0)
+      httpParams = httpParams.set('tag_ids', params.tag_ids.join(','));
+    if (params?.order_by) httpParams = httpParams.set('order_by', params.order_by);
+    if (params?.order) httpParams = httpParams.set('order', params.order);
+    if (params?.page_size) httpParams = httpParams.set('page_size', params.page_size.toString());
+    if (params?.page_token) httpParams = httpParams.set('page_token', params.page_token);
+
+    return this.http
+      .get<GroupedApplicationsResponse>(
+        `${environment.apiUrl}/users/${uid}/applications/grouped-by-status`,
+        { params: httpParams }
+      )
+      .pipe(
+        tap({
+          next: (res) => {
+            const grouped: GroupedApplications = res.grouped_applications || {
+              TO_APPLY: [],
+              APPLIED: [],
+              INTERVIEW: [],
+              OFFER: [],
+              ACCEPTED: [],
+              REJECTED: [],
+              OTHER: [],
+            };
+            this.groupedApplications.set(grouped);
+            this.nextPageToken.set(res.next_page_token || undefined);
+            const allApps = Object.values(grouped).flat();
+            this.applications.set(allApps);
             this.loading.set(false);
           },
           error: () => {
@@ -77,6 +134,14 @@ export class ApplicationService {
         tap({
           next: (created) => {
             this.applications.update((list) => [created, ...list]);
+            this.groupedApplications.update((current) => {
+              const status = created.status || 'OTHER';
+              const targetArray = current[status] || current['OTHER'] || [];
+              return {
+                ...current,
+                [status]: [created, ...targetArray],
+              };
+            });
             this.loading.set(false);
           },
           error: () => {
@@ -102,6 +167,35 @@ export class ApplicationService {
           this.applications.update((list) =>
             list.map((app) => (app.id === applicationId ? updated : app))
           );
+          this.groupedApplications.update((current) => {
+            const status = (updated.status || 'OTHER') as keyof GroupedApplications;
+            const next: GroupedApplications = {
+              TO_APPLY: [],
+              APPLIED: [],
+              INTERVIEW: [],
+              OFFER: [],
+              ACCEPTED: [],
+              REJECTED: [],
+              OTHER: [],
+            };
+            for (const [key, list] of Object.entries(current)) {
+              if (key === status) {
+                const existingIndex = list.findIndex((app) => app.id === applicationId);
+                if (existingIndex !== -1) {
+                  const targetList = [...list];
+                  targetList[existingIndex] = updated;
+                  next[key as keyof GroupedApplications] = targetList;
+                } else {
+                  next[key as keyof GroupedApplications] = [updated, ...list];
+                }
+              } else {
+                next[key as keyof GroupedApplications] = list.filter(
+                  (app) => app.id !== applicationId
+                );
+              }
+            }
+            return next;
+          });
         })
       );
   }
@@ -117,6 +211,23 @@ export class ApplicationService {
       .pipe(
         tap(() => {
           this.applications.update((list) => list.filter((app) => app.id !== applicationId));
+          this.groupedApplications.update((current) => {
+            const next: GroupedApplications = {
+              TO_APPLY: [],
+              APPLIED: [],
+              INTERVIEW: [],
+              OFFER: [],
+              ACCEPTED: [],
+              REJECTED: [],
+              OTHER: [],
+            };
+            for (const [key, list] of Object.entries(current)) {
+              next[key as keyof GroupedApplications] = list.filter(
+                (app) => app.id !== applicationId
+              );
+            }
+            return next;
+          });
         })
       );
   }

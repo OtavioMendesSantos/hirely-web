@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 
 describe('HeaderComponent', () => {
   let fixture: ComponentFixture<HeaderComponent>;
+  let component: HeaderComponent;
   let authServiceMock: { currentUser: ReturnType<typeof signal>; logout: any; getToken: any };
 
   beforeEach(async () => {

@@ -1,102 +1,170 @@
 <app-layout pageTitle="Dashboard">
-  <div class="flex flex-col gap-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-container-lowest border border-border-subtle p-5 sm:p-6 rounded-2xl shadow-xs">
-      <div class="flex flex-col gap-1">
-        <h2 class="text-xl sm:text-2xl font-heading font-bold text-on-surface tracking-tight">
-          Welcome back, {{ currentUser()?.name || 'Recruiter' }}!
-        </h2>
-        <p class="text-xs sm:text-sm text-on-surface-variant">
-          Manage and track all your ongoing job candidacies across the recruitment Kanban.
-        </p>
-      </div>
-
-      <button
-        hlmBtn
-        size="default"
-        type="button"
-        (click)="openCreateModal()"
-        class="cursor-pointer font-semibold shadow-sm flex items-center gap-2 self-start sm:self-auto rounded-lg px-4"
-      >
-        <ng-icon name="lucidePlus" class="size-4 shrink-0" />
-        <span>New Candidate</span>
-      </button>
-    </div>
-
-    <section hlmCard class="p-6 bg-surface-container-lowest border border-border-subtle shadow-sm rounded-2xl">
-      <div hlmCardHeader class="p-0 pb-4 border-b border-border-subtle/60 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary">
-            <ng-icon name="lucideBriefcase" class="size-4.5" />
+  <div class="flex flex-col gap-6 pb-8">
+    <div class="flex flex-col gap-3 bg-surface-container-lowest border border-border-subtle p-5 sm:p-6 rounded-2xl shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col gap-1 min-w-0">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h2 class="text-xl sm:text-2xl font-heading font-bold text-on-surface tracking-tight truncate">
+              Welcome back, {{ currentUser()?.name || 'Recruiter' }}!
+            </h2>
           </div>
-          <h3 hlmCardTitle class="text-lg font-heading font-bold text-on-surface">
-            Active Applications ({{ applicationService.applications().length }})
-          </h3>
+          <p class="text-xs sm:text-sm text-on-surface-variant flex items-center gap-2">
+            <span>{{ applicationService.applications().length }} candidacies loaded across the recruitment stages</span>
+          </p>
         </div>
+
+        <button
+          hlmBtn
+          size="sm"
+          type="button"
+          (click)="openCreateModal()"
+          class="cursor-pointer font-semibold shadow-sm flex items-center justify-center gap-2 rounded-xl px-4 h-10 bg-primary text-on-primary hover:bg-primary/90 transition-all self-start sm:self-auto shrink-0"
+        >
+          <ng-icon name="lucidePlus" class="size-4 shrink-0" />
+          <span>New Candidate</span>
+        </button>
       </div>
 
-      <div class="pt-4">
-        @if (applicationService.loading()) {
-          <div class="flex items-center justify-center py-12 text-on-surface-variant/70 text-sm font-medium">
-            Loading applications...
-          </div>
-        } @else if (applicationService.applications().length === 0) {
-          <hlm-empty class="py-12 border border-dashed border-border-subtle bg-surface/30">
-            <hlm-empty-header>
-              <hlm-empty-media variant="icon" class="size-12 rounded-full bg-primary/10 text-primary border border-primary/20">
-                <ng-icon name="lucideBriefcase" class="size-6" />
-              </hlm-empty-media>
-              <h4 hlmEmptyTitle class="text-base font-heading font-bold text-on-surface mt-2">
-                No candidacies tracked yet
-              </h4>
-              <p hlmEmptyDescription class="text-xs text-on-surface-variant leading-relaxed max-w-sm">
-                Click the "New Candidate" button to add your first job candidacy and start tracking its progress through the Kanban.
-              </p>
-            </hlm-empty-header>
-            <hlm-empty-content class="mt-2">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <div class="hidden md:flex items-center gap-1 bg-surface-container/60 p-1 rounded-xl border border-border-subtle flex-wrap">
+            @for (opt of allStatusOptions; track opt.value) {
               <button
-                hlmBtn
-                variant="outline"
-                size="sm"
                 type="button"
-                (click)="openCreateModal()"
-                class="cursor-pointer font-semibold gap-2"
+                (click)="toggleStatusFilter(opt.value)"
+                [class]="selectedStatuses().includes(opt.value) ? 'bg-primary text-on-primary font-semibold shadow-2xs' : 'text-on-surface-variant hover:text-on-surface font-medium hover:bg-surface/60'"
+                class="px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer select-none"
               >
-                <ng-icon name="lucidePlus" class="size-3.5 shrink-0" />
-                <span>Create Application</span>
+                {{ opt.label }}
               </button>
-            </hlm-empty-content>
-          </hlm-empty>
-        } @else {
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (app of applicationService.applications(); track app.id) {
-              <a [routerLink]="['/applications', app.id]" class="flex flex-col gap-3 p-4 rounded-xl border border-border-subtle bg-surface/50 hover:bg-surface hover:shadow-md transition-all cursor-pointer group block">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="flex flex-col gap-0.5 min-w-0">
-                    <span class="font-heading font-bold text-base text-on-surface truncate group-hover:text-primary transition-colors">
-                      {{ app.jobTitle }}
-                    </span>
-                    <div class="flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant/90 truncate">
-                      <ng-icon name="lucideBuilding" class="size-3.5 shrink-0 text-primary/80" />
-                      <span class="truncate">{{ app.companyName }}</span>
-                    </div>
-                  </div>
-
-                  <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase bg-primary/10 text-primary border border-primary/20 shrink-0">
-                    {{ app.status }}
-                  </span>
-                </div>
-
-                @if (app.location) {
-                  <div class="flex items-center gap-1.5 text-xs text-on-surface-variant/70 truncate pt-1 border-t border-border-subtle/50">
-                    <ng-icon name="lucideMapPin" class="size-3.5 shrink-0" />
-                    <span class="truncate">{{ app.location }}</span>
-                  </div>
-                }
-              </a>
             }
           </div>
-        }
+
+          <div class="md:hidden">
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              hlmDropdownMenuTrigger
+              [hlmDropdownMenuTrigger]="filterMenu"
+              class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
+            >
+              <ng-icon name="lucideFilter" class="size-3.5 text-primary" />
+              <span>Filter</span>
+              @if (selectedStatuses().length > 0) {
+                <span class="size-4 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ml-0.5">
+                  {{ selectedStatuses().length }}
+                </span>
+              }
+            </button>
+            <ng-template #filterMenu>
+              <div
+                hlmDropdownMenu
+                class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
+              >
+                <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
+                  Filter by Status
+                </div>
+                @for (opt of allStatusOptions; track opt.value) {
+                  <button
+                    type="button"
+                    hlmDropdownMenuItem
+                    (click)="toggleStatusFilter(opt.value)"
+                    class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
+                  >
+                    <span>{{ opt.label }}</span>
+                    @if (selectedStatuses().includes(opt.value)) {
+                      <span class="bg-primary size-1.5 rounded-full"></span>
+                    }
+                  </button>
+                }
+                @if (selectedStatuses().length > 0) {
+                  <div class="border-t border-border-subtle my-1"></div>
+                  <button
+                    type="button"
+                    hlmDropdownMenuItem
+                    (click)="clearStatusFilter()"
+                    class="w-full text-xs text-destructive hover:bg-destructive/10 rounded-lg font-semibold py-1.5 px-2 cursor-pointer flex items-center"
+                  >
+                    Clear Filters
+                  </button>
+                }
+              </div>
+            </ng-template>
+          </div>
+
+          @if (selectedStatuses().length > 0 || sortBy() !== 'created_at') {
+            <button
+              type="button"
+              (click)="resetAllFilters()"
+              class="text-primary hover:underline font-medium text-xs inline-flex items-center gap-1 cursor-pointer px-2 py-1 rounded-lg hover:bg-primary/5 transition-colors"
+            >
+              <ng-icon name="lucideRotateCcw" class="size-3" />
+              <span>Reset Filters</span>
+            </button>
+          }
+        </div>
+
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            hlmDropdownMenuTrigger
+            [hlmDropdownMenuTrigger]="sortMenu"
+            class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
+          >
+            <ng-icon name="lucideArrowUpDown" class="size-3.5 text-on-surface-variant" />
+            <span>Sort</span>
+          </button>
+          <ng-template #sortMenu>
+            <div
+              hlmDropdownMenu
+              class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
+            >
+              <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
+                Sort By
+              </div>
+              @for (opt of sortOptions; track opt.value) {
+                <button
+                  type="button"
+                  hlmDropdownMenuItem
+                  (click)="onSortByChange(opt.value)"
+                  class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
+                >
+                  <span>{{ opt.label }}</span>
+                  @if (sortBy() === opt.value) {
+                    <span class="bg-primary size-1.5 rounded-full"></span>
+                  }
+                </button>
+              }
+              <div class="border-t border-border-subtle my-1"></div>
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                (click)="toggleSortOrder()"
+                class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
+              >
+                <span>Order: {{ sortOrder() === 'asc' ? 'Ascending' : 'Descending' }}</span>
+                <span class="text-[10px] font-mono font-bold text-on-surface-variant uppercase bg-surface px-1.5 py-0.5 rounded border border-border-subtle">{{ sortOrder() }}</span>
+              </button>
+            </div>
+          </ng-template>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <div class="flex items-stretch gap-5 overflow-x-auto pb-4 pt-1 scrollbar-thin" cdkScrollable cdkDropListGroup>
+      @for (col of columns(); track col.status) {
+        <app-kanban-column
+          [column]="col"
+          [applications]="getCardsForStatus(col.status)"
+          [loading]="applicationService.loading()"
+          (editApplication)="openEditModal($event.application, $event.event)"
+          (addApplication)="openCreateModal($event)"
+          (applicationDropped)="onApplicationDrop($event)"
+        />
+      }
+    </div>
   </div>
 </app-layout>

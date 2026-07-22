@@ -1,0 +1,31 @@
+:host {
+  ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      padding: 0.875rem 0.875rem 0 0.875rem;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .cdk-drag-preview {
+      box-sizing: border-box;
+      border-radius: 0.75rem;
+      box-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.2),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      opacity: 0.95;
+      cursor: grabbing !important;
+    }
+
+    .cdk-drag-placeholder {
+      opacity: 0.25;
+    }
+
+    .cdk-drag-animating {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .cdk-drop-list-dragging .list-item-wrapper:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+}

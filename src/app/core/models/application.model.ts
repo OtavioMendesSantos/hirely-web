@@ -1,5 +1,5 @@
 export type ApplicationStatus =
-  'TO_APPLY' | 'APPLIED' | 'INTERVIEW' | 'OFFER' | 'ACCEPTED' | 'REJECTED';
+  'TO_APPLY' | 'APPLIED' | 'INTERVIEW' | 'OFFER' | 'ACCEPTED' | 'REJECTED' | 'OTHER';
 
 export type EventType = 'AUTOMATIC' | 'MANUAL';
 
@@ -76,4 +76,20 @@ export interface ApplicationStatsResponse {
   funil_by_status: Record<ApplicationStatus, number>;
   conversion_rate_interview?: number;
   top_tags?: { tag_name: string; count: number }[];
+}
+
+export type GroupedApplications = Record<ApplicationStatus, Application[]>;
+
+export interface GroupedApplicationsResponse {
+  grouped_applications: GroupedApplications;
+  next_page_token?: string;
+}
+
+export interface ApplicationQueryParams {
+  status?: string;
+  tag_ids?: string[];
+  order_by?: string;
+  order?: 'asc' | 'desc';
+  page_size?: number;
+  page_token?: string;
 }

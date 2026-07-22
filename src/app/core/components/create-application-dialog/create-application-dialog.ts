@@ -63,7 +63,10 @@ export class CreateApplicationDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private applicationService = inject(ApplicationService);
   dialogRef = inject(BrnDialogRef);
-  private readonly _dialogContext = injectBrnDialogContext<{ application?: Application } | null>({
+  private readonly _dialogContext = injectBrnDialogContext<{
+    application?: Application;
+    initialStatus?: ApplicationStatus;
+  } | null>({
     optional: true,
   });
 
@@ -86,7 +89,8 @@ export class CreateApplicationDialogComponent implements OnInit {
 
   ngOnInit() {
     const app = this._dialogContext?.application;
-    if (app) {
+    const initialStatus = this._dialogContext?.initialStatus;
+    if (app && app.id) {
       this.isEditMode.set(true);
       this.applicationToEdit.set(app);
       this.form.patchValue({
@@ -99,6 +103,10 @@ export class CreateApplicationDialogComponent implements OnInit {
         salary_range: app.salaryRange || '',
         notes: app.notes || '',
         job_description: app.jobDescription || '',
+      });
+    } else if (initialStatus || (app && app.status)) {
+      this.form.patchValue({
+        status: initialStatus || app!.status,
       });
     }
   }
