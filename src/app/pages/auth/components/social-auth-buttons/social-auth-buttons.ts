@@ -16,16 +16,16 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
       <div class="bg-border-subtle h-px flex-1"></div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
       <button
         hlmBtn
         variant="outline"
         type="button"
         (click)="socialClick.emit('Google')"
-        class="bg-surface-container-lowest hover:bg-surface-muted text-on-surface flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded px-4 text-sm font-medium transition-colors"
+        class="bg-surface-container-lowest hover:bg-surface-muted text-on-surface flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 sm:gap-2.5 rounded px-2 sm:px-4 text-xs sm:text-sm font-medium transition-colors"
       >
-        <app-google-icon class="h-4 w-4" />
-        <span>Google</span>
+        <app-google-icon class="h-4 w-4 shrink-0" />
+        <span class="truncate">Google</span>
       </button>
 
       <button
@@ -33,10 +33,10 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
         variant="outline"
         type="button"
         (click)="socialClick.emit('LinkedIn')"
-        class="bg-surface-container-lowest hover:bg-surface-muted text-on-surface flex h-10 w-full cursor-pointer items-center justify-center gap-2.5 rounded px-4 text-sm font-medium transition-colors"
+        class="bg-surface-container-lowest hover:bg-surface-muted text-on-surface flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 sm:gap-2.5 rounded px-2 sm:px-4 text-xs sm:text-sm font-medium transition-colors"
       >
-        <app-linkedin-icon class="h-4 w-4" />
-        <span>LinkedIn</span>
+        <app-linkedin-icon class="h-4 w-4 shrink-0" />
+        <span class="truncate">LinkedIn</span>
       </button>
     </div>
   `,

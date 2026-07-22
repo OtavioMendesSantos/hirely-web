@@ -67,7 +67,14 @@
         </label>
       </div>
 
-      <button hlmBtn type="submit" class="w-full">Sign in</button>
+      <button hlmBtn type="submit" [disabled]="isLoading()" class="w-full">
+        @if (isLoading()) {
+        <hlm-spinner data-icon="inline-start" />
+        Signing in...
+        } @else {
+        Sign in
+        }
+      </button>
     </form>
 
     <app-social-auth-buttons (socialClick)="onInProgress($event + ' Login')" />

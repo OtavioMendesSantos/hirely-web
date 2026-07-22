@@ -55,7 +55,14 @@
         <hlm-field-description>Must be at least 8 characters.</hlm-field-description>
       </hlm-field>
 
-      <button hlmBtn type="submit" class="w-full">Create account</button>
+      <button hlmBtn type="submit" [disabled]="isLoading()" class="w-full">
+        @if (isLoading()) {
+        <hlm-spinner data-icon="inline-start" />
+        Creating account...
+        } @else {
+        Create account
+        }
+      </button>
     </form>
 
     <app-social-auth-buttons (socialClick)="onInProgress($event + ' Sign up')" />

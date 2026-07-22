@@ -5,6 +5,9 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
   selector: 'app-login-showcase',
   standalone: true,
   imports: [...HlmCardImports],
+  host: {
+    class: 'hidden lg:block w-full',
+  },
   templateUrl: './login-showcase.html',
 })
 export class LoginShowcaseComponent {}

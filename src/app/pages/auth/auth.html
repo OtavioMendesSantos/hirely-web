@@ -1,4 +1,4 @@
-<div class="auth-container bg-surface text-on-surface flex min-h-screen lg:grid lg:grid-cols-2">
+<div class="auth-container bg-surface text-on-surface flex flex-col min-h-screen w-full lg:grid lg:grid-cols-2">
   @if (isLoginMode()) {
     <app-login-form (toggleMode)="toggleMode()" (inProgress)="onInProgress($event)" />
     <app-login-showcase />
