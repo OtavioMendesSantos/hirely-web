@@ -6,6 +6,8 @@ import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideEye, lucideEyeOff } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/services/auth';
 import { SocialAuthButtonsComponent } from '../social-auth-buttons/social-auth-buttons';
@@ -20,7 +22,14 @@ import { SocialAuthButtonsComponent } from '../social-auth-buttons/social-auth-b
     ...HlmButtonImports,
     ...HlmFieldImports,
     ...HlmSpinnerImports,
+    NgIcon,
     SocialAuthButtonsComponent,
+  ],
+  providers: [
+    provideIcons({
+      lucideEye,
+      lucideEyeOff,
+    }),
   ],
   host: {
     class: 'block w-full flex-1 lg:order-2',
@@ -38,13 +47,19 @@ export class RegisterFormComponent {
   email = '';
   password = '';
   rememberMe = true;
+  showPassword = signal(false);
   isLoading = signal(false);
+
+  toggleShowPassword() {
+    this.showPassword.update((s) => !s);
+  }
 
   clearForm() {
     this.name = '';
     this.email = '';
     this.password = '';
     this.rememberMe = true;
+    this.showPassword.set(false);
   }
 
   onInProgress(feature: string) {

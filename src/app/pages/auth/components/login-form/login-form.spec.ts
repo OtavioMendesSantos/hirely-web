@@ -64,12 +64,22 @@ describe('LoginFormComponent', () => {
     component.email = 'test@example.com';
     component.password = '123456';
     component.rememberMe = false;
+    component.showPassword.set(true);
 
     component.clearForm();
 
     expect(component.email).toBe('');
     expect(component.password).toBe('');
     expect(component.rememberMe).toBe(true);
+    expect(component.showPassword()).toBe(false);
+  });
+
+  it('should toggle showPassword when toggleShowPassword is called', () => {
+    expect(component.showPassword()).toBe(false);
+    component.toggleShowPassword();
+    expect(component.showPassword()).toBe(true);
+    component.toggleShowPassword();
+    expect(component.showPassword()).toBe(false);
   });
 
   it('should emit toggleMode event', () => {

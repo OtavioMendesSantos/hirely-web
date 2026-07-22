@@ -43,15 +43,29 @@
 
       <hlm-field>
         <label hlmFieldLabel for="reg-password">Password</label>
-        <input
-          hlmInput
-          id="reg-password"
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          required
-          placeholder="••••••••"
-        />
+        <div class="relative flex items-center">
+          <input
+            hlmInput
+            id="reg-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            required
+            placeholder="••••••••"
+            class="pr-10"
+          />
+          <button
+            type="button"
+            (click)="toggleShowPassword()"
+            class="text-on-surface-variant/70 hover:text-on-surface absolute right-3 flex items-center justify-center rounded-lg p-1 transition-colors cursor-pointer"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            <ng-icon
+              [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'"
+              class="size-4"
+            />
+          </button>
+        </div>
         <hlm-field-description>Must be at least 8 characters.</hlm-field-description>
       </hlm-field>
 
