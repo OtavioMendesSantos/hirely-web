@@ -5,6 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import {
   lucidePlus,
   lucideBriefcase,
@@ -25,7 +28,9 @@ import {
   lucidePartyPopper,
   lucideSend,
   lucideMoreHorizontal,
+  lucideSearch,
 } from '@ng-icons/lucide';
+
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmDialogImports, HlmDialogService } from '@spartan-ng/helm/dialog';
@@ -33,6 +38,7 @@ import { HlmEmptyImports } from '@spartan-ng/helm/empty';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
+import { HlmInputImports } from '@spartan-ng/helm/input';
 import { AuthService } from '../../core/services/auth';
 import { ApplicationService } from '../../core/services/application';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
@@ -71,6 +77,7 @@ export interface KanbanColumn {
     KanbanColumnComponent,
     DragDropModule,
     CdkScrollable,
+    ...HlmInputImports,
   ],
   providers: [
     provideIcons({
@@ -93,6 +100,7 @@ export interface KanbanColumn {
       lucidePartyPopper,
       lucideSend,
       lucideMoreHorizontal,
+      lucideSearch,
     }),
   ],
   templateUrl: './dashboard.html',
@@ -105,6 +113,9 @@ export class Dashboard implements OnInit {
   applicationService = inject(ApplicationService);
 
   currentUser = this.authService.currentUser;
+
+  readonly searchQuery = signal<string>('');
+  private searchSubject = new Subject<string>();
 
   readonly selectedStatuses = signal<ApplicationStatus[]>([]);
   readonly sortBy = signal<string>('created_at');
@@ -195,6 +206,13 @@ export class Dashboard implements OnInit {
         this.loadGrouped();
       }
     });
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe((query) => {
+      this.updateQueryParams({ search: query || null });
+    });
   }
 
   ngOnInit() {
@@ -219,20 +237,27 @@ export class Dashboard implements OnInit {
         : [];
       const newSort = params['sort'] || params['order_by'] || 'created_at';
       const newOrder = params['order'] === 'asc' ? 'asc' : 'desc';
+      const newSearch = params['search'] || '';
 
       const statusChanged = JSON.stringify(newStatuses) !== JSON.stringify(this.selectedStatuses());
       const sortChanged = newSort !== this.sortBy();
       const orderChanged = newOrder !== this.sortOrder();
+      const searchChanged = newSearch !== this.searchQuery();
 
-      if (statusChanged || sortChanged || orderChanged) {
+      if (statusChanged || sortChanged || orderChanged || searchChanged) {
         this.selectedStatuses.set(newStatuses);
         this.sortBy.set(newSort);
         this.sortOrder.set(newOrder);
+        this.searchQuery.set(newSearch);
         if (this.currentUser()) {
           this.loadGrouped();
         }
       }
     });
+  }
+
+  onSearchChange(query: string) {
+    this.searchSubject.next(query);
   }
 
   loadGrouped() {
@@ -243,6 +268,7 @@ export class Dashboard implements OnInit {
     }
     if (this.sortBy()) params.order_by = this.sortBy();
     if (this.sortOrder()) params.order = this.sortOrder();
+    if (this.searchQuery()) params.search = this.searchQuery();
 
     this.applicationService.loadGroupedApplications(params)?.subscribe();
   }
@@ -252,35 +278,37 @@ export class Dashboard implements OnInit {
     const newStatuses = current.includes(status)
       ? current.filter((s) => s !== status)
       : [...current, status];
-    this.updateUrlParams(newStatuses, this.sortBy(), this.sortOrder());
+    this.updateQueryParams({ status: newStatuses.length > 0 ? newStatuses.join(',') : null });
   }
 
   clearStatusFilter() {
-    this.updateUrlParams([], this.sortBy(), this.sortOrder());
+    this.updateQueryParams({ status: null });
   }
 
   onSortByChange(by: string) {
-    this.updateUrlParams(this.selectedStatuses(), by, this.sortOrder());
+    this.updateQueryParams({ sort: by !== 'created_at' ? by : null });
   }
 
   toggleSortOrder() {
     const newOrder = this.sortOrder() === 'asc' ? 'desc' : 'asc';
-    this.updateUrlParams(this.selectedStatuses(), this.sortBy(), newOrder);
+    this.updateQueryParams({ order: newOrder !== 'desc' ? newOrder : null });
   }
 
   resetAllFilters() {
-    this.updateUrlParams([], 'created_at', 'desc');
+    this.searchQuery.set('');
+    this.updateQueryParams({
+      status: null,
+      sort: null,
+      order_by: null,
+      order: null,
+      search: null,
+    });
   }
 
-  private updateUrlParams(statuses: ApplicationStatus[], sort: string, order: 'asc' | 'desc') {
-    const queryParams: Record<string, string | null> = {
-      status: statuses.length > 0 ? statuses.join(',') : null,
-      sort: sort !== 'created_at' ? sort : null,
-      order: order !== 'desc' ? order : null,
-    };
+  updateQueryParams(params: Record<string, string | null>) {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams,
+      queryParams: params,
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });

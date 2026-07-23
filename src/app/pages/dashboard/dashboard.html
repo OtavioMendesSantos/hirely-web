@@ -25,87 +25,74 @@
         </button>
       </div>
 
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5 flex-wrap">
-          <div class="hidden md:flex items-center gap-1 bg-surface-container/60 p-1 rounded-xl border border-border-subtle flex-wrap">
-            @for (opt of allStatusOptions; track opt.value) {
-              <button
-                type="button"
-                (click)="toggleStatusFilter(opt.value)"
-                [class]="selectedStatuses().includes(opt.value) ? 'bg-primary text-on-primary font-semibold shadow-2xs' : 'text-on-surface-variant hover:text-on-surface font-medium hover:bg-surface/60'"
-                class="px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer select-none"
-              >
-                {{ opt.label }}
-              </button>
-            }
-          </div>
-
-          <div class="md:hidden">
-            <button
-              hlmBtn
-              variant="outline"
-              size="sm"
-              hlmDropdownMenuTrigger
-              [hlmDropdownMenuTrigger]="filterMenu"
-              class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
-            >
-              <ng-icon name="lucideFilter" class="size-3.5 text-primary" />
-              <span>Filter</span>
-              @if (selectedStatuses().length > 0) {
-                <span class="size-4 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ml-0.5">
-                  {{ selectedStatuses().length }}
-                </span>
-              }
-            </button>
-            <ng-template #filterMenu>
-              <div
-                hlmDropdownMenu
-                class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
-              >
-                <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
-                  Filter by Status
-                </div>
-                @for (opt of allStatusOptions; track opt.value) {
-                  <button
-                    type="button"
-                    hlmDropdownMenuItem
-                    (click)="toggleStatusFilter(opt.value)"
-                    class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
-                  >
-                    <span>{{ opt.label }}</span>
-                    @if (selectedStatuses().includes(opt.value)) {
-                      <span class="bg-primary size-1.5 rounded-full"></span>
-                    }
-                  </button>
-                }
-                @if (selectedStatuses().length > 0) {
-                  <div class="border-t border-border-subtle my-1"></div>
-                  <button
-                    type="button"
-                    hlmDropdownMenuItem
-                    (click)="clearStatusFilter()"
-                    class="w-full text-xs text-destructive hover:bg-destructive/10 rounded-lg font-semibold py-1.5 px-2 cursor-pointer flex items-center"
-                  >
-                    Clear Filters
-                  </button>
-                }
-              </div>
-            </ng-template>
-          </div>
-
-          @if (selectedStatuses().length > 0 || sortBy() !== 'created_at') {
-            <button
-              type="button"
-              (click)="resetAllFilters()"
-              class="text-primary hover:underline font-medium text-xs inline-flex items-center gap-1 cursor-pointer px-2 py-1 rounded-lg hover:bg-primary/5 transition-colors"
-            >
-              <ng-icon name="lucideRotateCcw" class="size-3" />
-              <span>Reset Filters</span>
-            </button>
-          }
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-80 shrink-0">
+          <input 
+            hlmInput 
+            placeholder="Search applications..." 
+            class="w-full pr-9 h-9 text-xs bg-surface-container-lowest border-border-subtle" 
+            [ngModel]="searchQuery()" 
+            (ngModelChange)="onSearchChange($event)"
+          />
+          <ng-icon name="lucideSearch" class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant/50 pointer-events-none"></ng-icon>
         </div>
 
-        <div class="flex items-center gap-2 self-start sm:self-auto">
+        <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
+          <!-- Status Filters (Dropdown for all sizes) -->
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            hlmDropdownMenuTrigger
+            [hlmDropdownMenuTrigger]="filterMenu"
+            class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
+          >
+            <ng-icon name="lucideFilter" class="size-3.5 text-primary" />
+            <span>Status</span>
+            @if (selectedStatuses().length > 0) {
+              <span class="size-4 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ml-0.5">
+                {{ selectedStatuses().length }}
+              </span>
+            }
+          </button>
+          <ng-template #filterMenu>
+            <div
+              hlmDropdownMenu
+              class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
+            >
+              <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
+                Filter by Status
+              </div>
+              @for (opt of allStatusOptions; track opt.value) {
+                <button
+                  type="button"
+                  hlmDropdownMenuCheckboxItem
+                  [checked]="selectedStatuses().includes(opt.value)"
+                  (triggered)="toggleStatusFilter(opt.value)"
+                  class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
+                >
+                  <span>{{ opt.label }}</span>
+                  @if (selectedStatuses().includes(opt.value)) {
+                    <span class="bg-primary size-1.5 rounded-full"></span>
+                  }
+                </button>
+              }
+              @if (selectedStatuses().length > 0) {
+                <div class="border-t border-border-subtle my-1"></div>
+                <button
+                  type="button"
+                  hlmDropdownMenuItem
+                  (click)="clearStatusFilter()"
+                  class="w-full text-xs text-destructive hover:bg-destructive/10 rounded-lg font-semibold py-1.5 px-2 cursor-pointer flex items-center"
+                >
+                  Clear Filters
+                </button>
+              }
+            </div>
+          </ng-template>
+
+          <!-- Sort Menu -->
           <button
             hlmBtn
             variant="outline"
@@ -150,8 +137,20 @@
               </button>
             </div>
           </ng-template>
+
+          @if (selectedStatuses().length > 0 || sortBy() !== 'created_at' || searchQuery()) {
+            <button
+              type="button"
+              (click)="resetAllFilters()"
+              class="text-primary hover:underline font-medium text-xs inline-flex items-center gap-1 cursor-pointer px-2 py-1 rounded-lg hover:bg-primary/5 transition-colors"
+            >
+              <ng-icon name="lucideRotateCcw" class="size-3" />
+              <span>Reset</span>
+            </button>
+          }
         </div>
       </div>
+
     </div>
 
     <div class="flex items-stretch gap-5 overflow-x-auto pb-4 pt-1 scrollbar-thin" cdkScrollable cdkDropListGroup>

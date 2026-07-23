@@ -86,6 +86,7 @@ export interface GroupedApplicationsResponse {
 }
 
 export interface ApplicationQueryParams {
+  search?: string;
   status?: string;
   tag_ids?: string[];
   order_by?: string;

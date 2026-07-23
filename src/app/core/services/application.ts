@@ -40,21 +40,36 @@ export class ApplicationService {
     return this.authService.currentUser()?.id ?? null;
   }
 
-  loadApplications(status?: string, tagIds?: string[]) {
+  private buildHttpParams(params?: ApplicationQueryParams): HttpParams {
+    let httpParams = new HttpParams();
+    if (!params) return httpParams;
+
+    if (params.status) httpParams = httpParams.set('status', params.status);
+    if (params.tag_ids && params.tag_ids.length > 0)
+      httpParams = httpParams.set('tag_ids', params.tag_ids.join(','));
+    if (params.order_by) httpParams = httpParams.set('order_by', params.order_by);
+    if (params.order) httpParams = httpParams.set('order', params.order);
+    if (params.page_size) httpParams = httpParams.set('page_size', params.page_size.toString());
+    if (params.page_token) httpParams = httpParams.set('page_token', params.page_token);
+    if (params.search) httpParams = httpParams.set('search', params.search);
+
+    return httpParams;
+  }
+
+  loadApplications(params?: ApplicationQueryParams) {
     const uid = this.userId;
     if (!uid) return;
 
     this.loading.set(true);
-    let params = new HttpParams();
-    if (status) params = params.set('status', status);
-    if (tagIds && tagIds.length > 0) params = params.set('tag_ids', tagIds.join(','));
+    const httpParams = this.buildHttpParams(params);
 
     return this.http
-      .get<ListApplicationsResponse>(`${environment.apiUrl}/users/${uid}/applications`, { params })
+      .get<ListApplicationsResponse>(`${environment.apiUrl}/users/${uid}/applications`, { params: httpParams })
       .pipe(
         tap({
           next: (res) => {
             this.applications.set(res.applications || []);
+            this.nextPageToken.set(res.next_page_token || undefined);
             this.loading.set(false);
           },
           error: () => {
@@ -69,14 +84,7 @@ export class ApplicationService {
     if (!uid) return;
 
     this.loading.set(true);
-    let httpParams = new HttpParams();
-    if (params?.status) httpParams = httpParams.set('status', params.status);
-    if (params?.tag_ids && params.tag_ids.length > 0)
-      httpParams = httpParams.set('tag_ids', params.tag_ids.join(','));
-    if (params?.order_by) httpParams = httpParams.set('order_by', params.order_by);
-    if (params?.order) httpParams = httpParams.set('order', params.order);
-    if (params?.page_size) httpParams = httpParams.set('page_size', params.page_size.toString());
-    if (params?.page_token) httpParams = httpParams.set('page_token', params.page_token);
+    const httpParams = this.buildHttpParams(params);
 
     return this.http
       .get<GroupedApplicationsResponse>(

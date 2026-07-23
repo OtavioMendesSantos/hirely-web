@@ -2,19 +2,16 @@
   <hlm-dialog-header>
     <h3 hlmDialogTitle class="font-heading text-primary flex items-center gap-2 text-lg font-bold">
       @if (isEditMode()) {
-        <ng-icon name="lucideEdit" class="size-5 shrink-0" />
-        <span>Edit Job Application</span>
+      <ng-icon name="lucideEdit" class="size-5 shrink-0" />
+      <span>Edit Job Application</span>
       } @else {
-        <ng-icon name="lucideBriefcase" class="size-5 shrink-0" />
-        <span>New Job Application</span>
+      <ng-icon name="lucideBriefcase" class="size-5 shrink-0" />
+      <span>New Job Application</span>
       }
     </h3>
     <p hlmDialogDescription>
-      @if (isEditMode()) {
-        Update the details, status or notes of your candidacy.
-      } @else {
-        Track a new candidacy by specifying the role, company details, initial status, and notes.
-      }
+      @if (isEditMode()) { Update the details, status or notes of your candidacy. } @else { Track a
+      new candidacy by specifying the role, company details, initial status, and notes. }
     </p>
   </hlm-dialog-header>
 
@@ -35,23 +32,6 @@
     >
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <hlm-field>
-          <label hlmFieldLabel for="company_name" class="flex items-center gap-1.5 text-xs">
-            <span>Company Name</span>
-            <span class="text-destructive">*</span>
-          </label>
-          <input
-            id="company_name"
-            hlmInput
-            type="text"
-            formControlName="company_name"
-            placeholder="e.g. Hirely Corp, Google"
-          />
-          @if (form.get('company_name')?.invalid && form.get('company_name')?.touched) {
-          <hlm-field-error>Company name is required</hlm-field-error>
-          }
-        </hlm-field>
-
-        <hlm-field>
           <label hlmFieldLabel for="job_title" class="flex items-center gap-1.5 text-xs">
             <span>Job Title / Role</span>
             <span class="text-destructive">*</span>
@@ -65,6 +45,23 @@
           />
           @if (form.get('job_title')?.invalid && form.get('job_title')?.touched) {
           <hlm-field-error>Job title is required</hlm-field-error>
+          }
+        </hlm-field>
+
+        <hlm-field>
+          <label hlmFieldLabel for="company_name" class="flex items-center gap-1.5 text-xs">
+            <span>Company Name</span>
+            <span class="text-destructive">*</span>
+          </label>
+          <input
+            id="company_name"
+            hlmInput
+            type="text"
+            formControlName="company_name"
+            placeholder="e.g. Hirely Corp, Google"
+          />
+          @if (form.get('company_name')?.invalid && form.get('company_name')?.touched) {
+          <hlm-field-error>Company name is required</hlm-field-error>
           }
         </hlm-field>
       </div>
@@ -167,25 +164,14 @@
     <button hlmBtn variant="outline" type="button" (click)="closeDialog()" hlmDialogClose>
       Cancel
     </button>
-    <button
-      hlmBtn
-      type="submit"
-      form="create-app-form"
-      [disabled]="form.invalid || isSubmitting()"
-    >
+    <button hlmBtn type="submit" form="create-app-form" [disabled]="form.invalid || isSubmitting()">
       @if (isSubmitting()) {
       <hlm-spinner data-icon="inline-start" />
-      @if (isEditMode()) { Saving... } @else { Creating... }
-      } @else {
-      @if (isEditMode()) {
+      @if (isEditMode()) { Saving... } @else { Creating... } } @else { @if (isEditMode()) {
       <ng-icon name="lucideEdit" data-icon="inline-start" />
-      Save Changes
-      } @else {
+      Save Changes } @else {
       <ng-icon name="lucidePlus" data-icon="inline-start" />
-      Create Application
-      }
-      }
+      Create Application } }
     </button>
   </hlm-dialog-footer>
 </div>
-
