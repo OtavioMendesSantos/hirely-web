@@ -37,7 +37,7 @@
     <span class="truncate">{{ application().companyName }}</span>
   </div>
 
-  @if (application().location || application().salaryRange) {
+  @if (application().location || application().salaryRange || application().contractType) {
     <div class="flex flex-wrap items-center gap-1.5">
       @if (application().location) {
         <span class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-surface border border-border-subtle text-on-surface-variant">
@@ -45,6 +45,12 @@
           <span class="truncate max-w-[140px]">{{ application().location }}</span>
         </span>
       }
+      @if (application().contractType) {
+        <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-surface border border-border-subtle text-on-surface-variant">
+          <ng-icon name="lucideBriefcaseBusiness" class="size-3 shrink-0" />
+          <span>{{ application().contractType }}</span>
+        </span>
+      }      
       @if (application().salaryRange) {
         <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
           <ng-icon name="lucideDollarSign" class="size-3 shrink-0" />

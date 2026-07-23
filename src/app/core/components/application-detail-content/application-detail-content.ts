@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -92,6 +92,16 @@ export class ApplicationDetailContentComponent implements OnInit {
   newNoteText = signal<string>('');
   isAddingNote = signal<boolean>(false);
   isDeleteConfirmOpen = signal<boolean>(false);
+
+  showAllEvents = signal<boolean>(false);
+  showFullNotes = signal<boolean>(false);
+  showFullJobDescription = signal<boolean>(false);
+
+  sortedEvents = computed(() => {
+    const events = this.application()?.events;
+    if (!events) return [];
+    return [...events].reverse();
+  });
 
   constructor() {
     effect(() => {

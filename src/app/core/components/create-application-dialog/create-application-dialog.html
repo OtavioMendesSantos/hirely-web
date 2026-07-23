@@ -106,7 +106,23 @@
         </hlm-field>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <hlm-field>
+          <label hlmFieldLabel for="contract_type" class="text-xs"> Contract Type </label>
+          <select
+            id="contract_type"
+            hlmInput
+            formControlName="contract_type"
+            class="bg-surface text-on-surface cursor-pointer font-medium"
+          >
+            <option value="">Select contract...</option>
+            <option value="CLT">CLT</option>
+            <option value="PJ">PJ</option>
+            <option value="INTERNSHIP">Internship</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </hlm-field>
+
         <hlm-field>
           <label hlmFieldLabel for="location" class="text-xs"> Work Modality </label>
           <select

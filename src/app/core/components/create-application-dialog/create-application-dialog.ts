@@ -27,6 +27,7 @@ import {
   ApplicationStatus,
   CreateApplicationRequest,
   UpdateApplicationRequest,
+  ContractType,
 } from '../../models/application.model';
 
 @Component({
@@ -83,6 +84,7 @@ export class CreateApplicationDialogComponent implements OnInit {
     job_url: [''],
     location: [''],
     salary_range: [''],
+    contract_type: [''],
     notes: [''],
     job_description: [''],
   });
@@ -101,6 +103,7 @@ export class CreateApplicationDialogComponent implements OnInit {
         job_url: app.jobUrl || '',
         location: app.location || '',
         salary_range: app.salaryRange || '',
+        contract_type: app.contractType || '',
         notes: app.notes || '',
         job_description: app.jobDescription || '',
       });
@@ -134,6 +137,7 @@ export class CreateApplicationDialogComponent implements OnInit {
         job_url: val.job_url?.trim() || undefined,
         location: val.location?.trim() || undefined,
         salary_range: val.salary_range?.trim() || undefined,
+        contract_type: (val.contract_type as ContractType) || undefined,
         notes: val.notes?.trim() || undefined,
         job_description: val.job_description?.trim() || undefined,
       };
@@ -161,6 +165,7 @@ export class CreateApplicationDialogComponent implements OnInit {
       job_url: val.job_url?.trim() || undefined,
       location: val.location?.trim() || undefined,
       salary_range: val.salary_range?.trim() || undefined,
+      contract_type: (val.contract_type as ContractType) || undefined,
       notes: val.notes?.trim() || undefined,
       job_description: val.job_description?.trim() || undefined,
     };

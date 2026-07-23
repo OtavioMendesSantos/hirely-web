@@ -1,6 +1,8 @@
 export type ApplicationStatus =
   'TO_APPLY' | 'APPLIED' | 'INTERVIEW' | 'OFFER' | 'ACCEPTED' | 'REJECTED' | 'OTHER';
 
+export type ContractType = 'CLT' | 'PJ' | 'INTERNSHIP' | 'OTHER';
+
 export type EventType = 'AUTOMATIC' | 'MANUAL';
 
 export interface ApplicationEvent {
@@ -29,6 +31,7 @@ export interface Application {
   jobUrl?: string;
   salaryRange?: string;
   status: ApplicationStatus;
+  contractType?: ContractType;
   appliedAt?: string;
   location?: string;
   submittedDocuments?: string[];
@@ -46,6 +49,7 @@ export interface CreateApplicationRequest {
   job_url?: string;
   salary_range?: string;
   status: ApplicationStatus;
+  contract_type?: ContractType;
   applied_at?: string;
   location?: string;
   submitted_documents?: string[];
@@ -59,6 +63,7 @@ export interface UpdateApplicationRequest {
   job_url?: string;
   salary_range?: string;
   status?: ApplicationStatus;
+  contract_type?: ContractType;
   applied_at?: string;
   location?: string;
   submitted_documents?: string[];
