@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideBriefcase,
+      lucideBriefcaseBusiness,
   lucideBuilding,
   lucideMapPin,
   lucideDollarSign,
@@ -50,6 +51,7 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
   providers: [
     provideIcons({
       lucideBriefcase,
+      lucideBriefcaseBusiness,
       lucideBuilding,
       lucideMapPin,
       lucideDollarSign,
