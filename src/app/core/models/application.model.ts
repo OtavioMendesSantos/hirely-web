@@ -80,7 +80,7 @@ export interface ListApplicationsResponse {
 
 export interface ApplicationStatsResponse {
   total_applications: number;
-  funil_by_status: Record<ApplicationStatus, number>;
+  funnel_by_status: Record<ApplicationStatus, number>;
   conversion_rate_interview?: number;
   top_tags?: { tag_name: string; count: number }[];
 }
