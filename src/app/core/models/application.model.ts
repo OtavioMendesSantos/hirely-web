@@ -55,6 +55,7 @@ export interface CreateApplicationRequest {
   submitted_documents?: string[];
   job_description?: string;
   notes?: string;
+  tag_ids?: string[];
 }
 
 export interface UpdateApplicationRequest {
@@ -69,6 +70,7 @@ export interface UpdateApplicationRequest {
   submitted_documents?: string[];
   job_description?: string;
   notes?: string;
+  tag_ids?: string[];
 }
 
 export interface ListApplicationsResponse {

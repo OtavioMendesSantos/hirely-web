@@ -64,7 +64,9 @@ export class ApplicationService {
     const httpParams = this.buildHttpParams(params);
 
     return this.http
-      .get<ListApplicationsResponse>(`${environment.apiUrl}/users/${uid}/applications`, { params: httpParams })
+      .get<ListApplicationsResponse>(`${environment.apiUrl}/users/${uid}/applications`, {
+        params: httpParams,
+      })
       .pipe(
         tap({
           next: (res) => {
@@ -116,12 +118,18 @@ export class ApplicationService {
       );
   }
 
-  loadStats() {
+  loadStats(start_date?: string, end_date?: string) {
     const uid = this.userId;
     if (!uid) return;
 
+    let httpParams = new HttpParams();
+    if (start_date) httpParams = httpParams.set('start_date', start_date);
+    if (end_date) httpParams = httpParams.set('end_date', end_date);
+
     return this.http
-      .get<ApplicationStatsResponse>(`${environment.apiUrl}/users/${uid}/applications:stats`)
+      .get<ApplicationStatsResponse>(`${environment.apiUrl}/users/${uid}/applications:stats`, {
+        params: httpParams,
+      })
       .pipe(
         tap((res) => {
           this.stats.set(res);

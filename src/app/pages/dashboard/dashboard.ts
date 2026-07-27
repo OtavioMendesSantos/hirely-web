@@ -43,9 +43,9 @@ import { AuthService } from '../../core/services/auth';
 import { ApplicationService } from '../../core/services/application';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { CreateApplicationDialogComponent } from '../../core/components/create-application-dialog/create-application-dialog';
+import { TagManagementModal } from '../../core/components/tag-management-modal/tag-management-modal';
 import {
   Application,
-  ApplicationEvent,
   ApplicationQueryParams,
   ApplicationStatus,
 } from '../../core/models/application.model';
@@ -207,10 +207,7 @@ export class Dashboard implements OnInit {
       }
     });
 
-    this.searchSubject.pipe(
-      debounceTime(500),
-      distinctUntilChanged()
-    ).subscribe((query) => {
+    this.searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe((query) => {
       this.updateQueryParams({ search: query || null });
     });
   }
@@ -316,6 +313,13 @@ export class Dashboard implements OnInit {
 
   getCardsForStatus(status: ApplicationStatus): Application[] {
     return this.applicationService.groupedApplications()[status] || [];
+  }
+
+  openTagManagementModal() {
+    this.dialogService.open(TagManagementModal, {
+      contentClass:
+        'sm:max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden bg-surface-container-lowest border border-border-subtle shadow-2xl rounded-2xl',
+    });
   }
 
   openCreateModal(initialStatus?: ApplicationStatus) {

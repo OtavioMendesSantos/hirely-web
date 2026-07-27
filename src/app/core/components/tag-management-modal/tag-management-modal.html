@@ -1,0 +1,131 @@
+<hlm-dialog-header>
+  <h3 hlmDialogTitle class="font-heading text-xl font-bold">Manage Tags</h3>
+</hlm-dialog-header>
+
+<div
+  class="-mr-2 flex max-h-[60vh] flex-col overflow-y-auto py-4 pr-2 sm:mr-0 sm:max-h-[80vh] sm:pr-0"
+>
+  <div class="flex flex-col gap-6">
+    <div class="w-full space-y-2">
+      <label
+        hlmLabel
+        for="tagName"
+        class="text-on-surface-variant text-[11px] font-bold tracking-wider uppercase"
+      >
+        Tag Name
+      </label>
+      <input
+        hlmInput
+        id="tagName"
+        [(ngModel)]="newTagName"
+        placeholder="e.g. Remote, Urgent"
+        class="h-10 w-full"
+        (keyup.enter)="saveTag()"
+      />
+    </div>
+
+    <div class="w-full space-y-2">
+      <label
+        hlmLabel
+        class="text-on-surface-variant text-[11px] font-bold tracking-wider uppercase"
+      >
+        Tag Color
+      </label>
+      <app-tag-color-picker [(value)]="newTagColor" />
+    </div>
+
+    <button hlmBtn (click)="saveTag()" [disabled]="!newTagName().trim() || tagService.loading()">
+      @if (tagService.loading()) {
+      <hlm-spinner class="mr-2 size-4" />
+      } @else {
+      <ng-icon [name]="editingTag() ? 'lucideEdit2' : 'lucidePlus'" class="mr-2 size-4" />
+      } {{ editingTag() ? 'Update Tag' : 'Add Tag' }}
+    </button>
+  </div>
+
+  <hr class="border-border-subtle my-6" />
+
+  <div class="flex flex-col gap-3">
+    <h4 class="font-heading text-on-surface text-[11px] font-bold tracking-wider uppercase">
+      Existing Tags
+    </h4>
+
+    <div class="mt-1 max-h-[220px] scrollbar-thin space-y-3 overflow-y-auto pr-2">
+      @if (tagService.loading() && tagService.tags().length === 0) { @for (i of [1, 2, 3]; track i)
+      {
+      <div class="flex items-center justify-between">
+        <hlm-skeleton class="h-6 w-20 rounded-full" />
+        <div class="flex gap-2">
+          <hlm-skeleton class="size-8 rounded-full" />
+          <hlm-skeleton class="size-8 rounded-full" />
+        </div>
+      </div>
+      } } @else { @if (tagService.tags().length === 0) {
+      <p class="text-on-surface-variant text-sm">No tags registered yet.</p>
+      } } @for (tag of tagService.tags(); track tag.id) {
+      <div class="group flex items-center justify-between">
+        <div class="flex items-center">
+          <span
+            class="rounded-full border px-3 py-1 text-xs font-bold shadow-xs"
+            [style.backgroundColor]="tag.colorHex + '1A'"
+            [style.color]="tag.colorHex"
+            [style.borderColor]="tag.colorHex"
+          >
+            {{ tag.name }}
+          </span>
+        </div>
+        <div
+          class="flex items-center gap-1 opacity-100 transition-opacity group-hover:opacity-100 sm:opacity-0"
+        >
+          <button
+            hlmBtn
+            variant="ghost"
+            size="icon"
+            class="size-8"
+            (click)="editTag(tag)"
+            title="Edit"
+          >
+            <ng-icon name="lucideEdit2" class="text-on-surface-variant size-4" />
+          </button>
+          <hlm-alert-dialog>
+            <button
+              hlmAlertDialogTrigger
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              class="size-8"
+              title="Delete"
+              [disabled]="tagService.loading()"
+            >
+              <ng-icon
+                name="lucideTrash"
+                class="text-on-surface-variant hover:text-destructive size-4"
+              />
+            </button>
+            <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+              <hlm-alert-dialog-header>
+                <h2 hlmAlertDialogTitle class="font-heading text-destructive font-bold">
+                  Delete Tag
+                </h2>
+                <p hlmAlertDialogDescription class="text-on-surface-variant">
+                  Are you sure you want to delete this tag? This action cannot be undone.
+                </p>
+              </hlm-alert-dialog-header>
+              <hlm-alert-dialog-footer>
+                <button hlmAlertDialogCancel type="button">Cancel</button>
+                <button hlmAlertDialogAction type="button" (click)="deleteTag(tag.id); ctx.close()">
+                  Delete
+                </button>
+              </hlm-alert-dialog-footer>
+            </hlm-alert-dialog-content>
+          </hlm-alert-dialog>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<hlm-dialog-footer>
+  <button hlmBtn variant="outline" type="button" (click)="close()" hlmDialogClose>Close</button>
+</hlm-dialog-footer>

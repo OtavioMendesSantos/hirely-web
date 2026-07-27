@@ -1,44 +1,62 @@
 <app-layout pageTitle="Dashboard">
   <div class="flex flex-col gap-6 pb-8">
-    <div class="flex flex-col gap-3 bg-surface-container-lowest border border-border-subtle p-5 sm:p-6 rounded-2xl shadow-xs">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex flex-col gap-1 min-w-0">
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <h2 class="text-xl sm:text-2xl font-heading font-bold text-on-surface tracking-tight truncate">
+    <div
+      class="bg-surface-container-lowest border-border-subtle flex flex-col gap-3 rounded-2xl border p-5 shadow-xs sm:p-6"
+    >
+      <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div class="flex min-w-0 flex-col gap-1">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h2
+              class="font-heading text-on-surface truncate text-xl font-bold tracking-tight sm:text-2xl"
+            >
               Welcome back, {{ currentUser()?.name || 'Recruiter' }}!
             </h2>
           </div>
-          <p class="text-xs sm:text-sm text-on-surface-variant flex items-center gap-2">
-            <span>{{ applicationService.applications().length }} candidacies loaded across the recruitment stages</span>
+          <p class="text-on-surface-variant flex items-center gap-2 text-xs sm:text-sm">
+            <span
+              >{{ applicationService.applications().length }} candidacies loaded across the
+              recruitment stages</span
+            >
           </p>
         </div>
 
-        <button
-          hlmBtn
-          size="sm"
-          type="button"
-          (click)="openCreateModal()"
-          class="cursor-pointer font-semibold shadow-sm flex items-center justify-center gap-2 rounded-xl px-4 h-10 bg-primary text-on-primary hover:bg-primary/90 transition-all self-start sm:self-auto shrink-0"
-        >
-          <ng-icon name="lucidePlus" class="size-4 shrink-0" />
-          <span>New Candidate</span>
-        </button>
+        <div class="flex shrink-0 items-center gap-2 self-start sm:self-auto">
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            type="button"
+            class="flex items-center gap-2"
+            (click)="openTagManagementModal()"
+          >
+            <ng-icon name="lucideEdit" class="size-4 shrink-0" />
+            <span class="hidden sm:inline">Manage Tags</span>
+            <span class="sm:hidden">Tags</span>
+          </button>
+          <button hlmBtn size="sm" type="button" (click)="openCreateModal()">
+            <ng-icon name="lucidePlus" class="size-4 shrink-0" />
+            <span>New Candidate</span>
+          </button>
+        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+      <div class="flex w-full flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <!-- Search Input -->
-        <div class="relative w-full sm:w-80 shrink-0">
-          <input 
-            hlmInput 
-            placeholder="Search applications..." 
-            class="w-full pr-9 h-9 text-xs bg-surface-container-lowest border-border-subtle" 
-            [ngModel]="searchQuery()" 
+        <div class="relative w-full shrink-0 sm:w-80">
+          <input
+            hlmInput
+            placeholder="Search applications..."
+            class="bg-surface-container-lowest border-border-subtle h-9 w-full pr-9 text-xs"
+            [ngModel]="searchQuery()"
             (ngModelChange)="onSearchChange($event)"
           />
-          <ng-icon name="lucideSearch" class="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant/50 pointer-events-none"></ng-icon>
+          <ng-icon
+            name="lucideSearch"
+            class="text-on-surface-variant/50 pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2"
+          ></ng-icon>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
+        <div class="flex shrink-0 flex-wrap items-center gap-2 self-start sm:self-auto">
           <!-- Status Filters (Dropdown for all sizes) -->
           <button
             hlmBtn
@@ -46,14 +64,16 @@
             size="sm"
             hlmDropdownMenuTrigger
             [hlmDropdownMenuTrigger]="filterMenu"
-            class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
+            class="border-border-subtle bg-surface-container-lowest flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold"
           >
-            <ng-icon name="lucideFilter" class="size-3.5 text-primary" />
+            <ng-icon name="lucideFilter" class="text-primary size-3.5" />
             <span>Status</span>
             @if (selectedStatuses().length > 0) {
-              <span class="size-4 rounded-full bg-primary text-on-primary text-[10px] font-bold flex items-center justify-center ml-0.5">
-                {{ selectedStatuses().length }}
-              </span>
+            <span
+              class="bg-primary text-on-primary ml-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
+            >
+              {{ selectedStatuses().length }}
+            </span>
             }
           </button>
           <ng-template #filterMenu>
@@ -61,33 +81,34 @@
               hlmDropdownMenu
               class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
             >
-              <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
+              <div
+                class="text-on-surface-variant/70 px-2 py-1 text-[11px] font-bold tracking-wider uppercase"
+              >
                 Filter by Status
               </div>
               @for (opt of allStatusOptions; track opt.value) {
-                <button
-                  type="button"
-                  hlmDropdownMenuCheckboxItem
-                  [checked]="selectedStatuses().includes(opt.value)"
-                  (triggered)="toggleStatusFilter(opt.value)"
-                  class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
-                >
-                  <span>{{ opt.label }}</span>
-                  @if (selectedStatuses().includes(opt.value)) {
-                    <span class="bg-primary size-1.5 rounded-full"></span>
-                  }
-                </button>
-              }
-              @if (selectedStatuses().length > 0) {
-                <div class="border-t border-border-subtle my-1"></div>
-                <button
-                  type="button"
-                  hlmDropdownMenuItem
-                  (click)="clearStatusFilter()"
-                  class="w-full text-xs text-destructive hover:bg-destructive/10 rounded-lg font-semibold py-1.5 px-2 cursor-pointer flex items-center"
-                >
-                  Clear Filters
-                </button>
+              <button
+                type="button"
+                hlmDropdownMenuCheckboxItem
+                [checked]="selectedStatuses().includes(opt.value)"
+                (triggered)="toggleStatusFilter(opt.value)"
+                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+              >
+                <span>{{ opt.label }}</span>
+                @if (selectedStatuses().includes(opt.value)) {
+                <span class="bg-primary size-1.5 rounded-full"></span>
+                }
+              </button>
+              } @if (selectedStatuses().length > 0) {
+              <div class="border-border-subtle my-1 border-t"></div>
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                (click)="clearStatusFilter()"
+                class="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center rounded-lg px-2 py-1.5 text-xs font-semibold"
+              >
+                Clear Filters
+              </button>
               }
             </div>
           </ng-template>
@@ -99,9 +120,9 @@
             size="sm"
             hlmDropdownMenuTrigger
             [hlmDropdownMenuTrigger]="sortMenu"
-            class="flex items-center gap-1.5 font-semibold text-xs h-9 px-3 rounded-xl border-border-subtle bg-surface-container-lowest"
+            class="border-border-subtle bg-surface-container-lowest flex h-9 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold"
           >
-            <ng-icon name="lucideArrowUpDown" class="size-3.5 text-on-surface-variant" />
+            <ng-icon name="lucideArrowUpDown" class="text-on-surface-variant size-3.5" />
             <span>Sort</span>
           </button>
           <ng-template #sortMenu>
@@ -109,60 +130,68 @@
               hlmDropdownMenu
               class="bg-surface-container-lowest border-border-subtle flex min-w-48 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
             >
-              <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">
+              <div
+                class="text-on-surface-variant/70 px-2 py-1 text-[11px] font-bold tracking-wider uppercase"
+              >
                 Sort By
               </div>
               @for (opt of sortOptions; track opt.value) {
-                <button
-                  type="button"
-                  hlmDropdownMenuItem
-                  (click)="onSortByChange(opt.value)"
-                  class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
-                >
-                  <span>{{ opt.label }}</span>
-                  @if (sortBy() === opt.value) {
-                    <span class="bg-primary size-1.5 rounded-full"></span>
-                  }
-                </button>
+              <button
+                type="button"
+                hlmDropdownMenuItem
+                (click)="onSortByChange(opt.value)"
+                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+              >
+                <span>{{ opt.label }}</span>
+                @if (sortBy() === opt.value) {
+                <span class="bg-primary size-1.5 rounded-full"></span>
+                }
+              </button>
               }
-              <div class="border-t border-border-subtle my-1"></div>
+              <div class="border-border-subtle my-1 border-t"></div>
               <button
                 type="button"
                 hlmDropdownMenuItem
                 (click)="toggleSortOrder()"
-                class="text-on-surface hover:bg-surface-container-low flex cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors w-full"
+                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
               >
                 <span>Order: {{ sortOrder() === 'asc' ? 'Ascending' : 'Descending' }}</span>
-                <span class="text-[10px] font-mono font-bold text-on-surface-variant uppercase bg-surface px-1.5 py-0.5 rounded border border-border-subtle">{{ sortOrder() }}</span>
+                <span
+                  class="text-on-surface-variant bg-surface border-border-subtle rounded border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase"
+                  >{{ sortOrder() }}</span
+                >
               </button>
             </div>
           </ng-template>
 
           @if (selectedStatuses().length > 0 || sortBy() !== 'created_at' || searchQuery()) {
-            <button
-              type="button"
-              (click)="resetAllFilters()"
-              class="text-primary hover:underline font-medium text-xs inline-flex items-center gap-1 cursor-pointer px-2 py-1 rounded-lg hover:bg-primary/5 transition-colors"
-            >
-              <ng-icon name="lucideRotateCcw" class="size-3" />
-              <span>Reset</span>
-            </button>
+          <button
+            type="button"
+            (click)="resetAllFilters()"
+            class="text-primary hover:bg-primary/5 inline-flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors hover:underline"
+          >
+            <ng-icon name="lucideRotateCcw" class="size-3" />
+            <span>Reset</span>
+          </button>
           }
         </div>
       </div>
-
     </div>
 
-    <div class="flex items-stretch gap-5 overflow-x-auto pb-4 pt-1 scrollbar-thin" cdkScrollable cdkDropListGroup>
+    <div
+      class="flex scrollbar-thin items-stretch gap-5 overflow-x-auto pt-1 pb-4"
+      cdkScrollable
+      cdkDropListGroup
+    >
       @for (col of columns(); track col.status) {
-        <app-kanban-column
-          [column]="col"
-          [applications]="getCardsForStatus(col.status)"
-          [loading]="applicationService.loading()"
-          (editApplication)="openEditModal($event.application, $event.event)"
-          (addApplication)="openCreateModal($event)"
-          (applicationDropped)="onApplicationDrop($event)"
-        />
+      <app-kanban-column
+        [column]="col"
+        [applications]="getCardsForStatus(col.status)"
+        [loading]="applicationService.loading()"
+        (editApplication)="openEditModal($event.application, $event.event)"
+        (addApplication)="openCreateModal($event)"
+        (applicationDropped)="onApplicationDrop($event)"
+      />
       }
     </div>
   </div>

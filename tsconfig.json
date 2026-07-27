@@ -31,21 +31,28 @@
       "@spartan-ng/helm/empty": ["./libs/ui/empty/src/index.ts"],
       "@spartan-ng/helm/field": ["./libs/ui/field/src/index.ts"],
       "@spartan-ng/helm/textarea": ["./libs/ui/textarea/src/index.ts"],
-      "@spartan-ng/helm/spinner": ["./libs/ui/spinner/src/index.ts"]
-    }
+      "@spartan-ng/helm/spinner": ["./libs/ui/spinner/src/index.ts"],
+      "@spartan-ng/helm/calendar": ["./libs/ui/calendar/src/index.ts"],
+      "@spartan-ng/helm/select": ["./libs/ui/select/src/index.ts"],
+      "@spartan-ng/helm/badge": ["./libs/ui/badge/src/index.ts"],
+      "@spartan-ng/helm/popover": ["./libs/ui/popover/src/index.ts"],
+      "@spartan-ng/helm/button-group": ["./libs/ui/button-group/src/index.ts"],
+      "@spartan-ng/helm/input-group": ["./libs/ui/input-group/src/index.ts"],
+      "@spartan-ng/helm/native-select": ["./libs/ui/native-select/src/index.ts"],
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true
+    "strictInputAccessModifiers": true,
   },
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.app.json",
     },
     {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+      "path": "./tsconfig.spec.json",
+    },
+  ],
 }

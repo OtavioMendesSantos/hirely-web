@@ -151,6 +151,79 @@
       </div>
 
       <hlm-field>
+        <label hlmFieldLabel class="text-xs">Tags</label>
+        
+        <div class="flex flex-wrap items-center gap-2 mt-1">
+          @if (tagService.loading() && tagService.tags().length === 0) {
+            <hlm-spinner class="h-4 w-4" />
+          }
+
+          @for (tag of tagService.tags(); track tag.id) {
+            <button
+              type="button"
+              hlmBadge
+              [variant]="form.value.tag_ids?.includes(tag.id) ? 'default' : 'outline'"
+              [style.backgroundColor]="form.value.tag_ids?.includes(tag.id) ? tag.colorHex : 'transparent'"
+              [style.borderColor]="tag.colorHex"
+              [style.color]="form.value.tag_ids?.includes(tag.id) ? '#fff' : tag.colorHex"
+              class="cursor-pointer transition-transform active:scale-95"
+              (click)="toggleTag(tag.id)"
+            >
+              {{ tag.name }}
+            </button>
+          }
+
+          @if (!isCreatingTag()) {
+            <button
+              type="button"
+              hlmBadge
+              variant="outline"
+              class="cursor-pointer border-dashed transition-transform active:scale-95 text-muted-foreground"
+              (click)="isCreatingTag.set(true)"
+            >
+              <ng-icon name="lucidePlus" class="mr-1" /> Add Tag
+            </button>
+          } @else {
+            <div class="flex items-center gap-2 rounded-md border border-border p-1 bg-surface-container-lowest">
+              <input
+                type="color"
+                [ngModel]="newTagColor()"
+                (ngModelChange)="newTagColor.set($event)"
+                [ngModelOptions]="{standalone: true}"
+                class="h-6 w-6 cursor-pointer rounded border-0 bg-transparent p-0"
+              />
+              <input
+                hlmInput
+                type="text"
+                [ngModel]="newTagName()"
+                (ngModelChange)="newTagName.set($event)"
+                [ngModelOptions]="{standalone: true}"
+                (keydown.enter)="$event.preventDefault(); saveNewTag()"
+                (keydown.escape)="isCreatingTag.set(false)"
+                placeholder="Tag name"
+                class="h-6 min-w-[100px] flex-1 border-0 bg-transparent px-1 py-0 text-xs shadow-none focus-visible:ring-0"
+                autofocus
+              />
+              <button
+                type="button"
+                (click)="saveNewTag()"
+                class="flex h-6 items-center rounded bg-primary px-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                (click)="isCreatingTag.set(false)"
+                class="flex h-6 items-center px-1 text-xs text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </button>
+            </div>
+          }
+        </div>
+      </hlm-field>
+
+      <hlm-field>
         <label hlmFieldLabel for="job_description" class="text-xs">
           Job Description / Key Requirements
         </label>

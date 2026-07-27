@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-4">
+  <div class="grid grid-cols-4 place-items-center gap-y-5 p-1 sm:flex sm:flex-wrap sm:gap-x-4">
+    @for (preset of presets; track preset) {
+      <button
+        type="button"
+        class="size-8 rounded-full shadow-sm outline-offset-2 transition-all outline-none hover:scale-110 focus-visible:ring-2 focus-visible:ring-offset-2 sm:size-9"
+        [style.backgroundColor]="preset"
+        [style.outline]="currentColor() === preset ? '2px solid ' + preset : 'none'"
+        (click)="selectPreset(preset)"
+        aria-label="Select color preset"
+      ></button>
+    }
+  </div>
+
+  <div
+    class="bg-surface-container-lowest border-border-subtle flex flex-wrap items-center justify-between gap-4 rounded-xl border p-3 shadow-xs"
+  >
+    <div class="flex items-center gap-3">
+      <div
+        class="border-border-subtle size-8 shrink-0 rounded-md border shadow-sm"
+        [style.backgroundColor]="currentColor()"
+      ></div>
+      <div class="flex flex-col">
+        <span class="text-on-surface-variant text-[10px] font-bold tracking-wider uppercase">
+          Custom Color
+        </span>
+        <span class="text-on-surface text-sm font-semibold">
+          {{ currentColor() }}
+        </span>
+      </div>
+    </div>
+
+    <div class="relative w-32 shrink-0">
+      <input
+        type="text"
+        class="border-border-subtle focus-visible:ring-primary bg-surface h-9 w-full rounded-lg border px-3 py-1 text-sm font-medium uppercase shadow-xs transition-all outline-none focus-visible:ring-2"
+        [class.border-destructive]="hexError()"
+        [class.focus-visible:ring-destructive]="hexError()"
+        [ngModel]="customHex()"
+        (ngModelChange)="onCustomHexChange($event)"
+        placeholder="#HEX"
+        maxlength="7"
+      />
+    </div>
+  </div>
+</div>

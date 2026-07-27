@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/auth').then((c) => c.Auth),
   },
   {
+    path: 'auth/callback',
+    loadComponent: () => import('./pages/auth/oauth-callback').then((c) => c.OAuthCallback),
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard/dashboard').then((c) => c.Dashboard),
     canActivate: [authGuard],

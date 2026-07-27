@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideBriefcase,
@@ -21,7 +21,9 @@ import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { ApplicationService } from '../../services/application';
+import { TagService } from '../../services/tag';
 import {
   Application,
   ApplicationStatus,
@@ -35,6 +37,7 @@ import {
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     ...HlmButtonImports,
     ...HlmInputImports,
     ...HlmTextareaImports,
@@ -42,6 +45,7 @@ import {
     ...HlmDialogImports,
     ...HlmFieldImports,
     ...HlmSpinnerImports,
+    ...HlmBadgeImports,
     NgIcon,
   ],
   providers: [
@@ -63,6 +67,7 @@ import {
 export class CreateApplicationDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private applicationService = inject(ApplicationService);
+  tagService = inject(TagService);
   dialogRef = inject(BrnDialogRef);
   private readonly _dialogContext = injectBrnDialogContext<{
     application?: Application;
@@ -76,6 +81,10 @@ export class CreateApplicationDialogComponent implements OnInit {
   isEditMode = signal(false);
   applicationToEdit = signal<Application | null>(null);
 
+  isCreatingTag = signal(false);
+  newTagName = signal('');
+  newTagColor = signal('#4f46e5'); // default indigo
+
   form = this.fb.group({
     company_name: ['', [Validators.required]],
     job_title: ['', [Validators.required]],
@@ -87,9 +96,11 @@ export class CreateApplicationDialogComponent implements OnInit {
     contract_type: [''],
     notes: [''],
     job_description: [''],
+    tag_ids: [[] as string[]],
   });
 
   ngOnInit() {
+    this.tagService.loadTags()?.subscribe();
     const app = this._dialogContext?.application;
     const initialStatus = this._dialogContext?.initialStatus;
     if (app && app.id) {
@@ -106,12 +117,41 @@ export class CreateApplicationDialogComponent implements OnInit {
         contract_type: app.contractType || '',
         notes: app.notes || '',
         job_description: app.jobDescription || '',
+        tag_ids: app.tags?.map((t) => t.id) || [],
       });
     } else if (initialStatus || (app && app.status)) {
       this.form.patchValue({
         status: initialStatus || app!.status,
       });
     }
+  }
+
+  toggleTag(tagId: string) {
+    const current = this.form.get('tag_ids')?.value || [];
+    if (current.includes(tagId)) {
+      this.form.patchValue({ tag_ids: current.filter((id) => id !== tagId) });
+    } else {
+      this.form.patchValue({ tag_ids: [...current, tagId] });
+    }
+  }
+
+  saveNewTag() {
+    const name = this.newTagName().trim();
+    if (!name) {
+      this.isCreatingTag.set(false);
+      return;
+    }
+
+    this.tagService.createTag({ name, color_hex: this.newTagColor() }).subscribe({
+      next: (tag) => {
+        this.toggleTag(tag.id);
+        this.isCreatingTag.set(false);
+        this.newTagName.set('');
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.error?.message || 'Failed to create tag.');
+      },
+    });
   }
 
   closeDialog() {
@@ -140,6 +180,7 @@ export class CreateApplicationDialogComponent implements OnInit {
         contract_type: (val.contract_type as ContractType) || undefined,
         notes: val.notes?.trim() || undefined,
         job_description: val.job_description?.trim() || undefined,
+        tag_ids: val.tag_ids || [],
       };
 
       this.applicationService.updateApplication(this.applicationToEdit()!.id, payload).subscribe({
@@ -168,6 +209,7 @@ export class CreateApplicationDialogComponent implements OnInit {
       contract_type: (val.contract_type as ContractType) || undefined,
       notes: val.notes?.trim() || undefined,
       job_description: val.job_description?.trim() || undefined,
+      tag_ids: val.tag_ids || [],
     };
 
     this.applicationService.createApplication(payload).subscribe({

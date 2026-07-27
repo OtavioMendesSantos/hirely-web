@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth';
 import { ApplicationService } from '../../core/services/application';
 import { User } from '../../core/models/user.model';
 import { GroupedApplications } from '../../core/models/application.model';
+import { TagService } from '../../core/services/tag';
 import { vi } from 'vitest';
 
 describe('Dashboard', () => {
@@ -49,6 +50,7 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
+        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
       ],
     }).compileComponents();
 
@@ -97,6 +99,7 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
+        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
       ],
     }).compileComponents();
 
@@ -148,6 +151,7 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
+        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
       ],
     }).compileComponents();
 
@@ -205,6 +209,7 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
+        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
       ],
     }).compileComponents();
 

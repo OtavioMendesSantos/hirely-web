@@ -91,7 +91,7 @@
       </button>
     </form>
 
-    <app-social-auth-buttons (socialClick)="onInProgress($event + ' Login')" />
+    <app-social-auth-buttons [isGoogleLoading]="isGoogleLoading()" (socialClick)="onSocialClick($event)" />
 
     <p class="text-on-surface-variant mt-8 text-center text-sm">
       Don't have an account?

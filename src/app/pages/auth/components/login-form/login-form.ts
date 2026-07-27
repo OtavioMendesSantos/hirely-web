@@ -50,6 +50,7 @@ export class LoginFormComponent {
   rememberMe = true;
   showPassword = signal(false);
   isLoading = signal(false);
+  isGoogleLoading = signal(false);
 
   toggleShowPassword() {
     this.showPassword.update((s) => !s);
@@ -64,6 +65,23 @@ export class LoginFormComponent {
 
   onInProgress(feature: string) {
     this.inProgress.emit(feature);
+  }
+
+  onSocialClick(provider: string) {
+    if (provider === 'Google') {
+      this.isGoogleLoading.set(true);
+      this.authService.getOAuthUrl().subscribe({
+        next: (res) => {
+          window.location.href = res.url;
+        },
+        error: (err) => {
+          this.isGoogleLoading.set(false);
+          toast.error('Failed to get Google login URL', { duration: 3000 });
+        }
+      });
+    } else {
+      this.inProgress.emit(provider + ' Login');
+    }
   }
 
   async onLogin() {

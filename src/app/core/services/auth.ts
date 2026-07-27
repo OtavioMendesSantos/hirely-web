@@ -63,6 +63,21 @@ export class AuthService {
       );
   }
 
+  getOAuthUrl() {
+    return this.http.get<{ url: string }>(`${environment.apiUrl}/users:oauthUrl`);
+  }
+
+  oauthLogin(code: string, redirectUri: string) {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/users:oauthLogin`, { code, redirect_uri: redirectUri })
+      .pipe(
+        tap((response) => {
+          this.saveToken(response.token, true);
+          this.currentUser.set(response.user);
+        })
+      );
+  }
+
   register(name: string, email: string, password: string, rememberMe = true) {
     return this.http
       .post<AuthResponse>(`${environment.apiUrl}/users`, { name, email, password })

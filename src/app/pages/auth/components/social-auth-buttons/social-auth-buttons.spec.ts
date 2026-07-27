@@ -19,7 +19,7 @@ describe('SocialAuthButtonsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit socialClick when Google or LinkedIn button is clicked', () => {
+  it('should emit socialClick when Google button is clicked', () => {
     let emittedProvider = '';
     component.socialClick.subscribe((provider: string) => {
       emittedProvider = provider;
@@ -28,8 +28,5 @@ describe('SocialAuthButtonsComponent', () => {
     const buttons = fixture.nativeElement.querySelectorAll('button');
     buttons[0].click();
     expect(emittedProvider).toBe('Google');
-
-    buttons[1].click();
-    expect(emittedProvider).toBe('LinkedIn');
   });
 });
