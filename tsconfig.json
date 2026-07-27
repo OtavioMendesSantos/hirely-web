@@ -39,20 +39,21 @@
       "@spartan-ng/helm/button-group": ["./libs/ui/button-group/src/index.ts"],
       "@spartan-ng/helm/input-group": ["./libs/ui/input-group/src/index.ts"],
       "@spartan-ng/helm/native-select": ["./libs/ui/native-select/src/index.ts"],
-    },
+      "@spartan-ng/helm/date-picker": ["./libs/ui/date-picker/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
+    "strictInputAccessModifiers": true
   },
   "files": [],
   "references": [
     {
-      "path": "./tsconfig.app.json",
+      "path": "./tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.spec.json",
-    },
-  ],
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }
