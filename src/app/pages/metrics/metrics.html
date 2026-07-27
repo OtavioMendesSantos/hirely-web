@@ -10,25 +10,23 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <hlm-popover>
-          <button
+        <hlm-date-range-picker
+          [date]="[startDate(), endDate()]"
+          (dateChange)="onDateChange($event)"
+          [autoCloseOnEndSelection]="true"
+          [formatDates]="emptyFormat"
+        >
+          <hlm-date-picker-trigger
             hlmBtn
             variant="outline"
-            hlmPopoverTrigger
             class="bg-surface flex items-center gap-2"
+            buttonId="date-range-picker"
+            [showTrigger]="false"
           >
             <ng-icon name="lucideCalendar" size="sm" />
             {{ dateRangeText() }}
-          </button>
-          <div hlmPopoverContent class="w-auto p-0" *hlmPopoverPortal>
-            <hlm-calendar-range
-              [startDate]="startDate()"
-              (startDateChange)="startDate.set($event)"
-              [endDate]="endDate()"
-              (endDateChange)="endDate.set($event)"
-            />
-          </div>
-        </hlm-popover>
+          </hlm-date-picker-trigger>
+        </hlm-date-range-picker>
       </div>
     </div>
 

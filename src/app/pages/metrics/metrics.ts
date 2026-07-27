@@ -194,10 +194,10 @@ export class Metrics implements OnInit {
   constructor() {
     effect(() => {
       let start = this.startDate();
-      let end = this.endDate();
+      const end = this.endDate();
 
-      let startStr = start ? start.toISOString().split('T')[0] : undefined;
-      let endStr = end ? end.toISOString().split('T')[0] : undefined;
+      const startStr = start ? this.datePipe.transform(start, 'yyyy-MM-dd') ?? undefined : undefined;
+      const endStr = end ? this.datePipe.transform(end, 'yyyy-MM-dd') ?? undefined : undefined;
 
       this.applicationService.loadStats(startStr, endStr)?.subscribe();
     });
