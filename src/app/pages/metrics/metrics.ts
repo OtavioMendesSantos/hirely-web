@@ -3,9 +3,8 @@ import { DatePipe } from '@angular/common';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { ApplicationService } from '../../core/services/application';
-import { HlmCalendarImports } from '@spartan-ng/helm/calendar';
+import { HlmDatePickerImports } from '@spartan-ng/helm/date-picker';
 import { HlmEmptyImports } from '@spartan-ng/helm/empty';
-import { HlmPopoverImports } from '@spartan-ng/helm/popover';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -49,9 +48,8 @@ export type ChartOptions = {
   imports: [
     AppLayoutComponent,
     ...HlmCardImports,
-    ...HlmCalendarImports,
+    ...HlmDatePickerImports,
     ...HlmEmptyImports,
-    ...HlmPopoverImports,
     ...HlmButtonImports,
     NgIcon,
     NgApexchartsModule
@@ -91,8 +89,23 @@ export class Metrics implements OnInit {
       }
       return `${this.datePipe.transform(start, 'dd/MM/yyyy')} - ${this.datePipe.transform(end, 'dd/MM/yyyy')}`;
     }
+    if (start && !end) {
+      return `${this.datePipe.transform(start, 'dd/MM/yyyy')} - Pick end date`;
+    }
     return 'Últimos 30 dias';
   });
+
+  emptyFormat = () => '';
+
+  onDateChange(dates: [Date | null, Date | null] | null) {
+    if (dates) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+    } else {
+      this.startDate.set(null);
+      this.endDate.set(null);
+    }
+  }
 
   stats = this.applicationService.stats;
 
@@ -112,9 +125,19 @@ export class Metrics implements OnInit {
     const st = this.stats();
     if (!st || !st.funnel_by_status) return null;
 
-    // Use the backend response directly for the chart
-    const statuses = Object.keys(st.funnel_by_status);
-    const counts = Object.values(st.funnel_by_status);
+    // Ensure logical funnel order instead of alphabetical (Go maps marshal alphabetically)
+    const orderedStatuses = [
+      'TO_APPLY',
+      'APPLIED',
+      'INTERVIEW',
+      'OFFER',
+      'ACCEPTED',
+      'REJECTED',
+      'OTHER'
+    ];
+
+    const statuses = orderedStatuses;
+    const counts = orderedStatuses.map(status => st.funnel_by_status[status as keyof typeof st.funnel_by_status] || 0);
 
     return {
       series: [
