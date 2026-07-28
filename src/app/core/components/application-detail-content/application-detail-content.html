@@ -205,6 +205,21 @@
             </span>
             }
           </div>
+
+          @if (app.tags && app.tags.length > 0) {
+          <div class="mt-2 flex flex-wrap items-center gap-1.5">
+            @for (tag of app.tags; track tag.id) {
+            <span
+              class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold border shadow-xs"
+              [style.backgroundColor]="tag.colorHex + '1A'"
+              [style.color]="tag.colorHex"
+              [style.borderColor]="tag.colorHex + '40'"
+            >
+              {{ tag.name }}
+            </span>
+            }
+          </div>
+          }
         </div>
       </div>
 

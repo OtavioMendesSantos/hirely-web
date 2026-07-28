@@ -31,7 +31,7 @@
       >
         Tag Color
       </label>
-      <app-tag-color-picker [(value)]="newTagColor" />
+      <app-tag-color-picker [value]="newTagColor()" (valueChange)="newTagColor.set($event)" />
     </div>
 
     <button hlmBtn (click)="saveTag()" [disabled]="!newTagName().trim() || tagService.loading()">

@@ -60,6 +60,21 @@
     </div>
   }
 
+  @if (application().tags && application().tags!.length > 0) {
+    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
+      @for (tag of application().tags; track tag.id) {
+        <span 
+          class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-bold border"
+          [style.backgroundColor]="tag.colorHex + '1A'"
+          [style.color]="tag.colorHex"
+          [style.borderColor]="tag.colorHex + '40'"
+        >
+          {{ tag.name }}
+        </span>
+      }
+    </div>
+  }
+
   @if (getLatestEvent(); as latestEvent) {
     @if (getEventSnippet(latestEvent); as snippet) {
       <div class="flex items-center gap-2 rounded-lg bg-surface-container/60 p-2 text-xs border border-border-subtle/60 mt-0.5">
