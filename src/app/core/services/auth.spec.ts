@@ -1,11 +1,11 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
-import { AuthService } from './auth';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/user.model';
+import { AuthService } from './auth';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -74,7 +74,7 @@ describe('AuthService', () => {
 
     service.login('otavio@example.com', 'secret', true).subscribe();
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
     expect(req.request.body).toEqual({
       email: 'otavio@example.com',
       password: 'secret',
@@ -98,7 +98,7 @@ describe('AuthService', () => {
 
     service.login('otavio@example.com', 'secret', false).subscribe();
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/users:login`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
     expect(req.request.body).toEqual({
       email: 'otavio@example.com',
       password: 'secret',

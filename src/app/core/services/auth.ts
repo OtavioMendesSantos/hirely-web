@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models/user.model';
-import { environment } from '../../../environments/environment';
 import { catchError, tap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { User } from '../models/user.model';
 
 interface AuthResponse {
   token: string;
@@ -54,7 +54,7 @@ export class AuthService {
 
   login(email: string, password: string, rememberMe = true) {
     return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/users:login`, { email, password, rememberMe })
+      .post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password, rememberMe })
       .pipe(
         tap((response) => {
           this.saveToken(response.token, rememberMe);
@@ -64,12 +64,12 @@ export class AuthService {
   }
 
   getOAuthUrl() {
-    return this.http.get<{ url: string }>(`${environment.apiUrl}/users:oauthUrl`);
+    return this.http.get<{ url: string }>(`${environment.apiUrl}/auth/google/url`);
   }
 
   oauthLogin(code: string, redirectUri: string) {
     return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/users:oauthLogin`, { code, redirect_uri: redirectUri })
+      .post<AuthResponse>(`${environment.apiUrl}/auth/google/login`, { code, redirect_uri: redirectUri })
       .pipe(
         tap((response) => {
           this.saveToken(response.token, true);

@@ -127,7 +127,7 @@ export class ApplicationService {
     if (end_date) httpParams = httpParams.set('end_date', end_date);
 
     return this.http
-      .get<ApplicationStatsResponse>(`${environment.apiUrl}/users/${uid}/applications:stats`, {
+      .get<ApplicationStatsResponse>(`${environment.apiUrl}/users/${uid}/applications/stats`, {
         params: httpParams,
       })
       .pipe(
