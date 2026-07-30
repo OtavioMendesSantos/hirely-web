@@ -11,6 +11,7 @@ import {
   lucideEdit,
   lucideMessageSquare,
   lucideBriefcaseBusiness,
+  lucideHourglass,
 } from '@ng-icons/lucide';
 import { Application, ApplicationEvent } from '../../../../core/models/application.model';
 
@@ -27,6 +28,7 @@ import { Application, ApplicationEvent } from '../../../../core/models/applicati
       lucideEdit,
       lucideMessageSquare,
       lucideBriefcaseBusiness,
+      lucideHourglass,
     }),
   ],
   templateUrl: './application-card.html',
@@ -50,6 +52,34 @@ export class ApplicationCardComponent {
     const app = this.application();
     if (!app.events || app.events.length === 0) return undefined;
     return app.events[app.events.length - 1];
+  }
+
+  get waitTimeDays(): number | null {
+    const app = this.application();
+    if (app.status !== 'APPLIED') return null;
+
+    const referenceDateStr = app.updatedAt || app.createdAt;
+    if (!referenceDateStr) return null;
+
+    const referenceDate = new Date(referenceDateStr);
+    
+    const now = new Date();
+    const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const utcRef = Date.UTC(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+
+    const diffDays = Math.floor((utcNow - utcRef) / (1000 * 60 * 60 * 24));
+    
+    return diffDays >= 0 ? diffDays : 0;
+  }
+
+  get waitTimeTooltip(): string | null {
+    const days = this.waitTimeDays;
+    if (days === null) return null;
+    
+    if (days >= 30) return '30 days without response';
+    if (days === 0) return 'Today';
+    if (days === 1) return '1 day ago';
+    return `${days} days without response`;
   }
 
   getEventSnippet(event: ApplicationEvent): { text: string; dotClass: string; textClass: string } {
