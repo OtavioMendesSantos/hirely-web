@@ -14,7 +14,7 @@
       <p class="text-on-surface-variant text-sm">Enter your details to get started.</p>
     </div>
 
-    <form (ngSubmit)="onRegister()" class="flex flex-col gap-4">
+    <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)" class="flex flex-col gap-4">
       <hlm-field>
         <label hlmFieldLabel for="reg-name">Full name</label>
         <input
@@ -23,9 +23,15 @@
           type="text"
           [(ngModel)]="name"
           name="name"
+          #nameCtrl="ngModel"
           required
+          minlength="2"
+          maxlength="255"
           placeholder="John Doe"
         />
+        @if (nameCtrl.invalid && (nameCtrl.touched || registerForm.submitted)) {
+          <hlm-field-error>Name must be between 2 and 255 characters.</hlm-field-error>
+        }
       </hlm-field>
 
       <hlm-field>
@@ -36,9 +42,14 @@
           type="email"
           [(ngModel)]="email"
           name="email"
+          #emailCtrl="ngModel"
           required
+          email
           placeholder="you@example.com"
         />
+        @if (emailCtrl.invalid && (emailCtrl.touched || registerForm.submitted)) {
+          <hlm-field-error>Valid email address is required.</hlm-field-error>
+        }
       </hlm-field>
 
       <hlm-field>
@@ -50,7 +61,9 @@
             [type]="showPassword() ? 'text' : 'password'"
             [(ngModel)]="password"
             name="password"
+            #passwordCtrl="ngModel"
             required
+            minlength="8"
             placeholder="••••••••"
             class="pr-10"
           />
@@ -67,6 +80,9 @@
           </button>
         </div>
         <hlm-field-description>Must be at least 8 characters.</hlm-field-description>
+        @if (passwordCtrl.invalid && (passwordCtrl.touched || registerForm.submitted)) {
+          <hlm-field-error>Password must be at least 8 characters.</hlm-field-error>
+        }
       </hlm-field>
 
       <button hlmBtn type="submit" [disabled]="isLoading()" class="w-full">

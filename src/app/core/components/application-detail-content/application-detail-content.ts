@@ -144,11 +144,9 @@ export class ApplicationDetailContentComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(
-          err.error?.error?.message ||
-            err.error?.message ||
-            'Failed to load job application details.'
-        );
+        const msg = err.error?.error?.message || err.error?.message || 'Failed to load job application details.';
+        this.errorMessage.set(msg);
+        toast.error(msg);
       },
     });
   }

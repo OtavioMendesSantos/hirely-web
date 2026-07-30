@@ -14,7 +14,7 @@
       <p class="text-on-surface-variant text-sm">Please enter your details to sign in.</p>
     </div>
 
-    <form (ngSubmit)="onLogin()" class="flex flex-col gap-4">
+    <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" class="flex flex-col gap-4">
       <hlm-field>
         <label hlmFieldLabel for="login-email">Email</label>
         <input
@@ -23,9 +23,14 @@
           type="email"
           [(ngModel)]="email"
           name="email"
+          #emailCtrl="ngModel"
           required
+          email
           placeholder="your@email.com"
         />
+        @if (emailCtrl.invalid && (emailCtrl.touched || loginForm.submitted)) {
+          <hlm-field-error>Valid email address is required.</hlm-field-error>
+        }
       </hlm-field>
 
       <hlm-field>
@@ -45,6 +50,7 @@
             [type]="showPassword() ? 'text' : 'password'"
             [(ngModel)]="password"
             name="password"
+            #passwordCtrl="ngModel"
             required
             placeholder="••••••••"
             class="pr-10"
@@ -61,6 +67,9 @@
             />
           </button>
         </div>
+        @if (passwordCtrl.invalid && (passwordCtrl.touched || loginForm.submitted)) {
+          <hlm-field-error>Password is required.</hlm-field-error>
+        }
       </hlm-field>
 
       <div class="flex items-center gap-2.5">

@@ -1,5 +1,5 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HlmInputImports } from '@spartan-ng/helm/input';
@@ -84,7 +84,8 @@ export class RegisterFormComponent {
     }
   }
 
-  async onRegister() {
+  async onRegister(form: NgForm) {
+    if (form.invalid) return;
     if (this.isLoading()) return;
     this.isLoading.set(true);
     this.authService.register(this.name, this.email, this.password, this.rememberMe).subscribe({

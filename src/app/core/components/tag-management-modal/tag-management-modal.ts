@@ -11,6 +11,7 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
+import { toast } from '@spartan-ng/brain/sonner';
 import { TagService } from '../../services/tag';
 import { Tag } from '../../models/application.model';
 import { TagColorPickerComponent } from '../../../shared/components/tag-color-picker/tag-color-picker.component';
@@ -48,19 +49,37 @@ export class TagManagementModal implements OnInit {
 
   saveTag() {
     const name = this.newTagName().trim();
-    if (!name) return;
+    if (!name || name.length > 100) return;
 
     if (this.editingTag()) {
       const oldTag = this.editingTag()!;
-      this.tagService.deleteTag(oldTag.id)?.subscribe(() => {
-        this.tagService.createTag({ name, color_hex: this.newTagColor() })?.subscribe(() => {
-          this.cancelEdit();
-        });
+      this.tagService.deleteTag(oldTag.id)?.subscribe({
+        next: () => {
+          this.tagService.createTag({ name, color_hex: this.newTagColor() })?.subscribe({
+            next: () => {
+              this.cancelEdit();
+            },
+            error: (err) => {
+              const msg = err.error?.error?.message || err.error?.message || 'Failed to update tag';
+              toast.error(msg);
+            }
+          });
+        },
+        error: (err) => {
+          const msg = err.error?.error?.message || err.error?.message || 'Failed to delete old tag';
+          toast.error(msg);
+        }
       });
     } else {
-      this.tagService.createTag({ name, color_hex: this.newTagColor() })?.subscribe(() => {
-        this.newTagName.set('');
-        this.newTagColor.set('#EF4444');
+      this.tagService.createTag({ name, color_hex: this.newTagColor() })?.subscribe({
+        next: () => {
+          this.newTagName.set('');
+          this.newTagColor.set('#EF4444');
+        },
+        error: (err) => {
+          const msg = err.error?.error?.message || err.error?.message || 'Failed to create tag';
+          toast.error(msg);
+        }
       });
     }
   }
@@ -82,8 +101,14 @@ export class TagManagementModal implements OnInit {
   }
 
   deleteTag(id: string) {
-    this.tagService.deleteTag(id)?.subscribe(() => {
-      this.tagService.loadTags()?.subscribe();
+    this.tagService.deleteTag(id)?.subscribe({
+      next: () => {
+        this.tagService.loadTags()?.subscribe();
+      },
+      error: (err) => {
+        const msg = err.error?.error?.message || err.error?.message || 'Failed to delete tag';
+        toast.error(msg);
+      }
     });
   }
 }

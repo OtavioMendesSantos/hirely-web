@@ -16,13 +16,6 @@
   </hlm-dialog-header>
 
   <div class="flex max-h-[60vh] min-h-0 flex-1 flex-col gap-4 overflow-y-auto py-2">
-    @if (errorMessage()) {
-    <div
-      class="border-destructive/30 bg-destructive/10 text-destructive shrink-0 rounded-lg border px-3.5 py-2.5 text-xs font-medium"
-    >
-      {{ errorMessage() }}
-    </div>
-    }
 
     <form
       id="create-app-form"
@@ -43,8 +36,11 @@
             formControlName="job_title"
             placeholder="e.g. Senior Backend Engineer"
           />
-          @if (form.get('job_title')?.invalid && form.get('job_title')?.touched) {
-          <hlm-field-error>Job title is required</hlm-field-error>
+          @if (form.get('job_title')?.hasError('required') && form.get('job_title')?.touched) {
+          <hlm-field-error>Job title is required.</hlm-field-error>
+          }
+          @if (form.get('job_title')?.hasError('maxlength') && form.get('job_title')?.touched) {
+          <hlm-field-error>Job title cannot exceed 255 characters.</hlm-field-error>
           }
         </hlm-field>
 
@@ -60,8 +56,11 @@
             formControlName="company_name"
             placeholder="e.g. Hirely Corp, Google"
           />
-          @if (form.get('company_name')?.invalid && form.get('company_name')?.touched) {
-          <hlm-field-error>Company name is required</hlm-field-error>
+          @if (form.get('company_name')?.hasError('required') && form.get('company_name')?.touched) {
+          <hlm-field-error>Company name is required.</hlm-field-error>
+          }
+          @if (form.get('company_name')?.hasError('maxlength') && form.get('company_name')?.touched) {
+          <hlm-field-error>Company name cannot exceed 255 characters.</hlm-field-error>
           }
         </hlm-field>
       </div>
@@ -103,6 +102,9 @@
             formControlName="job_url"
             placeholder="https://..."
           />
+          @if (form.get('job_url')?.invalid && form.get('job_url')?.touched) {
+          <hlm-field-error>Please provide a valid URL.</hlm-field-error>
+          }
         </hlm-field>
       </div>
 
@@ -136,6 +138,9 @@
             <option value="Hybrid">Hybrid</option>
             <option value="On-site">On-site</option>
           </select>
+          @if (form.get('location')?.hasError('maxlength') && form.get('location')?.touched) {
+          <hlm-field-error>Location cannot exceed 255 characters.</hlm-field-error>
+          }
         </hlm-field>
 
         <hlm-field>
@@ -147,6 +152,9 @@
             formControlName="salary_range"
             placeholder="e.g. $120k - $150k/year"
           />
+          @if (form.get('salary_range')?.hasError('maxlength') && form.get('salary_range')?.touched) {
+          <hlm-field-error>Salary range cannot exceed 100 characters.</hlm-field-error>
+          }
         </hlm-field>
       </div>
 
@@ -200,15 +208,21 @@
                 [ngModelOptions]="{standalone: true}"
                 (keydown.enter)="$event.preventDefault(); saveNewTag()"
                 (keydown.escape)="isCreatingTag.set(false)"
+                [disabled]="isSavingTag()"
                 placeholder="Tag name"
-                class="h-6 min-w-[100px] flex-1 border-0 bg-transparent px-1 py-0 text-xs shadow-none focus-visible:ring-0"
+                class="h-6 min-w-[100px] flex-1 border-0 bg-transparent px-1 py-0 text-xs shadow-none focus-visible:ring-0 disabled:opacity-50"
                 autofocus
+                maxlength="100"
               />
               <button
                 type="button"
                 (click)="saveNewTag()"
-                class="flex h-6 items-center rounded bg-primary px-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                [disabled]="!newTagName().trim() || newTagName().trim().length > 100 || isSavingTag()"
+                class="flex h-6 items-center rounded bg-primary px-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                @if (isSavingTag()) {
+                  <hlm-spinner class="h-3 w-3 mr-1" />
+                }
                 Save
               </button>
               <button

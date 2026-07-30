@@ -21,6 +21,7 @@
         placeholder="e.g. Remote, Urgent"
         class="h-10 w-full"
         (keyup.enter)="saveTag()"
+        maxlength="100"
       />
     </div>
 
@@ -34,7 +35,7 @@
       <app-tag-color-picker [value]="newTagColor()" (valueChange)="newTagColor.set($event)" />
     </div>
 
-    <button hlmBtn (click)="saveTag()" [disabled]="!newTagName().trim() || tagService.loading()">
+    <button hlmBtn (click)="saveTag()" [disabled]="!newTagName().trim() || newTagName().trim().length > 100 || tagService.loading()">
       @if (tagService.loading()) {
       <hlm-spinner class="mr-2 size-4" />
       } @else {

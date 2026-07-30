@@ -14,6 +14,7 @@ import {
   lucideLoader2,
 } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
@@ -77,22 +78,22 @@ export class CreateApplicationDialogComponent implements OnInit {
   });
 
   isSubmitting = signal(false);
-  errorMessage = signal<string | null>(null);
   isEditMode = signal(false);
   applicationToEdit = signal<Application | null>(null);
 
   isCreatingTag = signal(false);
+  isSavingTag = signal(false);
   newTagName = signal('');
   newTagColor = signal('#4f46e5'); // default indigo
 
   form = this.fb.group({
-    company_name: ['', [Validators.required]],
-    job_title: ['', [Validators.required]],
+    company_name: ['', [Validators.required, Validators.maxLength(255)]],
+    job_title: ['', [Validators.required, Validators.maxLength(255)]],
     status: ['APPLIED' as ApplicationStatus, [Validators.required]],
     applied_at: [new Date().toISOString().split('T')[0]],
-    job_url: [''],
-    location: [''],
-    salary_range: [''],
+    job_url: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+    location: ['', [Validators.maxLength(255)]],
+    salary_range: ['', [Validators.maxLength(100)]],
     contract_type: [''],
     notes: [''],
     job_description: [''],
@@ -136,20 +137,25 @@ export class CreateApplicationDialogComponent implements OnInit {
   }
 
   saveNewTag() {
+    if (this.isSavingTag()) return;
     const name = this.newTagName().trim();
-    if (!name) {
+    if (!name || name.length > 100) {
       this.isCreatingTag.set(false);
       return;
     }
 
+    this.isSavingTag.set(true);
     this.tagService.createTag({ name, color_hex: this.newTagColor() }).subscribe({
       next: (tag) => {
         this.toggleTag(tag.id);
         this.isCreatingTag.set(false);
+        this.isSavingTag.set(false);
         this.newTagName.set('');
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.error?.message || 'Failed to create tag.');
+        this.isSavingTag.set(false);
+        const msg = err.error?.error?.message || err.error?.message || 'Failed to create tag.';
+        toast.error(msg);
       },
     });
   }
@@ -165,7 +171,6 @@ export class CreateApplicationDialogComponent implements OnInit {
     }
 
     this.isSubmitting.set(true);
-    this.errorMessage.set(null);
 
     const val = this.form.getRawValue();
     if (this.isEditMode() && this.applicationToEdit()) {
@@ -190,9 +195,8 @@ export class CreateApplicationDialogComponent implements OnInit {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.errorMessage.set(
-            err.error?.error?.message || err.error?.message || 'Failed to update job application.'
-          );
+          const msg = err.error?.error?.message || err.error?.message || 'Failed to update job application.';
+          toast.error(msg);
         },
       });
       return;
@@ -219,9 +223,8 @@ export class CreateApplicationDialogComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        this.errorMessage.set(
-          err.error?.error?.message || err.error?.message || 'Failed to create job application.'
-        );
+        const msg = err.error?.error?.message || err.error?.message || 'Failed to create job application.';
+        toast.error(msg);
       },
     });
   }
