@@ -78,10 +78,21 @@ export interface ListApplicationsResponse {
   next_page_token?: string;
 }
 
+export interface KPIMetric {
+  count: number;
+  rate: number;
+}
+
+export interface KPIs {
+  interviews: KPIMetric;
+  rejections: KPIMetric;
+  ghosting: KPIMetric;
+}
+
 export interface ApplicationStatsResponse {
   total_applications: number;
   funnel_by_status: Record<ApplicationStatus, number>;
-  conversion_rate_interview?: number;
+  kpis: KPIs;
   top_tags?: { tag_name: string; count: number }[];
 }
 

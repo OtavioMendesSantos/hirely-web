@@ -48,7 +48,7 @@
     } @else {
 
     <!-- KPI Cards Row -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Total Applications -->
       <div
         hlmCard
@@ -70,11 +70,44 @@
       >
         <div class="bg-primary absolute top-0 bottom-0 left-0 w-1"></div>
         <div class="flex items-start justify-between">
-          <span class="text-primary text-sm font-medium">Interview Conversion Rate</span>
+          <span class="text-primary text-sm font-medium">Interview Rate</span>
           <ng-icon name="lucideTrendingUp" class="text-primary size-5" />
         </div>
         <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-primary text-3xl font-bold">{{ conversionRate() }}%</span>
+          <span class="text-primary text-3xl font-bold">{{ interviewCount() }}</span>
+          <span class="text-primary/80 text-sm font-medium ml-1">({{ conversionRate() }}%)</span>
+        </div>
+      </div>
+
+      <!-- Rejection Rate -->
+      <div
+        hlmCard
+        class="border-border-subtle bg-surface-container-lowest relative overflow-hidden rounded-xl border p-6 shadow-sm"
+      >
+        <div class="bg-destructive absolute top-0 bottom-0 left-0 w-1"></div>
+        <div class="flex items-start justify-between">
+          <span class="text-destructive text-sm font-medium">Rejections</span>
+          <ng-icon name="lucideXCircle" class="text-destructive size-5" />
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-destructive text-3xl font-bold">{{ rejectedCount() }}</span>
+          <span class="text-destructive/80 text-sm font-medium ml-1">({{ rejectionRate() }}%)</span>
+        </div>
+      </div>
+
+      <!-- Ghosting Count -->
+      <div
+        hlmCard
+        class="border-border-subtle bg-surface-container-lowest relative overflow-hidden rounded-xl border p-6 shadow-sm"
+      >
+        <div class="bg-on-surface-variant absolute top-0 bottom-0 left-0 w-1"></div>
+        <div class="flex items-start justify-between">
+          <span class="text-on-surface-variant text-sm font-medium">Ghosting (30+ days)</span>
+          <ng-icon name="lucideHourglass" class="text-on-surface-variant/80 size-5" />
+        </div>
+        <div class="mt-4 flex items-baseline gap-2">
+          <span class="text-on-surface text-3xl font-bold">{{ ghostedCount() }}</span>
+          <span class="text-on-surface-variant/80 text-sm font-medium ml-1">({{ ghostingRate() }}%)</span>
         </div>
       </div>
     </div>

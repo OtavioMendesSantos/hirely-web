@@ -15,6 +15,8 @@ import {
   lucideAward,
   lucideAlertTriangle,
   lucideCalendar,
+  lucideXCircle,
+  lucideHourglass,
 } from '@ng-icons/lucide';
 
 import {
@@ -63,6 +65,8 @@ export type ChartOptions = {
       lucideAward,
       lucideAlertTriangle,
       lucideCalendar,
+      lucideXCircle,
+      lucideHourglass,
     }),
   ],
   templateUrl: './metrics.html',
@@ -116,8 +120,24 @@ export class Metrics implements OnInit {
 
   totalApplications = computed(() => this.stats()?.total_applications || 0);
   
+  interviewCount = computed(() => this.stats()?.kpis?.interviews?.count || 0);
+  
   conversionRate = computed(() => {
-    const rate = this.stats()?.conversion_rate_interview || 0;
+    const rate = this.stats()?.kpis?.interviews?.rate || 0;
+    return (rate * 100).toFixed(1);
+  });
+
+  rejectionRate = computed(() => {
+    const rate = this.stats()?.kpis?.rejections?.rate || 0;
+    return (rate * 100).toFixed(1);
+  });
+
+  rejectedCount = computed(() => this.stats()?.kpis?.rejections?.count || 0);
+  
+  ghostedCount = computed(() => this.stats()?.kpis?.ghosting?.count || 0);
+
+  ghostingRate = computed(() => {
+    const rate = this.stats()?.kpis?.ghosting?.rate || 0;
     return (rate * 100).toFixed(1);
   });
 
