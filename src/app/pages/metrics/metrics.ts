@@ -6,6 +6,7 @@ import { ApplicationService } from '../../core/services/application';
 import { HlmDatePickerImports } from '@spartan-ng/helm/date-picker';
 import { HlmEmptyImports } from '@spartan-ng/helm/empty';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {
@@ -52,6 +53,7 @@ export interface ChartOptions {
     ...HlmCardImports,
     ...HlmDatePickerImports,
     ...HlmEmptyImports,
+    ...HlmSkeletonImports,
     ...HlmButtonImports,
     NgIcon,
     NgApexchartsModule
