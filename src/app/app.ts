@@ -7,7 +7,10 @@ import { ThemeService } from './core/services/theme';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, ...HlmToasterImports],
-  templateUrl: './app.html',
+  template: `
+    <router-outlet></router-outlet>
+    <hlm-toaster></hlm-toaster>
+  `,
   standalone: true,
 })
 export class App {

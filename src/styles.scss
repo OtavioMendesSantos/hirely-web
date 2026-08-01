@@ -200,13 +200,13 @@
   }
 }
 
-hlm-toaster {
-  position: relative;
-  z-index: 99999 !important;
+.cdk-overlay-container {
+  z-index: 50 !important;
 }
 
+hlm-toaster,
 brn-sonner-toaster,
 ngx-sonner-toaster,
 [data-sonner-toaster] {
-  z-index: 99999 !important;
+  z-index: 100 !important;
 }

@@ -157,7 +157,7 @@
     class="border-l-primary bg-surface-container-lowest border border-l-4 p-6 shadow-sm sm:p-7"
   >
     <div class="flex flex-col justify-between gap-6 md:flex-row md:items-start">
-      <div class="flex items-start gap-4 sm:gap-5">
+      <div class="flex items-start gap-4 sm:gap-5 min-w-0">
         <div
           class="bg-primary/10 border-primary/20 text-primary flex size-14 shrink-0 items-center justify-center rounded-2xl border shadow-xs sm:size-16"
         >
@@ -165,14 +165,14 @@
         </div>
 
         <div class="flex min-w-0 flex-col gap-1.5">
-          <h1 class="font-heading text-on-surface text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 class="font-heading text-on-surface text-2xl font-bold tracking-tight sm:text-3xl truncate">
             {{ app.jobTitle }}
           </h1>
 
           <div
-            class="text-on-surface-variant flex flex-wrap items-center gap-2 text-sm font-semibold"
+            class="text-on-surface-variant flex flex-wrap items-center gap-2 text-sm font-semibold min-w-0"
           >
-            <span>{{ app.companyName }}</span>
+            <span class="truncate max-w-[250px] sm:max-w-md">{{ app.companyName }}</span>
             @if (app.location) {
             <span class="text-border-subtle">•</span>
             <span class="flex items-center gap-1">
@@ -267,10 +267,10 @@
   </div>
 
   <div class="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start">
-    <div class="contents lg:col-span-1 lg:flex lg:flex-col lg:gap-6">
+    <div class="contents lg:col-span-1 lg:flex lg:flex-col lg:gap-6 lg:sticky lg:top-18">
       <div
         hlmCard
-        class="order-1 lg:order-none bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
       >
         <h2
           class="font-heading border-border-subtle/60 text-on-surface border-b pb-3 text-lg font-bold"
@@ -346,10 +346,86 @@
           }
         </div>
       </div>
+    </div>
 
+    <div class="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
       <div
         hlmCard
-        class="order-3 lg:order-none bg-surface-container-lowest border-border-subtle flex flex-col gap-6 rounded-2xl border p-5 shadow-sm sm:p-6"
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
+      >
+        <h2
+          class="font-heading border-border-subtle/60 text-on-surface border-b pb-3 text-lg font-bold"
+        >
+          Notes & Description
+        </h2>
+
+        <div class="flex flex-col gap-4">
+          @if (app.notes) {
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Notes
+            </span>
+            <p
+              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
+            >
+              @if (app.notes.length > 1000) {
+                @if (!showFullNotes()) {
+                  {{ app.notes | slice:0:1000 }}...
+                } @else {
+                  {{ app.notes | slice:0:1000 }}<span class="animate-in fade-in duration-500">{{ app.notes | slice:1000 }}</span>
+                }
+              } @else {
+                {{ app.notes }}
+              }
+            </p>
+            @if (app.notes.length > 1000) {
+            <button
+              type="button"
+              (click)="showFullNotes.set(!showFullNotes())"
+              class="text-primary hover:underline self-start text-xs font-semibold cursor-pointer"
+            >
+              {{ showFullNotes() ? 'Show less' : 'Read more' }}
+            </button>
+            }
+          </div>
+          } @if (app.jobDescription) {
+          <div class="flex flex-col gap-1">
+            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
+              Job Description
+            </span>
+            <p
+              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
+            >
+              @if (app.jobDescription.length > 800) {
+                @if (!showFullJobDescription()) {
+                  {{ app.jobDescription | slice:0:800 }}...
+                } @else {
+                  {{ app.jobDescription | slice:0:800 }}<span class="animate-in fade-in duration-500">{{ app.jobDescription | slice:800 }}</span>
+                }
+              } @else {
+                {{ app.jobDescription }}
+              }
+            </p>
+            @if (app.jobDescription.length > 800) {
+            <button
+              type="button"
+              (click)="showFullJobDescription.set(!showFullJobDescription())"
+              class="text-primary hover:underline self-start text-xs font-semibold cursor-pointer"
+            >
+              {{ showFullJobDescription() ? 'Show less' : 'Read more' }}
+            </button>
+            }
+          </div>
+          } @if (!app.notes && !app.jobDescription) {
+          <p class="text-on-surface-variant/60 py-4 text-center text-xs italic">
+            No notes or job description added yet.
+          </p>
+          }
+        </div>
+      </div>
+      <div
+        hlmCard
+        class="bg-surface-container-lowest border-border-subtle flex flex-col gap-6 rounded-2xl border p-5 shadow-sm sm:p-6"
       >
         <div
           class="border-border-subtle/60 flex flex-col justify-between gap-4 border-b pb-4 sm:flex-row sm:items-center"
@@ -455,83 +531,6 @@
             </div>
             }
           </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
-      <div
-        hlmCard
-        class="order-2 lg:order-none bg-surface-container-lowest border-border-subtle flex flex-col gap-4 rounded-2xl border p-5 shadow-sm sm:p-6"
-      >
-        <h2
-          class="font-heading border-border-subtle/60 text-on-surface border-b pb-3 text-lg font-bold"
-        >
-          Notes & Description
-        </h2>
-
-        <div class="flex flex-col gap-4">
-          @if (app.notes) {
-          <div class="flex flex-col gap-1">
-            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
-              Notes
-            </span>
-            <p
-              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
-            >
-              @if (app.notes.length > 1000) {
-                @if (!showFullNotes()) {
-                  {{ app.notes | slice:0:1000 }}...
-                } @else {
-                  {{ app.notes | slice:0:1000 }}<span class="animate-in fade-in duration-500">{{ app.notes | slice:1000 }}</span>
-                }
-              } @else {
-                {{ app.notes }}
-              }
-            </p>
-            @if (app.notes.length > 1000) {
-            <button
-              type="button"
-              (click)="showFullNotes.set(!showFullNotes())"
-              class="text-primary hover:underline self-start text-xs font-semibold cursor-pointer"
-            >
-              {{ showFullNotes() ? 'Show less' : 'Read more' }}
-            </button>
-            }
-          </div>
-          } @if (app.jobDescription) {
-          <div class="flex flex-col gap-1">
-            <span class="text-on-surface-variant/70 text-xs font-semibold tracking-wide uppercase">
-              Job Description
-            </span>
-            <p
-              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap"
-            >
-              @if (app.jobDescription.length > 800) {
-                @if (!showFullJobDescription()) {
-                  {{ app.jobDescription | slice:0:800 }}...
-                } @else {
-                  {{ app.jobDescription | slice:0:800 }}<span class="animate-in fade-in duration-500">{{ app.jobDescription | slice:800 }}</span>
-                }
-              } @else {
-                {{ app.jobDescription }}
-              }
-            </p>
-            @if (app.jobDescription.length > 800) {
-            <button
-              type="button"
-              (click)="showFullJobDescription.set(!showFullJobDescription())"
-              class="text-primary hover:underline self-start text-xs font-semibold cursor-pointer"
-            >
-              {{ showFullJobDescription() ? 'Show less' : 'Read more' }}
-            </button>
-            }
-          </div>
-          } @if (!app.notes && !app.jobDescription) {
-          <p class="text-on-surface-variant/60 py-4 text-center text-xs italic">
-            No notes or job description added yet.
-          </p>
           }
         </div>
       </div>
