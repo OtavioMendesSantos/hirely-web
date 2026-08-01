@@ -128,5 +128,19 @@
 </div>
 
 <hlm-dialog-footer>
-  <button hlmBtn variant="outline" type="button" (click)="close()" hlmDialogClose>Close</button>
+  <button hlmBtn variant="outline" type="button" (click)="close(true)">Close</button>
 </hlm-dialog-footer>
+
+<hlm-alert-dialog>
+  <button #confirmTrigger hlmAlertDialogTrigger class="hidden"></button>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Are you sure you want to leave?</h2>
+      <p hlmAlertDialogDescription>Unsaved changes may be lost.</p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="ctx.close(); forceClose()">Confirm</button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

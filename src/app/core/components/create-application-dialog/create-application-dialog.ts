@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -23,6 +23,7 @@ import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { ApplicationService } from '../../services/application';
 import { TagService } from '../../services/tag';
 import {
@@ -47,6 +48,7 @@ import {
     ...HlmFieldImports,
     ...HlmSpinnerImports,
     ...HlmBadgeImports,
+    ...HlmAlertDialogImports,
     NgIcon,
   ],
   providers: [
@@ -102,6 +104,17 @@ export class CreateApplicationDialogComponent implements OnInit {
 
   ngOnInit() {
     this.tagService.loadTags()?.subscribe();
+    const cdkRef = (this.dialogRef as any)._cdkDialogRef;
+    if (cdkRef) {
+      if (cdkRef.backdropClick) {
+        cdkRef.backdropClick.subscribe(() => this.closeDialog(false));
+      }
+      if (cdkRef.keydownEvents) {
+        cdkRef.keydownEvents.subscribe((e: KeyboardEvent) => {
+          if (e.key === 'Escape') this.closeDialog(false);
+        });
+      }
+    }
     const app = this._dialogContext?.application;
     const initialStatus = this._dialogContext?.initialStatus;
     if (app && app.id) {
@@ -160,8 +173,27 @@ export class CreateApplicationDialogComponent implements OnInit {
     });
   }
 
-  closeDialog() {
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.form.dirty || this.isCreatingTag()) {
+      event.preventDefault();
+      event.returnValue = 'Are you sure you want to leave? Unsaved changes may be lost.';
+      return event.returnValue;
+    }
+  }
+
+  @ViewChild('confirmTrigger') confirmTrigger!: ElementRef<HTMLButtonElement>;
+
+  forceClose() {
     this.dialogRef.close();
+  }
+
+  closeDialog(force: boolean = false) {
+    if (!force && (this.form.dirty || this.isCreatingTag())) {
+      this.confirmTrigger?.nativeElement?.click();
+      return;
+    }
+    this.forceClose();
   }
 
   onSubmit() {

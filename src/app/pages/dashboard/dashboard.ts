@@ -317,6 +317,7 @@ export class Dashboard implements OnInit {
 
   openTagManagementModal() {
     this.dialogService.open(TagManagementModal, {
+      disableClose: true,
       contentClass:
         'sm:max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden bg-surface-container-lowest border border-border-subtle shadow-2xl rounded-2xl',
     });
@@ -324,6 +325,7 @@ export class Dashboard implements OnInit {
 
   openCreateModal(initialStatus?: ApplicationStatus) {
     this.dialogService.open(CreateApplicationDialogComponent, {
+      disableClose: true,
       contentClass:
         'sm:max-w-xl max-h-[90vh] flex flex-col overflow-hidden bg-surface-container-lowest border border-border-subtle shadow-2xl rounded-2xl',
       context: initialStatus ? { initialStatus } : undefined,
@@ -336,6 +338,7 @@ export class Dashboard implements OnInit {
       event.preventDefault();
     }
     this.dialogService.open(CreateApplicationDialogComponent, {
+      disableClose: true,
       contentClass:
         'sm:max-w-xl max-h-[90vh] flex flex-col overflow-hidden bg-surface-container-lowest border border-border-subtle shadow-2xl rounded-2xl',
       context: { application },

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -45,6 +45,17 @@ export class TagManagementModal implements OnInit {
 
   ngOnInit() {
     this.tagService.loadTags()?.subscribe();
+    const cdkRef = (this.dialogRef as any)._cdkDialogRef;
+    if (cdkRef) {
+      if (cdkRef.backdropClick) {
+        cdkRef.backdropClick.subscribe(() => this.close(false));
+      }
+      if (cdkRef.keydownEvents) {
+        cdkRef.keydownEvents.subscribe((e: KeyboardEvent) => {
+          if (e.key === 'Escape') this.close(false);
+        });
+      }
+    }
   }
 
   saveTag() {
@@ -96,8 +107,27 @@ export class TagManagementModal implements OnInit {
     this.newTagColor.set('#EF4444');
   }
 
-  close() {
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.newTagName().trim() !== '' || this.editingTag()) {
+      event.preventDefault();
+      event.returnValue = 'Are you sure you want to leave? Unsaved changes may be lost.';
+      return event.returnValue;
+    }
+  }
+
+  @ViewChild('confirmTrigger') confirmTrigger!: ElementRef<HTMLButtonElement>;
+
+  forceClose() {
     this.dialogRef.close();
+  }
+
+  close(force: boolean = false) {
+    if (!force && (this.newTagName().trim() !== '' || this.editingTag())) {
+      this.confirmTrigger?.nativeElement?.click();
+      return;
+    }
+    this.forceClose();
   }
 
   deleteTag(id: string) {

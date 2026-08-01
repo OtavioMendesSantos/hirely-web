@@ -31,7 +31,7 @@ import {
   ApexNonAxisChartSeries
 } from 'ng-apexcharts';
 
-export type ChartOptions = {
+export interface ChartOptions {
   series: ApexAxisChartSeries | ApexNonAxisChartSeries | any;
   chart: ApexChart | any;
   xaxis?: ApexXAxis | any;
