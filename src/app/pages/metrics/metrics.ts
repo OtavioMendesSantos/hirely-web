@@ -34,14 +34,14 @@ import { ApplicationService } from '../../core/services/application';
 export interface ChartOptions {
   series: ApexAxisChartSeries | ApexNonAxisChartSeries;
   chart: ApexChart;
-  xaxis?: ApexXAxis;
-  yaxis?: ApexYAxis;
-  dataLabels?: ApexDataLabels;
-  plotOptions?: ApexPlotOptions;
-  colors?: string[];
-  labels?: string[];
-  legend?: ApexLegend;
-  tooltip?: ApexTooltip;
+  xaxis?: ApexXAxis | any;
+  yaxis?: ApexYAxis | any;
+  dataLabels?: ApexDataLabels | any;
+  plotOptions?: ApexPlotOptions | any;
+  colors?: string[] | any;
+  labels?: string[] | any;
+  legend?: ApexLegend | any;
+  tooltip?: ApexTooltip | any;
 }
 
 @Component({
