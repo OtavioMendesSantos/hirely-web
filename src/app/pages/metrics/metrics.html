@@ -53,13 +53,14 @@
 
       <!-- Skeleton Charts -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        @for (i of [1, 2]; track i) {
+        @for (i of [1, 2, 3]; track i) {
         <div
           hlmCard
-          class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm flex flex-col"
+          class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
+          [class.lg:col-span-2]="i === 1"
         >
-          <hlm-skeleton class="h-6 w-48 mb-4 rounded" />
-          <hlm-skeleton class="w-full h-[350px] rounded-xl" />
+          <hlm-skeleton class="mb-4 h-6 w-48 rounded" />
+          <hlm-skeleton class="h-[350px] w-full rounded-xl" />
         </div>
         }
       </div>
@@ -105,7 +106,7 @@
         </div>
         <div class="mt-4 flex items-baseline gap-2">
           <span class="text-primary text-3xl font-bold">{{ interviewCount() }}</span>
-          <span class="text-primary/80 text-sm font-medium ml-1">({{ conversionRate() }}%)</span>
+          <span class="text-primary/80 ml-1 text-sm font-medium">({{ conversionRate() }}%)</span>
         </div>
       </div>
 
@@ -121,7 +122,7 @@
         </div>
         <div class="mt-4 flex items-baseline gap-2">
           <span class="text-destructive text-3xl font-bold">{{ rejectedCount() }}</span>
-          <span class="text-destructive/80 text-sm font-medium ml-1">({{ rejectionRate() }}%)</span>
+          <span class="text-destructive/80 ml-1 text-sm font-medium">({{ rejectionRate() }}%)</span>
         </div>
       </div>
 
@@ -137,7 +138,9 @@
         </div>
         <div class="mt-4 flex items-baseline gap-2">
           <span class="text-on-surface text-3xl font-bold">{{ ghostedCount() }}</span>
-          <span class="text-on-surface-variant/80 text-sm font-medium ml-1">({{ ghostingRate() }}%)</span>
+          <span class="text-on-surface-variant/80 ml-1 text-sm font-medium"
+            >({{ ghostingRate() }}%)</span
+          >
         </div>
       </div>
     </div>
@@ -147,24 +150,56 @@
       <!-- Funnel Chart -->
       <div
         hlmCard
-        class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm flex flex-col"
+        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm lg:col-span-2"
       >
         <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Applications by Status</h4>
-        <div class="flex-1 w-full h-[350px]">
+        <div class="h-[350px] w-full flex-1">
           @if (funnelChartOptions()) {
-            <apx-chart
-              [series]="funnelChartOptions()!.series"
-              [chart]="funnelChartOptions()!.chart"
-              [plotOptions]="funnelChartOptions()!.plotOptions"
-              [dataLabels]="funnelChartOptions()!.dataLabels"
-              [xaxis]="funnelChartOptions()!.xaxis"
-              [yaxis]="funnelChartOptions()!.yaxis"
-              [colors]="funnelChartOptions()!.colors"
-              [tooltip]="funnelChartOptions()!.tooltip"
-              class="w-full h-full"
-            ></apx-chart>
+          <apx-chart
+            [series]="funnelChartOptions()!.series"
+            [chart]="funnelChartOptions()!.chart"
+            [plotOptions]="funnelChartOptions()!.plotOptions"
+            [dataLabels]="funnelChartOptions()!.dataLabels"
+            [xaxis]="funnelChartOptions()!.xaxis"
+            [yaxis]="funnelChartOptions()!.yaxis"
+            [colors]="funnelChartOptions()!.colors"
+            [tooltip]="funnelChartOptions()!.tooltip"
+            class="h-full w-full"
+          ></apx-chart>
           } @else {
-            <div class="flex h-full items-center justify-center text-on-surface-variant">No data available</div>
+          <div class="text-on-surface-variant flex h-full items-center justify-center">
+            No data available
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Top Job Titles Chart -->
+      <div
+        hlmCard
+        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
+      >
+        <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Job Titles</h4>
+        <div class="h-[350px] w-full flex-1">
+          @if (jobTitlesChartOptions()) {
+          <apx-chart
+            [series]="jobTitlesChartOptions()!.series"
+            [chart]="jobTitlesChartOptions()!.chart"
+            [plotOptions]="jobTitlesChartOptions()!.plotOptions"
+            [dataLabels]="jobTitlesChartOptions()!.dataLabels"
+            [xaxis]="jobTitlesChartOptions()!.xaxis"
+            [yaxis]="jobTitlesChartOptions()!.yaxis"
+            [colors]="jobTitlesChartOptions()!.colors"
+            [tooltip]="jobTitlesChartOptions()!.tooltip"
+            class="h-full w-full"
+          ></apx-chart>
+          } @else {
+          <div
+            class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+          >
+            <ng-icon name="lucideAlertTriangle" size="xl" />
+            <span>No job titles found in this time range.</span>
+          </div>
           }
         </div>
       </div>
@@ -172,26 +207,28 @@
       <!-- Top Tags Chart -->
       <div
         hlmCard
-        class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm flex flex-col"
+        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
       >
         <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Performing Tags</h4>
-        <div class="flex-1 w-full h-[350px]">
+        <div class="h-[350px] w-full flex-1">
           @if (tagsChartOptions()) {
-            <apx-chart
-              [series]="tagsChartOptions()!.series"
-              [chart]="tagsChartOptions()!.chart"
-              [labels]="tagsChartOptions()!.labels"
-              [dataLabels]="tagsChartOptions()!.dataLabels"
-              [legend]="tagsChartOptions()!.legend"
-              [colors]="tagsChartOptions()!.colors"
-              [tooltip]="tagsChartOptions()!.tooltip"
-              class="w-full h-full"
-            ></apx-chart>
+          <apx-chart
+            [series]="tagsChartOptions()!.series"
+            [chart]="tagsChartOptions()!.chart"
+            [labels]="tagsChartOptions()!.labels"
+            [dataLabels]="tagsChartOptions()!.dataLabels"
+            [legend]="tagsChartOptions()!.legend"
+            [colors]="tagsChartOptions()!.colors"
+            [tooltip]="tagsChartOptions()!.tooltip"
+            class="h-full w-full"
+          ></apx-chart>
           } @else {
-            <div class="flex h-full flex-col items-center justify-center text-on-surface-variant gap-2">
-              <ng-icon name="lucideAlertTriangle" size="xl" />
-              <span>No tags found in this time range.</span>
-            </div>
+          <div
+            class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+          >
+            <ng-icon name="lucideAlertTriangle" size="xl" />
+            <span>No tags found in this time range.</span>
+          </div>
           }
         </div>
       </div>

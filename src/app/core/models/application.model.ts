@@ -94,6 +94,7 @@ export interface ApplicationStatsResponse {
   funnel_by_status: Record<ApplicationStatus, number>;
   kpis: KPIs;
   top_tags?: { tag_name: string; count: number }[];
+  top_job_titles?: { job_title: string; count: number }[];
 }
 
 export type GroupedApplications = Record<ApplicationStatus, Application[]>;
