@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideBriefcase,
-      lucideBriefcaseBusiness,
+  lucideBriefcaseBusiness,
   lucideBuilding,
   lucideMapPin,
   lucideDollarSign,
@@ -20,6 +20,7 @@ import {
   lucideRefreshCw,
   lucideCheckCircle,
   lucideLoader2,
+  lucideCopy,
 } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmCardImports } from '@spartan-ng/helm/card';
@@ -66,6 +67,7 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
       lucideRefreshCw,
       lucideCheckCircle,
       lucideLoader2,
+      lucideCopy,
     }),
   ],
   templateUrl: './application-detail-content.html',
@@ -98,6 +100,16 @@ export class ApplicationDetailContentComponent implements OnInit {
   showAllEvents = signal<boolean>(false);
   showFullNotes = signal<boolean>(false);
   showFullJobDescription = signal<boolean>(false);
+
+  isLongNotes = computed(() => {
+    const text = this.application()?.notes || '';
+    return text.length > 1000 || text.split('\n').length > 15;
+  });
+
+  isLongJobDescription = computed(() => {
+    const text = this.application()?.jobDescription || '';
+    return text.length > 800 || text.split('\n').length > 15;
+  });
 
   sortedEvents = computed(() => {
     const events = this.application()?.events;
@@ -144,7 +156,10 @@ export class ApplicationDetailContentComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        const msg = err.error?.error?.message || err.error?.message || 'Failed to load job application details.';
+        const msg =
+          err.error?.error?.message ||
+          err.error?.message ||
+          'Failed to load job application details.';
         this.errorMessage.set(msg);
         toast.error(msg);
       },
@@ -243,5 +258,17 @@ export class ApplicationDetailContentComponent implements OnInit {
     if (event.previousStatus && event.newStatus) return 'Stage Changed';
     if (event.description.toLowerCase().includes('created')) return 'Application Submitted';
     return 'System Event';
+  }
+
+  copyToClipboard(text: string, label: string) {
+    if (!text) return;
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success(`${label} copied to clipboard`);
+      })
+      .catch(() => {
+        toast.error('Failed to copy');
+      });
   }
 }

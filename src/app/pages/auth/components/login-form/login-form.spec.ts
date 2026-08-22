@@ -107,7 +107,7 @@ describe('LoginFormComponent', () => {
       component.email = 'test@example.com';
       component.password = 'secret';
 
-      await component.onLogin();
+      await component.onLogin({ invalid: false } as any);
 
       expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'secret', true);
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
@@ -124,7 +124,7 @@ describe('LoginFormComponent', () => {
       component.password = 'secret';
       component.rememberMe = false;
 
-      await component.onLogin();
+      await component.onLogin({ invalid: false } as any);
 
       expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'secret', false);
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
@@ -146,7 +146,7 @@ describe('LoginFormComponent', () => {
       component.email = 'test@example.com';
       component.password = 'wrong';
 
-      await component.onLogin();
+      await component.onLogin({ invalid: false } as any);
 
       expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrong', true);
       expect(toast.error).toHaveBeenCalledWith('Invalid email or password', { duration: 3000 });
@@ -156,7 +156,7 @@ describe('LoginFormComponent', () => {
       const mockError = { error: null, message: 'Network error' };
       authServiceMock.login.mockReturnValue(throwError(() => mockError));
 
-      await component.onLogin();
+      await component.onLogin({ invalid: false } as any);
 
       expect(toast.error).toHaveBeenCalledWith('Network error', { duration: 3000 });
     });

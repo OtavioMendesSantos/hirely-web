@@ -60,8 +60,8 @@ describe('TagColorPickerComponent', () => {
       component.onCustomHexChange('#abc');
 
       expect(component.hexError()).toBe(false);
-      expect(component.currentColor()).toBe('#AABBCC');
-      expect(component.valueChange.emit).toHaveBeenCalledWith('#AABBCC');
+      expect(component.currentColor()).toBe('#aabbcc');
+      expect(component.valueChange.emit).toHaveBeenCalledWith('#aabbcc');
     });
 
     it('should not update current color or emit when invalid hex is entered', () => {

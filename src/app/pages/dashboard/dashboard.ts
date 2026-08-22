@@ -41,6 +41,7 @@ import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { AuthService } from '../../core/services/auth';
 import { ApplicationService } from '../../core/services/application';
+import { TagService } from '../../core/services/tag';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { CreateApplicationDialogComponent } from '../../core/components/create-application-dialog/create-application-dialog';
 import { TagManagementModal } from '../../core/components/tag-management-modal/tag-management-modal';
@@ -55,7 +56,6 @@ export interface KanbanColumn {
   status: ApplicationStatus;
   title: string;
   badgeCount: number;
-  highlight?: boolean;
   badgeClass: string;
 }
 
@@ -111,6 +111,7 @@ export class Dashboard implements OnInit {
   private router = inject(Router);
   private dialogService = inject(HlmDialogService);
   applicationService = inject(ApplicationService);
+  tagService = inject(TagService);
 
   currentUser = this.authService.currentUser;
 
@@ -118,6 +119,7 @@ export class Dashboard implements OnInit {
   private searchSubject = new Subject<string>();
 
   readonly selectedStatuses = signal<ApplicationStatus[]>([]);
+  readonly selectedTags = signal<string[]>([]);
   readonly sortBy = signal<string>('created_at');
   readonly sortOrder = signal<'asc' | 'desc'>('desc');
   readonly allStatusOptions: { value: ApplicationStatus; label: string }[] = [
@@ -144,7 +146,6 @@ export class Dashboard implements OnInit {
     const baseColumns: {
       status: ApplicationStatus;
       title: string;
-      highlight?: boolean;
       badgeClass: string;
     }[] = [
       {
@@ -160,7 +161,6 @@ export class Dashboard implements OnInit {
       {
         status: 'INTERVIEW',
         title: 'INTERVIEWING',
-        highlight: true,
         badgeClass: 'bg-destructive/10 text-destructive border-destructive/20',
       },
       {
@@ -204,6 +204,7 @@ export class Dashboard implements OnInit {
     effect(() => {
       if (this.currentUser()) {
         this.loadGrouped();
+        this.tagService.loadTags()?.subscribe();
       }
     });
 
@@ -232,17 +233,23 @@ export class Dashboard implements OnInit {
               this.allStatusOptions.some((o) => o.value === s)
             ) as ApplicationStatus[])
         : [];
+
+      const rawTags = params['tag_ids'];
+      const newTags = rawTags ? rawTags.split(',') : [];
+
       const newSort = params['sort'] || params['order_by'] || 'created_at';
       const newOrder = params['order'] === 'asc' ? 'asc' : 'desc';
       const newSearch = params['search'] || '';
 
       const statusChanged = JSON.stringify(newStatuses) !== JSON.stringify(this.selectedStatuses());
+      const tagsChanged = JSON.stringify(newTags) !== JSON.stringify(this.selectedTags());
       const sortChanged = newSort !== this.sortBy();
       const orderChanged = newOrder !== this.sortOrder();
       const searchChanged = newSearch !== this.searchQuery();
 
-      if (statusChanged || sortChanged || orderChanged || searchChanged) {
+      if (statusChanged || tagsChanged || sortChanged || orderChanged || searchChanged) {
         this.selectedStatuses.set(newStatuses);
+        this.selectedTags.set(newTags);
         this.sortBy.set(newSort);
         this.sortOrder.set(newOrder);
         this.searchQuery.set(newSearch);
@@ -263,6 +270,10 @@ export class Dashboard implements OnInit {
     if (statuses.length > 0) {
       params.status = statuses.join(',');
     }
+    const tags = this.selectedTags();
+    if (tags.length > 0) {
+      params.tag_ids = tags;
+    }
     if (this.sortBy()) params.order_by = this.sortBy();
     if (this.sortOrder()) params.order = this.sortOrder();
     if (this.searchQuery()) params.search = this.searchQuery();
@@ -278,8 +289,20 @@ export class Dashboard implements OnInit {
     this.updateQueryParams({ status: newStatuses.length > 0 ? newStatuses.join(',') : null });
   }
 
+  toggleTagFilter(tagId: string) {
+    const current = this.selectedTags();
+    const newTags = current.includes(tagId)
+      ? current.filter((t) => t !== tagId)
+      : [...current, tagId];
+    this.updateQueryParams({ tag_ids: newTags.length > 0 ? newTags.join(',') : null });
+  }
+
   clearStatusFilter() {
     this.updateQueryParams({ status: null });
+  }
+
+  clearTagFilter() {
+    this.updateQueryParams({ tag_ids: null });
   }
 
   onSortByChange(by: string) {
@@ -291,6 +314,12 @@ export class Dashboard implements OnInit {
     this.updateQueryParams({ order: newOrder !== 'desc' ? newOrder : null });
   }
 
+  readonly activeTagCount = computed(() => {
+    const selected = this.selectedTags();
+    const available = this.tagService.tags();
+    return selected.filter((id) => available.some((t) => t.id === id)).length;
+  });
+
   resetAllFilters() {
     this.searchQuery.set('');
     this.updateQueryParams({
@@ -299,6 +328,7 @@ export class Dashboard implements OnInit {
       order_by: null,
       order: null,
       search: null,
+      tag_ids: null,
     });
   }
 

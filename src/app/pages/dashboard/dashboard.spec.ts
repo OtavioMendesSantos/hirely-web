@@ -50,7 +50,10 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
-        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
+        {
+          provide: TagService,
+          useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })), tags: signal([]) },
+        },
       ],
     }).compileComponents();
 
@@ -99,7 +102,10 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
-        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
+        {
+          provide: TagService,
+          useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })), tags: signal([]) },
+        },
       ],
     }).compileComponents();
 
@@ -151,7 +157,10 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
-        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
+        {
+          provide: TagService,
+          useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })), tags: signal([]) },
+        },
       ],
     }).compileComponents();
 
@@ -209,7 +218,10 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: ApplicationService, useValue: appServiceMock },
-        { provide: TagService, useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })) } },
+        {
+          provide: TagService,
+          useValue: { loadTags: vi.fn().mockReturnValue(of({ tags: [] })), tags: signal([]) },
+        },
       ],
     }).compileComponents();
 

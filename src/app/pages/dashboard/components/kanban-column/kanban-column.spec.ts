@@ -60,7 +60,9 @@ describe('KanbanColumnComponent', () => {
   it('should emit addApplication when add button is clicked', () => {
     const addSpy = vi.spyOn(component.addApplication, 'emit');
     const compiled = fixture.nativeElement as HTMLElement;
-    const addButton = compiled.querySelector('button') as HTMLButtonElement;
+    const addButton = Array.from(compiled.querySelectorAll('button')).find((btn) =>
+      btn.textContent?.includes('Add Card')
+    ) as HTMLButtonElement;
     addButton.click();
     expect(addSpy).toHaveBeenCalledWith('APPLIED');
   });

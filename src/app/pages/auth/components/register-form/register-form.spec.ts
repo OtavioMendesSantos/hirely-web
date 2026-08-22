@@ -106,7 +106,7 @@ describe('RegisterFormComponent', () => {
       component.email = 'new@example.com';
       component.password = 'secret';
 
-      await component.onRegister();
+      await component.onRegister({ invalid: false } as any);
 
       expect(authServiceMock.register).toHaveBeenCalledWith(
         'New User',
@@ -134,7 +134,7 @@ describe('RegisterFormComponent', () => {
       component.email = 'new@example.com';
       component.password = 'secret';
 
-      await component.onRegister();
+      await component.onRegister({ invalid: false } as any);
 
       expect(authServiceMock.register).toHaveBeenCalledWith(
         'New User',
@@ -149,7 +149,7 @@ describe('RegisterFormComponent', () => {
       const mockError = { error: null, message: 'Server unavailable' };
       authServiceMock.register.mockReturnValue(throwError(() => mockError));
 
-      await component.onRegister();
+      await component.onRegister({ invalid: false } as any);
 
       expect(toast.error).toHaveBeenCalledWith('Server unavailable', { duration: 3000 });
     });

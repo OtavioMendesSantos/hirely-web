@@ -29,3 +29,8 @@
     }
   }
 }
+
+:host:has(.cdk-drop-list-receiving) .empty-state-overlay,
+:host:has(.cdk-drop-list-dragging) .empty-state-overlay {
+  opacity: 0;
+}
