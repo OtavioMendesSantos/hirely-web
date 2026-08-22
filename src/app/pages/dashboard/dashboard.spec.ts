@@ -1,14 +1,14 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { signal } from '@angular/core';
 import { of } from 'rxjs';
-import { Dashboard } from './dashboard';
-import { AuthService } from '../../core/services/auth';
-import { ApplicationService } from '../../core/services/application';
-import { User } from '../../core/models/user.model';
-import { GroupedApplications } from '../../core/models/application.model';
-import { TagService } from '../../core/services/tag';
 import { vi } from 'vitest';
+import { GroupedApplications } from '../../core/models/application.model';
+import { User } from '../../core/models/user.model';
+import { ApplicationService } from '../../core/services/application';
+import { AuthService } from '../../core/services/auth';
+import { TagService } from '../../core/services/tag';
+import { Dashboard } from './dashboard';
 
 describe('Dashboard', () => {
   it('should create and display welcome with user name when user is logged in', async () => {
@@ -118,7 +118,7 @@ describe('Dashboard', () => {
     expect(component.currentUser()).toBeNull();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Welcome back, Recruiter!');
+    expect(compiled.querySelector('hlm-skeleton')).toBeTruthy();
   });
 
   it('should reorder applications within the same column on drop', async () => {

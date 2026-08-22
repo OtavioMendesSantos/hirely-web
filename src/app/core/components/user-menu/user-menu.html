@@ -17,12 +17,13 @@
       {{ userInitials() }}
     </div>
     <div class="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-      <span class="text-on-surface truncate font-semibold"
-        >{{ currentUser()?.name || 'Recruiter' }}</span
-      >
-      <span class="text-on-surface-variant/80 truncate text-xs"
-        >{{ currentUser()?.email || 'recruiter@hirely.com' }}</span
-      >
+      @if (currentUser()) {
+      <span class="text-on-surface truncate font-semibold">{{ currentUser()?.name }}</span>
+      <span class="text-on-surface-variant/80 truncate text-xs">{{ currentUser()?.email }}</span>
+      } @else {
+      <hlm-skeleton class="mb-1 h-3.5 w-24 rounded-md" />
+      <hlm-skeleton class="h-2.5 w-32 rounded-md" />
+      }
     </div>
     <ng-icon
       name="lucideChevronsUpDown"
@@ -47,7 +48,7 @@
     <span
       class="text-on-surface hidden max-w-[140px] truncate ps-1 pe-0.5 text-sm font-semibold sm:inline-block"
     >
-      {{ currentUser()?.name || 'Recruiter' }}
+      {{ currentUser()?.name }}
     </span>
     <ng-icon
       name="lucideChevronsUpDown"
@@ -64,9 +65,7 @@
     class="bg-surface-container-lowest border-border-subtle flex min-w-56 flex-col gap-1 rounded-xl border p-1.5 shadow-xl"
   >
     <div class="border-border-subtle/60 mb-0.5 border-b px-2 py-1.5">
-      <div class="text-on-surface truncate text-xs font-semibold">
-        {{ currentUser()?.name || 'Recruiter' }}
-      </div>
+      <div class="text-on-surface truncate text-xs font-semibold">{{ currentUser()?.name }}</div>
       <div class="text-on-surface-variant/80 truncate text-xs">
         {{ currentUser()?.email || 'recruiter@hirely.com' }}
       </div>
