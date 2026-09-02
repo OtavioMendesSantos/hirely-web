@@ -45,7 +45,12 @@ export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
   hostDirectives: [BrnFieldControl],
   host: { class: 'block' },
   template: `
-    <hlm-popover sideOffset="5" [state]="_popoverState()" (stateChanged)="_onStateChange($event)">
+    <hlm-popover
+      sideOffset="5"
+      [align]="align()"
+      [state]="_popoverState()"
+      (stateChanged)="_onStateChange($event)"
+    >
       <ng-content />
 
       <hlm-popover-content class="w-fit p-0" *hlmPopoverPortal="let ctx">
@@ -66,12 +71,17 @@ export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
     </hlm-popover>
   `,
 })
-export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, ControlValueAccessor {
+export class HlmDateRangePicker<T>
+  implements BrnDatePickerBase<[T | null, T | null]>, ControlValueAccessor
+{
   private readonly _config = injectHlmDateRangePickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
 
   private readonly _trigger = contentChild(BrnDatePickerTriggerToken);
+
+  /** Alignment of the popover relative to the trigger. */
+  public readonly align = input<'start' | 'center' | 'end'>('center');
 
   /** Show dropdowns to navigate between months or years. */
   public readonly captionLayout = input<
