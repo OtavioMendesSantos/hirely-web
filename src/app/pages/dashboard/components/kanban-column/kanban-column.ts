@@ -42,13 +42,13 @@ export class KanbanColumnComponent {
   readonly applicationDropped = output<CdkDragDrop<Application[]>>();
 
   readonly emptyStateDescriptions: Record<ApplicationStatus, string> = {
-    TO_APPLY: 'No target roles yet',
-    APPLIED: 'No applications waiting',
-    INTERVIEW: 'No active interviews',
-    OFFER: 'No offers yet. Keep going!',
-    ACCEPTED: 'No accepted offers yet',
-    REJECTED: 'No rejected applications',
-    OTHER: 'No other cards',
+    TO_APPLY: 'No saved roles',
+    APPLIED: 'No applications',
+    INTERVIEW: 'No interviews',
+    OFFER: 'No offers',
+    ACCEPTED: 'No accepted offers',
+    REJECTED: 'No rejections',
+    OTHER: 'No other applications',
   };
 
   trackByAppId(index: number, app: Application): string {
