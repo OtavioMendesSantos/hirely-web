@@ -101,7 +101,6 @@ export class CreateApplicationDialogComponent implements OnInit {
   newTagName = signal('');
   newTagColor = signal('#4f46e5');
 
-
   form = this.fb.group({
     company_name: ['', [Validators.required, Validators.maxLength(255)]],
     job_title: ['', [Validators.required, Validators.maxLength(255)]],

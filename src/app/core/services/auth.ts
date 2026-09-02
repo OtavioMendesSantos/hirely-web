@@ -69,7 +69,10 @@ export class AuthService {
 
   oauthLogin(code: string, redirectUri: string) {
     return this.http
-      .post<AuthResponse>(`${environment.apiUrl}/auth/google/login`, { code, redirect_uri: redirectUri })
+      .post<AuthResponse>(`${environment.apiUrl}/auth/google/login`, {
+        code,
+        redirect_uri: redirectUri,
+      })
       .pipe(
         tap((response) => {
           this.saveToken(response.token, true);

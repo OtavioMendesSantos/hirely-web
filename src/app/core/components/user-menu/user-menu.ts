@@ -2,12 +2,12 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideChevronsUpDown,
-    lucideLogOut,
-    lucideMonitor,
-    lucideMoon,
-    lucideSun,
-    lucideUser,
+  lucideChevronsUpDown,
+  lucideLogOut,
+  lucideMonitor,
+  lucideMoon,
+  lucideSun,
+  lucideUser,
 } from '@ng-icons/lucide';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';

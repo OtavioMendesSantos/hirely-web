@@ -9,7 +9,14 @@ import { MarkdownComponent } from 'ngx-markdown';
 @Component({
   selector: 'app-markdown-input',
   standalone: true,
-  imports: [FormsModule, HlmFieldImports, HlmInputImports, HlmTextarea, HlmTabsImports, MarkdownComponent],
+  imports: [
+    FormsModule,
+    HlmFieldImports,
+    HlmInputImports,
+    HlmTextarea,
+    HlmTabsImports,
+    MarkdownComponent,
+  ],
   templateUrl: './markdown-input.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -20,8 +27,8 @@ import { MarkdownComponent } from 'ngx-markdown';
     },
   ],
   host: {
-    class: 'block w-full'
-  }
+    class: 'block w-full',
+  },
 })
 export class MarkdownInputComponent implements ControlValueAccessor {
   public readonly id = input.required<string>();

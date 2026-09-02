@@ -3,7 +3,7 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css';
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
 /* You can add global styles to this file, and also import other style files */
 
@@ -206,12 +206,19 @@
     color: var(--color-on-surface-variant) !important;
   }
 
-  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
     font-family: 'Hanken Grotesk', sans-serif;
     color: var(--color-on-surface) !important;
   }
 
-  .prose strong, .prose b, .prose blockquote {
+  .prose strong,
+  .prose b,
+  .prose blockquote {
     color: var(--color-on-surface) !important;
   }
 
@@ -223,7 +230,8 @@
     color: var(--color-primary) !important;
   }
 
-  .prose ul li::marker, .prose ol li::marker {
+  .prose ul li::marker,
+  .prose ol li::marker {
     color: var(--color-primary) !important;
   }
 
@@ -268,12 +276,12 @@
   }
 
   /* Style markdown checkboxes */
-  .prose input[type="checkbox"] {
-    @apply rounded border-border text-primary focus:ring-primary h-4 w-4 mr-2 align-middle;
+  .prose input[type='checkbox'] {
+    @apply border-border text-primary focus:ring-primary mr-2 h-4 w-4 rounded align-middle;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
   }
-  .prose li:has(input[type="checkbox"]) {
+  .prose li:has(input[type='checkbox']) {
     list-style-type: none;
     padding-left: 0;
   }

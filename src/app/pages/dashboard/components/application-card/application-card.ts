@@ -62,20 +62,24 @@ export class ApplicationCardComponent {
     if (!referenceDateStr) return null;
 
     const referenceDate = new Date(referenceDateStr);
-    
+
     const now = new Date();
     const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-    const utcRef = Date.UTC(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+    const utcRef = Date.UTC(
+      referenceDate.getFullYear(),
+      referenceDate.getMonth(),
+      referenceDate.getDate()
+    );
 
     const diffDays = Math.floor((utcNow - utcRef) / (1000 * 60 * 60 * 24));
-    
+
     return diffDays >= 0 ? diffDays : 0;
   }
 
   get waitTimeTooltip(): string | null {
     const days = this.waitTimeDays;
     if (days === null) return null;
-    
+
     if (days >= 30) return '30 days without response';
     if (days === 0) return 'Today';
     if (days === 1) return '1 day ago';

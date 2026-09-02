@@ -77,7 +77,7 @@ export class LoginFormComponent {
         error: (err) => {
           this.isGoogleLoading.set(false);
           toast.error('Failed to get Google login URL', { duration: 3000 });
-        }
+        },
       });
     } else {
       this.inProgress.emit(provider + ' Login');

@@ -71,7 +71,7 @@ export interface ChartOptions {
       lucideCalendar,
       lucideXCircle,
       lucideHourglass,
-      lucideChevronDown
+      lucideChevronDown,
     }),
   ],
   templateUrl: './metrics.html',
@@ -116,7 +116,7 @@ export class Metrics implements OnInit {
   setPreset(preset: '7days' | '30days' | 'thisMonth' | 'lastMonth' | 'thisYear') {
     let today = new Date();
     let start = new Date();
-    
+
     switch (preset) {
       case '7days':
         start.setDate(today.getDate() - 7);
@@ -140,7 +140,7 @@ export class Metrics implements OnInit {
         this.selectedPreset.set('This Year');
         break;
     }
-    
+
     this.startDate.set(start);
     this.endDate.set(today);
   }
@@ -169,7 +169,7 @@ export class Metrics implements OnInit {
   rejectedCount = computed(() => this.stats()?.kpis?.rejections?.count || 0);
 
   directRejectionsCount = computed(() => this.stats()?.kpis?.direct_rejections?.count || 0);
-  
+
   advancedRejectionsCount = computed(() => this.stats()?.kpis?.advanced_rejections?.count || 0);
 
   ghostedCount = computed(() => this.stats()?.kpis?.ghosting?.count || 0);

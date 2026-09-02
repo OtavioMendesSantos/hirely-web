@@ -1,4 +1,12 @@
-import { Component, inject, signal, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  HostListener,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -73,13 +81,13 @@ export class TagManagementModal implements OnInit {
             error: (err) => {
               const msg = err.error?.error?.message || err.error?.message || 'Failed to update tag';
               toast.error(msg);
-            }
+            },
           });
         },
         error: (err) => {
           const msg = err.error?.error?.message || err.error?.message || 'Failed to delete old tag';
           toast.error(msg);
-        }
+        },
       });
     } else {
       this.tagService.createTag({ name, color_hex: this.newTagColor() })?.subscribe({
@@ -90,7 +98,7 @@ export class TagManagementModal implements OnInit {
         error: (err) => {
           const msg = err.error?.error?.message || err.error?.message || 'Failed to create tag';
           toast.error(msg);
-        }
+        },
       });
     }
   }
@@ -138,7 +146,7 @@ export class TagManagementModal implements OnInit {
       error: (err) => {
         const msg = err.error?.error?.message || err.error?.message || 'Failed to delete tag';
         toast.error(msg);
-      }
+      },
     });
   }
 }
