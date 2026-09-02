@@ -1,0 +1,37 @@
+<hlm-field class="gap-1.5 block">
+  <hlm-tabs [tab]="tab()" (tabActivated)="tab.set($event)" class="w-full">
+    <div class="flex items-center justify-between mb-2">
+      <label hlmFieldLabel [for]="id()" class="text-xs">
+        {{ label() }}
+      </label>
+      <hlm-tabs-list class="h-8 p-1" aria-label="Markdown tabs">
+        <button hlmTabsTrigger="write" class="text-xs px-2 py-1">Write</button>
+        <button hlmTabsTrigger="preview" class="text-xs px-2 py-1">Preview</button>
+      </hlm-tabs-list>
+    </div>
+    
+    <div hlmTabsContent="write">
+      <textarea
+        [id]="id()"
+        hlmTextarea
+        [rows]="rows()"
+        [ngModel]="value()"
+        (ngModelChange)="onInputChange($event)"
+        (blur)="onTouched()"
+        [placeholder]="placeholder()"
+        class="w-full"
+        [disabled]="disabled()"
+      ></textarea>
+    </div>
+    
+    <div hlmTabsContent="preview">
+      <div class="w-full p-3 bg-surface-muted/50 rounded-md border border-input overflow-y-auto" [style.minHeight.px]="minHeight()">
+        @if (value()) {
+          <markdown class="prose prose-sm max-w-none text-on-surface-variant" [data]="value()"></markdown>
+        } @else {
+          <span class="text-on-surface-variant/50 text-sm">Nothing to preview</span>
+        }
+      </div>
+    </div>
+  </hlm-tabs>
+</hlm-field>

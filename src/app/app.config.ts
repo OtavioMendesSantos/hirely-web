@@ -1,8 +1,9 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-
+import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { routes } from './app.routes';
+import { markedOptionsFactory } from './core/config/markdown.config';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -10,5 +11,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideMarkdown({
+      markedOptions: {
+        provide: MARKED_OPTIONS,
+        useFactory: markedOptionsFactory,
+      },
+    }),
   ],
 };
