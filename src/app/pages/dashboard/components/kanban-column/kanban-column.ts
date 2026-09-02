@@ -4,6 +4,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePartyPopper, lucideBriefcase, lucidePlus } from '@ng-icons/lucide';
+import { HlmEmptyImports } from '@spartan-ng/helm/empty';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { Application, ApplicationStatus } from '../../../../core/models/application.model';
 import { KanbanColumn } from '../../dashboard';
@@ -17,6 +18,7 @@ import { ApplicationCardComponent } from '../application-card/application-card';
     ScrollingModule,
     DragDropModule,
     ...HlmSkeletonImports,
+    ...HlmEmptyImports,
     NgIcon,
     ApplicationCardComponent,
   ],

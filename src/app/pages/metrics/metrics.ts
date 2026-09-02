@@ -10,12 +10,14 @@ import {
   lucideMessageSquare,
   lucideTrendingUp,
   lucideXCircle,
+  lucideChevronDown,
 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDatePickerImports } from '@spartan-ng/helm/date-picker';
 import { HlmEmptyImports } from '@spartan-ng/helm/empty';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -54,6 +56,7 @@ export interface ChartOptions {
     ...HlmEmptyImports,
     ...HlmSkeletonImports,
     ...HlmButtonImports,
+    ...HlmDropdownMenuImports,
     NgIcon,
     NgApexchartsModule,
   ],
@@ -68,6 +71,7 @@ export interface ChartOptions {
       lucideCalendar,
       lucideXCircle,
       lucideHourglass,
+      lucideChevronDown
     }),
   ],
   templateUrl: './metrics.html',
@@ -78,31 +82,28 @@ export class Metrics implements OnInit {
 
   startDate = signal<Date | null>(null);
   endDate = signal<Date | null>(null);
+  selectedPreset = signal<string | null>('Last 30 days');
 
   dateRangeText = computed(() => {
+    const preset = this.selectedPreset();
+    if (preset) return preset;
+
     const start = this.startDate();
     const end = this.endDate();
 
     if (start && end) {
-      const today = new Date();
-      // Check if it's strictly "Last 30 days"
-      const diffTime = Math.abs(today.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 30 && end.toDateString() === today.toDateString()) {
-        return 'Últimos 30 dias';
-      }
       return `${this.datePipe.transform(start, 'dd/MM/yyyy')} - ${this.datePipe.transform(end, 'dd/MM/yyyy')}`;
     }
     if (start && !end) {
       return `${this.datePipe.transform(start, 'dd/MM/yyyy')} - Pick end date`;
     }
-    return 'Últimos 30 dias';
+    return 'Custom Range';
   });
 
   emptyFormat = () => '';
 
   onDateChange(dates: [Date | null, Date | null] | null) {
+    this.selectedPreset.set(null); // Clear preset if user manually changes dates
     if (dates) {
       this.startDate.set(dates[0]);
       this.endDate.set(dates[1]);
@@ -110,6 +111,38 @@ export class Metrics implements OnInit {
       this.startDate.set(null);
       this.endDate.set(null);
     }
+  }
+
+  setPreset(preset: '7days' | '30days' | 'thisMonth' | 'lastMonth' | 'thisYear') {
+    let today = new Date();
+    let start = new Date();
+    
+    switch (preset) {
+      case '7days':
+        start.setDate(today.getDate() - 7);
+        this.selectedPreset.set('Last 7 days');
+        break;
+      case '30days':
+        start.setDate(today.getDate() - 30);
+        this.selectedPreset.set('Last 30 days');
+        break;
+      case 'thisMonth':
+        start = new Date(today.getFullYear(), today.getMonth(), 1);
+        this.selectedPreset.set('This Month');
+        break;
+      case 'lastMonth':
+        start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        today = new Date(today.getFullYear(), today.getMonth(), 0);
+        this.selectedPreset.set('Last Month');
+        break;
+      case 'thisYear':
+        start = new Date(today.getFullYear(), 0, 1);
+        this.selectedPreset.set('This Year');
+        break;
+    }
+    
+    this.startDate.set(start);
+    this.endDate.set(today);
   }
 
   stats = this.applicationService.stats;
@@ -134,6 +167,10 @@ export class Metrics implements OnInit {
   });
 
   rejectedCount = computed(() => this.stats()?.kpis?.rejections?.count || 0);
+
+  directRejectionsCount = computed(() => this.stats()?.kpis?.direct_rejections?.count || 0);
+  
+  advancedRejectionsCount = computed(() => this.stats()?.kpis?.advanced_rejections?.count || 0);
 
   ghostedCount = computed(() => this.stats()?.kpis?.ghosting?.count || 0);
 

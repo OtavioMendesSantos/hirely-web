@@ -1,38 +1,49 @@
-import { Component, inject, OnInit, signal, HostListener, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideBriefcase,
   lucideBuilding,
-  lucideMapPin,
-  lucideDollarSign,
-  lucideLink,
   lucideCalendar,
-  lucideFileText,
-  lucidePlus,
+  lucideDollarSign,
   lucideEdit,
+  lucideFileText,
+  lucideLink,
   lucideLoader2,
+  lucideMapPin,
+  lucidePlus,
 } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmInputImports } from '@spartan-ng/helm/input';
-import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
-import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmInputImports } from '@spartan-ng/helm/input';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmNativeSelectImports } from '@spartan-ng/helm/native-select';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
-import { HlmBadgeImports } from '@spartan-ng/helm/badge';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
-import { ApplicationService } from '../../services/application';
-import { TagService } from '../../services/tag';
+import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
 import {
   Application,
   ApplicationStatus,
+  ContractType,
   CreateApplicationRequest,
   UpdateApplicationRequest,
-  ContractType,
 } from '../../models/application.model';
+import { ApplicationService } from '../../services/application';
+import { TagService } from '../../services/tag';
+
+import { MarkdownInputComponent } from '../markdown-input/markdown-input';
 
 @Component({
   selector: 'app-create-application-dialog',
@@ -46,10 +57,12 @@ import {
     ...HlmLabelImports,
     ...HlmDialogImports,
     ...HlmFieldImports,
+    ...HlmNativeSelectImports,
     ...HlmSpinnerImports,
     ...HlmBadgeImports,
     ...HlmAlertDialogImports,
     NgIcon,
+    MarkdownInputComponent,
   ],
   providers: [
     provideIcons({
@@ -86,7 +99,8 @@ export class CreateApplicationDialogComponent implements OnInit {
   isCreatingTag = signal(false);
   isSavingTag = signal(false);
   newTagName = signal('');
-  newTagColor = signal('#4f46e5'); // default indigo
+  newTagColor = signal('#4f46e5');
+
 
   form = this.fb.group({
     company_name: ['', [Validators.required, Validators.maxLength(255)]],
@@ -227,7 +241,8 @@ export class CreateApplicationDialogComponent implements OnInit {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          const msg = err.error?.error?.message || err.error?.message || 'Failed to update job application.';
+          const msg =
+            err.error?.error?.message || err.error?.message || 'Failed to update job application.';
           toast.error(msg);
         },
       });
@@ -255,7 +270,8 @@ export class CreateApplicationDialogComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        const msg = err.error?.error?.message || err.error?.message || 'Failed to create job application.';
+        const msg =
+          err.error?.error?.message || err.error?.message || 'Failed to create job application.';
         toast.error(msg);
       },
     });

@@ -70,11 +70,9 @@
           <label hlmFieldLabel for="status" class="text-xs">
             @if (isEditMode()) { Current Status } @else { Initial Status }
           </label>
-          <select
+          <hlm-native-select
             id="status"
-            hlmInput
             formControlName="status"
-            class="bg-surface text-on-surface cursor-pointer font-medium"
           >
             <option value="TO_APPLY">To Apply</option>
             <option value="APPLIED">Applied</option>
@@ -83,7 +81,7 @@
             <option value="ACCEPTED">Accepted</option>
             <option value="REJECTED">Rejected</option>
             <option value="OTHER">Other</option>
-          </select>
+          </hlm-native-select>
         </hlm-field>
 
         <hlm-field>
@@ -111,33 +109,29 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <hlm-field>
           <label hlmFieldLabel for="contract_type" class="text-xs"> Contract Type </label>
-          <select
+          <hlm-native-select
             id="contract_type"
-            hlmInput
             formControlName="contract_type"
-            class="bg-surface text-on-surface cursor-pointer font-medium"
           >
             <option value="">Select contract...</option>
             <option value="CLT">CLT</option>
             <option value="PJ">PJ</option>
             <option value="INTERNSHIP">Internship</option>
             <option value="OTHER">Other</option>
-          </select>
+          </hlm-native-select>
         </hlm-field>
 
         <hlm-field>
           <label hlmFieldLabel for="location" class="text-xs"> Work Modality </label>
-          <select
+          <hlm-native-select
             id="location"
-            hlmInput
             formControlName="location"
-            class="bg-surface text-on-surface cursor-pointer font-medium"
           >
             <option value="">Select modality...</option>
             <option value="Remote">Remote</option>
             <option value="Hybrid">Hybrid</option>
             <option value="On-site">On-site</option>
-          </select>
+          </hlm-native-select>
           @if (form.get('location')?.hasError('maxlength') && form.get('location')?.touched) {
           <hlm-field-error>Location cannot exceed 255 characters.</hlm-field-error>
           }
@@ -237,29 +231,23 @@
         </div>
       </hlm-field>
 
-      <hlm-field>
-        <label hlmFieldLabel for="job_description" class="text-xs">
-          Job Description / Key Requirements
-        </label>
-        <textarea
-          id="job_description"
-          hlmTextarea
-          rows="3"
-          formControlName="job_description"
-          placeholder="Paste tech stack, requirements, or responsibilities..."
-        ></textarea>
-      </hlm-field>
+      <app-markdown-input
+        id="job_description"
+        formControlName="job_description"
+        label="Job Description / Key Requirements"
+        placeholder="Paste tech stack, requirements, or responsibilities... (Markdown supported)"
+        [rows]="3"
+        [minHeight]="80"
+      ></app-markdown-input>
 
-      <hlm-field>
-        <label hlmFieldLabel for="notes" class="text-xs"> Notes & Referrals </label>
-        <textarea
-          id="notes"
-          hlmTextarea
-          rows="2"
-          formControlName="notes"
-          placeholder="e.g. Referred by Tech Lead via LinkedIn, scheduled initial call..."
-        ></textarea>
-      </hlm-field>
+      <app-markdown-input
+        id="notes"
+        formControlName="notes"
+        label="Notes & Referrals"
+        placeholder="e.g. Referred by Tech Lead via LinkedIn, scheduled initial call... (Markdown supported)"
+        [rows]="2"
+        [minHeight]="60"
+      ></app-markdown-input>
     </form>
   </div>
 

@@ -349,15 +349,15 @@
                 <ng-icon name="lucideCopy" class="size-4" />
               </button>
             </div>
-            <p
-              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap transition-all"
+            <markdown
+              class="prose prose-sm prose-p:leading-relaxed prose-a:text-primary max-w-none text-on-surface-variant font-body transition-all"
               [style.-webkit-line-clamp]="showFullNotes() ? 'unset' : '15'"
               [style.display]="showFullNotes() ? 'block' : '-webkit-box'"
               [style.-webkit-box-orient]="'vertical'"
               [style.overflow]="showFullNotes() ? 'visible' : 'hidden'"
+              [data]="app.notes"
             >
-              {{ app.notes }}
-            </p>
+            </markdown>
             @if (isLongNotes()) {
             <button
               type="button"
@@ -385,15 +385,15 @@
                 <ng-icon name="lucideCopy" class="size-4" />
               </button>
             </div>
-            <p
-              class="text-on-surface-variant font-body text-sm leading-relaxed whitespace-pre-wrap transition-all"
+            <markdown
+              class="prose prose-sm prose-p:leading-relaxed prose-a:text-primary max-w-none text-on-surface-variant font-body transition-all"
               [style.-webkit-line-clamp]="showFullJobDescription() ? 'unset' : '15'"
               [style.display]="showFullJobDescription() ? 'block' : '-webkit-box'"
               [style.-webkit-box-orient]="'vertical'"
               [style.overflow]="showFullJobDescription() ? 'visible' : 'hidden'"
+              [data]="app.jobDescription"
             >
-              {{ app.jobDescription }}
-            </p>
+            </markdown>
             @if (isLongJobDescription()) {
             <button
               type="button"

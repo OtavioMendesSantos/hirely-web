@@ -86,6 +86,8 @@ export interface KPIMetric {
 export interface KPIs {
   interviews: KPIMetric;
   rejections: KPIMetric;
+  direct_rejections: KPIMetric;
+  advanced_rejections: KPIMetric;
   ghosting: KPIMetric;
 }
 

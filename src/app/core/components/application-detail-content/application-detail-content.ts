@@ -1,5 +1,5 @@
-import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -7,32 +7,33 @@ import {
   lucideBriefcase,
   lucideBriefcaseBusiness,
   lucideBuilding,
-  lucideMapPin,
-  lucideDollarSign,
-  lucideLink,
   lucideCalendar,
-  lucideFileText,
-  lucidePlus,
-  lucideEdit,
-  lucideTrash2,
-  lucideExternalLink,
-  lucideMessageSquare,
-  lucideRefreshCw,
   lucideCheckCircle,
-  lucideLoader2,
   lucideCopy,
+  lucideDollarSign,
+  lucideEdit,
+  lucideExternalLink,
+  lucideFileText,
+  lucideLink,
+  lucideLoader2,
+  lucideMapPin,
+  lucideMessageSquare,
+  lucidePlus,
+  lucideRefreshCw,
+  lucideTrash2,
 } from '@ng-icons/lucide';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { HlmCardImports } from '@spartan-ng/helm/card';
-import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmInputImports } from '@spartan-ng/helm/input';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
+import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
-import { toast } from '@spartan-ng/brain/sonner';
-import { ApplicationService } from '../../services/application';
+import { MarkdownComponent } from 'ngx-markdown';
 import { Application, ApplicationEvent } from '../../models/application.model';
+import { ApplicationService } from '../../services/application';
 import { CreateApplicationDialogComponent } from '../create-application-dialog/create-application-dialog';
 
 @Component({
@@ -48,6 +49,7 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
     ...HlmSkeletonImports,
     ...HlmSpinnerImports,
     NgIcon,
+    MarkdownComponent,
   ],
   providers: [
     provideIcons({

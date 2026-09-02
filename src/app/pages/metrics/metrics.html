@@ -9,231 +9,362 @@
         <p class="text-on-surface-variant mt-1 text-sm">Overview of your recruitment metrics.</p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center">
+        <!-- Presets Dropdown -->
+        <button
+          hlmBtn
+          variant="outline"
+          hlmDropdownMenuTrigger
+          [hlmDropdownMenuTrigger]="datePresetsMenu"
+          class="bg-surface border-border-subtle hover:bg-surface-container-low flex w-44 items-center justify-between gap-2 rounded-r-none font-medium"
+        >
+          <div class="flex items-center gap-2 truncate">
+            <ng-icon name="lucideCalendar" class="text-on-surface-variant size-4 shrink-0" />
+            <span class="truncate">{{ dateRangeText() }}</span>
+          </div>
+          <ng-icon
+            name="lucideChevronDown"
+            class="text-on-surface-variant size-3.5 shrink-0 opacity-50"
+          />
+        </button>
+        <ng-template #datePresetsMenu>
+          <div hlmDropdownMenu class="w-44">
+            <div hlmDropdownMenuLabel>Quick Presets</div>
+            <div hlmDropdownMenuSeparator></div>
+            <button hlmDropdownMenuItem (click)="setPreset('7days')">Last 7 days</button>
+            <button hlmDropdownMenuItem (click)="setPreset('30days')">Last 30 days</button>
+            <button hlmDropdownMenuItem (click)="setPreset('thisMonth')">This Month</button>
+            <button hlmDropdownMenuItem (click)="setPreset('lastMonth')">Last Month</button>
+            <button hlmDropdownMenuItem (click)="setPreset('thisYear')">This Year</button>
+          </div>
+        </ng-template>
+
+        <!-- Custom Date Picker Trigger -->
         <hlm-date-range-picker
+          class="contents"
+          align="end"
           [date]="[startDate(), endDate()]"
           (dateChange)="onDateChange($event)"
           [autoCloseOnEndSelection]="true"
           [formatDates]="emptyFormat"
         >
           <hlm-date-picker-trigger
-            hlmBtn
+            style="display: contents"
             variant="outline"
-            class="bg-surface flex items-center gap-2"
+            class="bg-surface border-border-subtle hover:bg-surface-container-low flex items-center justify-center rounded-l-none border-l-0 px-2.5 transition-colors"
             buttonId="date-range-picker"
             [showTrigger]="false"
+            title="Custom Range..."
           >
-            <ng-icon name="lucideCalendar" size="sm" />
-            {{ dateRangeText() }}
+            <span class="sr-only">Custom Range</span>
+            <span class="text-on-surface-variant mb-1 text-lg leading-none">...</span>
           </hlm-date-picker-trigger>
         </hlm-date-range-picker>
       </div>
     </div>
 
     @if (!stats()) {
-    <div class="flex flex-col gap-6">
-      <!-- Skeleton KPI Cards -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        @for (i of [1, 2, 3, 4]; track i) {
-        <div
-          hlmCard
-          class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
-        >
-          <div class="flex items-start justify-between">
-            <hlm-skeleton class="h-4 w-32 rounded" />
-            <hlm-skeleton class="size-5 rounded-full" />
-          </div>
-          <div class="mt-4 flex items-baseline gap-2">
-            <hlm-skeleton class="h-9 w-16 rounded" />
-            <hlm-skeleton class="h-4 w-12 rounded" />
-          </div>
+      <div class="flex flex-col gap-6">
+        <!-- Skeleton KPI Cards -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div
+              hlmCard
+              class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
+            >
+              <div class="flex items-start justify-between">
+                <hlm-skeleton class="h-4 w-32 rounded" />
+                <hlm-skeleton class="size-5 rounded-full" />
+              </div>
+              <div class="mt-4 flex items-baseline gap-2">
+                <hlm-skeleton class="h-9 w-16 rounded" />
+                <hlm-skeleton class="h-4 w-12 rounded" />
+              </div>
+            </div>
+          }
         </div>
-        }
-      </div>
 
-      <!-- Skeleton Charts -->
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        @for (i of [1, 2, 3]; track i) {
-        <div
-          hlmCard
-          class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
-          [class.lg:col-span-2]="i === 1"
-        >
-          <hlm-skeleton class="mb-4 h-6 w-48 rounded" />
-          <hlm-skeleton class="h-[350px] w-full rounded-xl" />
+        <!-- Skeleton Charts -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          @for (i of [1, 2, 3]; track i) {
+            <div
+              hlmCard
+              class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
+              [class.lg:col-span-2]="i === 1"
+            >
+              <hlm-skeleton class="mb-4 h-6 w-48 rounded" />
+              <hlm-skeleton class="h-[350px] w-full rounded-xl" />
+            </div>
+          }
         </div>
-        }
       </div>
-    </div>
-    } @else { @if (!hasData()) {
-    <hlm-empty
-      class="border-border-subtle bg-surface-container-lowest mt-8 rounded-2xl border shadow-sm"
-    >
-      <hlm-empty-header>
-        <div hlmEmptyTitle class="text-on-surface text-lg">No Data Found</div>
-        <div hlmEmptyDescription class="text-on-surface-variant">
-          There are no applications in the selected time range.
-        </div>
-      </hlm-empty-header>
-    </hlm-empty>
     } @else {
-
-    <!-- KPI Cards Row -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <!-- Total Applications -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
-      >
-        <div class="flex items-start justify-between">
-          <span class="text-on-surface-variant text-sm font-medium">Total Applications</span>
-          <ng-icon name="lucideFileText" class="text-primary size-5" />
-        </div>
-        <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-on-surface text-3xl font-bold">{{ totalApplications() }}</span>
-        </div>
-      </div>
-
-      <!-- Conversion Rate -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest relative overflow-hidden rounded-xl border p-6 shadow-sm"
-      >
-        <div class="bg-primary absolute top-0 bottom-0 left-0 w-1"></div>
-        <div class="flex items-start justify-between">
-          <span class="text-primary text-sm font-medium">Interview Rate</span>
-          <ng-icon name="lucideTrendingUp" class="text-primary size-5" />
-        </div>
-        <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-primary text-3xl font-bold">{{ interviewCount() }}</span>
-          <span class="text-primary/80 ml-1 text-sm font-medium">({{ conversionRate() }}%)</span>
-        </div>
-      </div>
-
-      <!-- Rejection Rate -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest relative overflow-hidden rounded-xl border p-6 shadow-sm"
-      >
-        <div class="bg-destructive absolute top-0 bottom-0 left-0 w-1"></div>
-        <div class="flex items-start justify-between">
-          <span class="text-destructive text-sm font-medium">Rejections</span>
-          <ng-icon name="lucideXCircle" class="text-destructive size-5" />
-        </div>
-        <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-destructive text-3xl font-bold">{{ rejectedCount() }}</span>
-          <span class="text-destructive/80 ml-1 text-sm font-medium">({{ rejectionRate() }}%)</span>
-        </div>
-      </div>
-
-      <!-- Ghosting Count -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest relative overflow-hidden rounded-xl border p-6 shadow-sm"
-      >
-        <div class="bg-on-surface-variant absolute top-0 bottom-0 left-0 w-1"></div>
-        <div class="flex items-start justify-between">
-          <span class="text-on-surface-variant text-sm font-medium">Ghosting (30+ days)</span>
-          <ng-icon name="lucideHourglass" class="text-on-surface-variant/80 size-5" />
-        </div>
-        <div class="mt-4 flex items-baseline gap-2">
-          <span class="text-on-surface text-3xl font-bold">{{ ghostedCount() }}</span>
-          <span class="text-on-surface-variant/80 ml-1 text-sm font-medium"
-            >({{ ghostingRate() }}%)</span
-          >
-        </div>
-      </div>
-    </div>
-
-    <!-- Charts -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <!-- Funnel Chart -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm lg:col-span-2"
-      >
-        <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Applications by Status</h4>
-        <div class="h-[350px] w-full flex-1">
-          @if (funnelChartOptions()) {
-          <apx-chart
-            [series]="funnelChartOptions()!.series"
-            [chart]="funnelChartOptions()!.chart"
-            [plotOptions]="funnelChartOptions()!.plotOptions!"
-            [dataLabels]="funnelChartOptions()!.dataLabels!"
-            [xaxis]="funnelChartOptions()!.xaxis!"
-            [yaxis]="funnelChartOptions()!.yaxis!"
-            [colors]="funnelChartOptions()!.colors!"
-            [tooltip]="funnelChartOptions()!.tooltip!"
-            class="h-full w-full"
-          ></apx-chart>
-          } @else {
-          <div class="text-on-surface-variant flex h-full items-center justify-center">
-            No data available
-          </div>
-          }
-        </div>
-      </div>
-
-      <!-- Top Job Titles Chart -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
-      >
-        <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Job Titles</h4>
-        <div class="h-[350px] w-full flex-1">
-          @if (jobTitlesChartOptions()) {
-          <apx-chart
-            [series]="jobTitlesChartOptions()!.series"
-            [chart]="jobTitlesChartOptions()!.chart"
-            [plotOptions]="jobTitlesChartOptions()!.plotOptions!"
-            [dataLabels]="jobTitlesChartOptions()!.dataLabels!"
-            [xaxis]="jobTitlesChartOptions()!.xaxis!"
-            [yaxis]="jobTitlesChartOptions()!.yaxis!"
-            [colors]="jobTitlesChartOptions()!.colors!"
-            [tooltip]="jobTitlesChartOptions()!.tooltip!"
-            class="h-full w-full"
-          ></apx-chart>
-          } @else {
+      @if (!hasData()) {
+        <hlm-empty
+          class="border-border-subtle bg-surface-container-lowest mt-8 rounded-2xl border shadow-sm"
+        >
+          <hlm-empty-header>
+            <div hlmEmptyTitle class="text-on-surface text-lg">No Data Found</div>
+            <div hlmEmptyDescription class="text-on-surface-variant">
+              There are no applications in the selected time range.
+            </div>
+          </hlm-empty-header>
+        </hlm-empty>
+      } @else {
+        <!-- KPI Cards Row -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <!-- Total Applications -->
           <div
-            class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
           >
-            <ng-icon name="lucideAlertTriangle" size="xl" />
-            <span>No job titles found in this time range.</span>
+            <div class="flex items-start justify-between">
+              <span class="text-on-surface-variant text-sm font-medium">Total Applications</span>
+              <ng-icon name="lucideFileText" class="text-primary size-5" />
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-on-surface text-3xl font-bold">{{ totalApplications() }}</span>
+            </div>
           </div>
-          }
-        </div>
-      </div>
 
-      <!-- Top Tags Chart -->
-      <div
-        hlmCard
-        class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
-      >
-        <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Performing Tags</h4>
-        <div class="h-[350px] w-full flex-1">
-          @if (tagsChartOptions()) {
-          <apx-chart
-            [series]="tagsChartOptions()!.series"
-            [chart]="tagsChartOptions()!.chart"
-            [labels]="tagsChartOptions()!.labels!"
-            [dataLabels]="tagsChartOptions()!.dataLabels!"
-            [legend]="tagsChartOptions()!.legend!"
-            [colors]="tagsChartOptions()!.colors!"
-            [tooltip]="tagsChartOptions()!.tooltip!"
-            class="h-full w-full"
-          ></apx-chart>
-          } @else {
+          <!-- Conversion Rate -->
           <div
-            class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest relative rounded-xl border p-6 shadow-sm"
           >
-            <ng-icon name="lucideAlertTriangle" size="xl" />
-            <span>No tags found in this time range.</span>
+            <div class="bg-primary absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
+            <div class="flex items-start justify-between">
+              <span class="text-primary text-sm font-medium">Interview Rate</span>
+              <ng-icon name="lucideTrendingUp" class="text-primary size-5" />
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-primary text-3xl font-bold">{{ interviewCount() }}</span>
+              <span class="text-primary/80 ml-1 text-sm font-medium"
+                >({{ conversionRate() }}%)</span
+              >
+            </div>
           </div>
-          }
-        </div>
-      </div>
-    </div>
 
-    } }
+          <!-- Rejection Rate -->
+          <div
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest relative flex flex-col justify-between rounded-xl border p-6 shadow-sm hover:z-10 !overflow-visible"
+          >
+            <div class="bg-destructive absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
+            <div class="flex items-start justify-between">
+              <span class="text-destructive text-sm font-medium">Rejections</span>
+              <ng-icon name="lucideXCircle" class="text-destructive size-5" />
+            </div>
+
+            <div class="mt-4 flex items-center justify-between gap-2">
+              <div class="flex items-baseline gap-2">
+                <span class="text-destructive text-3xl font-bold">{{ rejectedCount() }}</span>
+                <span class="text-destructive/80 ml-1 text-sm font-medium"
+                  >({{ rejectionRate() }}%)</span
+                >
+              </div>
+
+              <!-- Desktop: Circular Progress with Tooltip -->
+              @if (rejectedCount() > 0) {
+                <div class="group relative hidden lg:block">
+                  <svg class="size-8 -rotate-90 transform" viewBox="0 0 36 36">
+                    <!-- Background Circle (Direct) -->
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      class="stroke-destructive/40"
+                      stroke-width="4"
+                    ></circle>
+                    <!-- Foreground Circle (Advanced) -->
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      class="stroke-destructive"
+                      stroke-width="4"
+                      pathLength="100"
+                      stroke-dasharray="100"
+                      [style.stroke-dashoffset]="
+                        100 - (advancedRejectionsCount() / rejectedCount()) * 100
+                      "
+                      stroke-linecap="round"
+                    ></circle>
+                  </svg>
+                  <!-- Tooltip -->
+                  <div
+                    class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-max -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <div
+                      class="bg-surface-container-highest border-border-subtle text-on-surface relative flex flex-col gap-1 rounded-lg border px-2.5 py-1.5 text-xs shadow-md"
+                    >
+                      <div class="flex items-center gap-1.5">
+                        <span class="bg-destructive/40 size-2 rounded-full"></span>
+                        <span>{{ directRejectionsCount() }} Direct</span>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="bg-destructive size-2 rounded-full"></span>
+                        <span>{{ advancedRejectionsCount() }} After Process</span>
+                      </div>
+                      <div
+                        class="bg-surface-container-highest border-border-subtle absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border-r border-b"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Mobile: Progress bar -->
+            @if (rejectedCount() > 0) {
+              <div
+                class="border-border-subtle/50 mt-4 flex flex-col gap-2.5 border-t pt-3 lg:hidden"
+              >
+                <!-- Progress bar -->
+                <div
+                  class="bg-surface-container-high flex h-1.5 w-full overflow-hidden rounded-full"
+                >
+                  <div
+                    class="bg-destructive/40 h-full transition-all duration-500"
+                    [style.width]="(directRejectionsCount() / rejectedCount()) * 100 + '%'"
+                  ></div>
+                  <div
+                    class="bg-destructive h-full transition-all duration-500"
+                    [style.width]="(advancedRejectionsCount() / rejectedCount()) * 100 + '%'"
+                  ></div>
+                </div>
+
+                <!-- Legend -->
+                <div
+                  class="text-on-surface-variant flex items-center justify-between text-[11px] font-semibold"
+                >
+                  <div class="flex items-center gap-1.5" title="Rejected immediately (no process)">
+                    <span class="bg-destructive/40 size-2 rounded-full"></span>
+                    <span>{{ directRejectionsCount() }} Direct</span>
+                  </div>
+                  <div class="flex items-center gap-1.5" title="Rejected after some stage">
+                    <span class="bg-destructive size-2 rounded-full"></span>
+                    <span>{{ advancedRejectionsCount() }} After Process</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Ghosting Count -->
+          <div
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest relative rounded-xl border p-6 shadow-sm"
+          >
+            <div
+              class="bg-on-surface-variant absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"
+            ></div>
+            <div class="flex items-start justify-between">
+              <span class="text-on-surface-variant text-sm font-medium">Ghosting (30+ days)</span>
+              <ng-icon name="lucideHourglass" class="text-on-surface-variant/80 size-5" />
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-on-surface text-3xl font-bold">{{ ghostedCount() }}</span>
+              <span class="text-on-surface-variant/80 ml-1 text-sm font-medium"
+                >({{ ghostingRate() }}%)</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <!-- Funnel Chart -->
+          <div
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm lg:col-span-2"
+          >
+            <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">
+              Applications by Status
+            </h4>
+            <div class="h-[350px] w-full flex-1">
+              @if (funnelChartOptions()) {
+                <apx-chart
+                  [series]="funnelChartOptions()!.series"
+                  [chart]="funnelChartOptions()!.chart"
+                  [plotOptions]="funnelChartOptions()!.plotOptions!"
+                  [dataLabels]="funnelChartOptions()!.dataLabels!"
+                  [xaxis]="funnelChartOptions()!.xaxis!"
+                  [yaxis]="funnelChartOptions()!.yaxis!"
+                  [colors]="funnelChartOptions()!.colors!"
+                  [tooltip]="funnelChartOptions()!.tooltip!"
+                  class="h-full w-full"
+                ></apx-chart>
+              } @else {
+                <div class="text-on-surface-variant flex h-full items-center justify-center">
+                  No data available
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Top Job Titles Chart -->
+          <div
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
+          >
+            <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Job Titles</h4>
+            <div class="h-[350px] w-full flex-1">
+              @if (jobTitlesChartOptions()) {
+                <apx-chart
+                  [series]="jobTitlesChartOptions()!.series"
+                  [chart]="jobTitlesChartOptions()!.chart"
+                  [plotOptions]="jobTitlesChartOptions()!.plotOptions!"
+                  [dataLabels]="jobTitlesChartOptions()!.dataLabels!"
+                  [xaxis]="jobTitlesChartOptions()!.xaxis!"
+                  [yaxis]="jobTitlesChartOptions()!.yaxis!"
+                  [colors]="jobTitlesChartOptions()!.colors!"
+                  [tooltip]="jobTitlesChartOptions()!.tooltip!"
+                  class="h-full w-full"
+                ></apx-chart>
+              } @else {
+                <div
+                  class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+                >
+                  <ng-icon name="lucideAlertTriangle" size="xl" />
+                  <span>No job titles found in this time range.</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Top Tags Chart -->
+          <div
+            hlmCard
+            class="border-border-subtle bg-surface-container-lowest flex flex-col rounded-xl border p-6 shadow-sm"
+          >
+            <h4 class="font-heading text-on-surface mb-4 text-lg font-bold">Top Performing Tags</h4>
+            <div class="h-[350px] w-full flex-1">
+              @if (tagsChartOptions()) {
+                <apx-chart
+                  [series]="tagsChartOptions()!.series"
+                  [chart]="tagsChartOptions()!.chart"
+                  [labels]="tagsChartOptions()!.labels!"
+                  [dataLabels]="tagsChartOptions()!.dataLabels!"
+                  [legend]="tagsChartOptions()!.legend!"
+                  [colors]="tagsChartOptions()!.colors!"
+                  [tooltip]="tagsChartOptions()!.tooltip!"
+                  class="h-full w-full"
+                ></apx-chart>
+              } @else {
+                <div
+                  class="text-on-surface-variant flex h-full flex-col items-center justify-center gap-2"
+                >
+                  <ng-icon name="lucideAlertTriangle" size="xl" />
+                  <span>No tags found in this time range.</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
   </div>
 </app-layout>
