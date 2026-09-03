@@ -37,6 +37,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'api-keys',
+    loadComponent: () => import('./pages/api-keys/api-keys').then((c) => c.ApiKeysPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile').then((c) => c.Profile),
     canActivate: [authGuard],
