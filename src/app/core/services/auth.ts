@@ -6,20 +6,7 @@ import { environment } from '../../../environments/environment';
 import { User } from '../models/user.model';
 
 interface AuthResponse {
-  token: string;
   user: User;
-}
-
-export function getTokenFromStorage(): string | null {
-  if (typeof localStorage !== 'undefined') {
-    const token = localStorage.getItem('jwt_token');
-    if (token) return token;
-  }
-  if (typeof sessionStorage !== 'undefined') {
-    const token = sessionStorage.getItem('jwt_token');
-    if (token) return token;
-  }
-  return null;
 }
 
 @Injectable({
@@ -31,23 +18,18 @@ export class AuthService {
   currentUser = signal<User | null>(null);
 
   getToken(): string | null {
-    return getTokenFromStorage();
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('is_logged_in');
+    }
+    return null;
   }
 
-  private saveToken(token: string, rememberMe: boolean) {
-    if (rememberMe) {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('jwt_token', token);
-      }
-      if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.removeItem('jwt_token');
-      }
-    } else {
-      if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('jwt_token', token);
-      }
-      if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem('jwt_token');
+  private setLoginState(loggedIn: boolean) {
+    if (typeof localStorage !== 'undefined') {
+      if (loggedIn) {
+        localStorage.setItem('is_logged_in', 'true');
+      } else {
+        localStorage.removeItem('is_logged_in');
       }
     }
   }
@@ -57,7 +39,7 @@ export class AuthService {
       .post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password, rememberMe })
       .pipe(
         tap((response) => {
-          this.saveToken(response.token, rememberMe);
+          this.setLoginState(true);
           this.currentUser.set(response.user);
         })
       );
@@ -75,7 +57,7 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          this.saveToken(response.token, true);
+          this.setLoginState(true);
           this.currentUser.set(response.user);
         })
       );
@@ -86,7 +68,7 @@ export class AuthService {
       .post<AuthResponse>(`${environment.apiUrl}/users`, { name, email, password })
       .pipe(
         tap((response) => {
-          this.saveToken(response.token, rememberMe);
+          this.setLoginState(true);
           this.currentUser.set(response.user);
         })
       );
@@ -95,6 +77,7 @@ export class AuthService {
   checkAuth() {
     return this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
       tap((user) => {
+        this.setLoginState(true);
         this.currentUser.set(user);
       }),
       catchError((error) => {
@@ -106,12 +89,7 @@ export class AuthService {
   }
 
   logout() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('jwt_token');
-    }
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem('jwt_token');
-    }
     this.currentUser.set(null);
+    this.setLoginState(false);
   }
 }
