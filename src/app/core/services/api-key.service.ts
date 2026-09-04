@@ -4,15 +4,15 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 
 export interface ApiKey {
-  id: string;
-  userId: string;
-  name: string;
-  usageCount: number;
-  lastIp: string | null;
-  lastUserAgent: string | null;
-  lastUsedAt: string | null;
-  revoked: boolean;
-  createdAt: string;
+  ID: string;
+  UserID: string;
+  Name: string;
+  UsageCount: number;
+  LastIP: string | null;
+  LastUserAgent: string | null;
+  LastUsedAt: string | null;
+  Revoked: boolean;
+  CreatedAt: string;
 }
 
 export interface CreateApiKeyResponse {

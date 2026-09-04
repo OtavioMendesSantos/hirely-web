@@ -8,7 +8,12 @@ import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { HlmEmptyImports } from '@spartan-ng/helm/empty';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideKey, lucideTrash2, lucideCopy, lucideCheck, lucidePlus } from '@ng-icons/lucide';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 
 @Component({
   selector: 'app-api-keys',
@@ -23,6 +28,18 @@ import { AppLayoutComponent } from '../../core/components/app-layout/app-layout'
     ...HlmBadgeImports,
     ...HlmLabelImports,
     ...HlmSpinnerImports,
+    ...HlmEmptyImports,
+    ...HlmAlertDialogImports,
+    NgIcon,
+  ],
+  providers: [
+    provideIcons({
+      lucideKey,
+      lucideTrash2,
+      lucideCopy,
+      lucideCheck,
+      lucidePlus
+    })
   ],
   templateUrl: './api-keys.html',
 })
@@ -58,7 +75,7 @@ export class ApiKeysPage implements OnInit {
     this.isCreating.set(true);
     this.apiKeyService.create(this.newKeyName()).subscribe({
       next: (res) => {
-        this.generatedKey.set({ name: res.apiKey.name, key: res.key });
+        this.generatedKey.set({ name: res.apiKey.Name, key: res.key });
         this.newKeyName.set('');
         this.isCreating.set(false);
         this.loadKeys();
@@ -69,14 +86,36 @@ export class ApiKeysPage implements OnInit {
     });
   }
 
-  revokeKey(id: string) {
-    if (!confirm('Are you sure you want to revoke this API Key? It will stop working immediately.')) {
-      return;
+  keyToRevoke = signal<string | null>(null);
+
+  openRevokeConfirm(id: string) {
+    this.keyToRevoke.set(id);
+  }
+
+  cancelRevoke() {
+    this.keyToRevoke.set(null);
+  }
+
+  onRevokeDialogStateChanged(state: 'open' | 'closed') {
+    if (state === 'closed') {
+      this.keyToRevoke.set(null);
     }
+  }
+
+  confirmRevoke() {
+    const id = this.keyToRevoke();
+    if (!id) return;
+
+    // Clear the state immediately to close the dialog
+    this.keyToRevoke.set(null);
 
     this.apiKeyService.revoke(id).subscribe({
       next: () => {
+        toast.success('API Key revoked successfully');
         this.loadKeys();
+      },
+      error: () => {
+        toast.error('Failed to revoke API Key');
       }
     });
   }
@@ -84,7 +123,7 @@ export class ApiKeysPage implements OnInit {
   copyKey() {
     if (this.generatedKey()) {
       navigator.clipboard.writeText(this.generatedKey()!.key);
-      alert('API Key copied to clipboard!');
+      toast.success('API Key copied to clipboard!');
     }
   }
 
