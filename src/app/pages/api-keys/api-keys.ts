@@ -130,4 +130,20 @@ export class ApiKeysPage implements OnInit {
   closeGeneratedKey() {
     this.generatedKey.set(null);
   }
+
+  copyMcpConfig() {
+    const config = `{
+  "mcpServers": {
+    "hirely-backend": {
+      "type": "remote",
+      "url": "https://hirely-api.up.railway.app/v1/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer <YOUR_TOKEN>"
+      }
+    }
+  }
+}`;
+    navigator.clipboard.writeText(config);
+    toast.success('MCP configuration copied to clipboard!');
+  }
 }

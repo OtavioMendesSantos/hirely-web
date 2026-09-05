@@ -146,6 +146,46 @@
         }
       </div>
     </div>
+
+    <!-- MCP Configuration Guide -->
+    <div hlmCard class="bg-surface-container-lowest border-border-subtle rounded-2xl border shadow-sm">
+      <div hlmCardHeader class="border-border-subtle border-b px-6 py-5">
+        <h4 class="font-heading text-on-surface text-lg font-bold">MCP Configuration</h4>
+        <p class="text-on-surface-variant text-sm mt-1">
+          Use this snippet to connect the Hirely MCP server to your AI assistant (e.g. Roo Code, Cursor, Claude Desktop, etc). Just paste it into your MCP settings and replace <code>&lt;YOUR_TOKEN&gt;</code> with your generated API key.
+        </p>
+      </div>
+      <div hlmCardContent class="p-6 flex flex-col gap-4">
+        <div class="relative group border border-border-subtle rounded-xl overflow-hidden bg-[#1e1e1e] dark:bg-black">
+          <div class="flex items-center justify-between px-4 py-2 bg-black/40 border-b border-white/10">
+            <span class="text-xs font-mono text-gray-400">mcp-config.json</span>
+            <button
+              hlmBtn
+              variant="ghost"
+              size="sm"
+              class="h-7 px-2 text-gray-400 hover:text-white hover:bg-white/10"
+              (click)="copyMcpConfig()"
+            >
+              <ng-icon name="lucideCopy" class="mr-1.5 size-3" /> Copy
+            </button>
+          </div>
+          <pre class="font-mono text-sm p-4 overflow-x-auto text-[#d4d4d4]"><code>&#123;
+  "mcpServers": &#123;
+    "hirely-backend": &#123;
+      "type": "remote",
+      "url": "https://hirely-api.up.railway.app/v1/mcp/sse",
+      "headers": &#123;
+        "Authorization": "Bearer &lt;YOUR_TOKEN&gt;"
+      &#125;
+    &#125;
+  &#125;
+&#125;</code></pre>
+        </div>
+        <p class="text-sm text-on-surface-variant">
+          <strong>Note:</strong> Some IDE extensions might use <code>"mcp"</code> as the root key instead of <code>"mcpServers"</code>. Adjust according to your extension's documentation.
+        </p>
+      </div>
+    </div>
   </div>
 
   <!-- Revoke Alert Dialog -->
