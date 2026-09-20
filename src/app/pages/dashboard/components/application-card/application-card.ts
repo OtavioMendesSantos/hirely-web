@@ -12,6 +12,7 @@ import {
   lucideMessageSquare,
   lucideBriefcaseBusiness,
   lucideHourglass,
+  lucideMonitor,
 } from '@ng-icons/lucide';
 import { Application, ApplicationEvent } from '../../../../core/models/application.model';
 
@@ -29,6 +30,7 @@ import { Application, ApplicationEvent } from '../../../../core/models/applicati
       lucideMessageSquare,
       lucideBriefcaseBusiness,
       lucideHourglass,
+      lucideMonitor,
     }),
   ],
   templateUrl: './application-card.html',

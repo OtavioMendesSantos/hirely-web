@@ -13,7 +13,7 @@ describe('ApplicationCardComponent', () => {
     companyName: 'Acme Corp',
     jobTitle: 'Senior Frontend Engineer',
     status: 'APPLIED',
-    location: 'Remote',
+    workModality: 'REMOTE',
     salaryRange: '$120k - $150k',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -36,7 +36,7 @@ describe('ApplicationCardComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Senior Frontend Engineer');
     expect(compiled.textContent).toContain('Acme Corp');
-    expect(compiled.textContent).toContain('Remote');
+    expect(compiled.textContent).toContain('REMOTE');
     expect(compiled.textContent).toContain('$120k - $150k');
   });
 

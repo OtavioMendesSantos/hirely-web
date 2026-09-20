@@ -120,21 +120,17 @@
             <option value="OTHER">Other</option>
           </hlm-native-select>
         </hlm-field>
-
         <hlm-field>
-          <label hlmFieldLabel for="location" class="text-xs"> Work Modality </label>
+          <label hlmFieldLabel for="work_modality" class="text-xs"> Work Modality </label>
           <hlm-native-select
-            id="location"
-            formControlName="location"
+            id="work_modality"
+            formControlName="work_modality"
           >
             <option value="">Select modality...</option>
-            <option value="Remote">Remote</option>
-            <option value="Hybrid">Hybrid</option>
-            <option value="On-site">On-site</option>
+            <option value="REMOTE">Remote</option>
+            <option value="HYBRID">Hybrid</option>
+            <option value="ONSITE">On-site</option>
           </hlm-native-select>
-          @if (form.get('location')?.hasError('maxlength') && form.get('location')?.touched) {
-          <hlm-field-error>Location cannot exceed 255 characters.</hlm-field-error>
-          }
         </hlm-field>
 
         <hlm-field>

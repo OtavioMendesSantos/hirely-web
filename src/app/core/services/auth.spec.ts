@@ -63,7 +63,7 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should store token in localStorage when login is called with rememberMe=true', () => {
+  it('should set logged-in state when login succeeds with rememberMe=true', () => {
     const mockUser: User = {
       id: '1',
       name: 'Otavio',
@@ -80,14 +80,16 @@ describe('AuthService', () => {
       password: 'secret',
       rememberMe: true,
     });
-    req.flush({ token: 'new-local-token', user: mockUser });
+    req.flush({ user: mockUser });
 
-    expect(localStorage.getItem('jwt_token')).toBe('new-local-token');
-    expect(sessionStorage.getItem('jwt_token')).toBeNull();
-    expect(service.getToken()).toBe('new-local-token');
+    // O JWT agora vive em cookie (HttpOnly) no servidor; o front só marca o estado.
+    expect(localStorage.getItem('is_logged_in')).toBe('true');
+    expect(sessionStorage.getItem('jwt_token')).toBe('old-session-token');
+    expect(service.getToken()).toBe('true');
+    expect(service.currentUser()).toEqual(mockUser);
   });
 
-  it('should store token in sessionStorage when login is called with rememberMe=false', () => {
+  it('should set logged-in state when login succeeds with rememberMe=false', () => {
     const mockUser: User = {
       id: '1',
       name: 'Otavio',
@@ -104,11 +106,11 @@ describe('AuthService', () => {
       password: 'secret',
       rememberMe: false,
     });
-    req.flush({ token: 'new-session-token', user: mockUser });
+    req.flush({ user: mockUser });
 
-    expect(sessionStorage.getItem('jwt_token')).toBe('new-session-token');
-    expect(localStorage.getItem('jwt_token')).toBeNull();
-    expect(service.getToken()).toBe('new-session-token');
+    expect(localStorage.getItem('is_logged_in')).toBe('true');
+    expect(service.getToken()).toBe('true');
+    expect(service.currentUser()).toEqual(mockUser);
   });
 
   it('should call /v1/users/me on checkAuth and set currentUser upon success', () => {
@@ -129,15 +131,13 @@ describe('AuthService', () => {
     req.flush(mockUser);
   });
 
-  it('should logout and remove token from both localStorage and sessionStorage', () => {
+  it('should logout and clear logged-in state when /users/me returns 401', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
-    localStorage.setItem('jwt_token', 'invalid-token');
-    sessionStorage.setItem('jwt_token', 'invalid-token-session');
+    localStorage.setItem('is_logged_in', 'true');
 
     service.checkAuth().subscribe({
       error: () => {
-        expect(localStorage.getItem('jwt_token')).toBeNull();
-        expect(sessionStorage.getItem('jwt_token')).toBeNull();
+        expect(localStorage.getItem('is_logged_in')).toBeNull();
         expect(service.currentUser()).toBeNull();
         expect(navigateSpy).toHaveBeenCalledWith(['/auth']);
       },

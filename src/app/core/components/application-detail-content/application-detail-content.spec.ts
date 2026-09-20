@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApplicationDetailContentComponent } from './application-detail-content';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
+import { provideMarkdown } from 'ngx-markdown';
 import { ApplicationService } from '../../services/application';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -19,7 +20,6 @@ describe('ApplicationDetailContentComponent', () => {
     jobTitle: 'Senior Backend Engineer',
     status: 'INTERVIEW',
     appliedAt: '2023-10-24T00:00:00Z',
-    location: 'San Francisco, CA (Remote)',
     salaryRange: '$150k - $180k',
     notes: 'Test notes',
     events: [
@@ -47,6 +47,7 @@ describe('ApplicationDetailContentComponent', () => {
       providers: [
         provideRouter([]),
         provideHttpClient(),
+        provideMarkdown(),
         { provide: ApplicationService, useValue: appServiceMock },
       ],
     }).compileComponents();
