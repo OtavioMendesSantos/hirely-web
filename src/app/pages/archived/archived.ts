@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -73,6 +73,13 @@ export class Archived {
     { value: 'OTHER', label: 'Other' },
   ];
 
+  readonly selectedStatusLabels = computed(() =>
+    this.statusOptions
+      .filter((option) => this.statuses().includes(option.value))
+      .map((option) => option.label)
+      .join(', ')
+  );
+
   constructor() {
     this.destroyRef.onDestroy(() => this.generation++);
     effect(() => {
@@ -129,6 +136,11 @@ export class Archived {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  clearFilters() {
+    this.searchChanges.next('');
+    this.updateFilters({ search: null, status: null });
   }
 
   toggleStatus(status: ApplicationStatus) {

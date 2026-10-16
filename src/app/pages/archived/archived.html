@@ -7,7 +7,7 @@
           Keep past applications here. Restore one to bring it back to your dashboard.
         </p>
       </div>
-      <div hlmCardContent class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div hlmCardContent class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <input
           hlmInput
           type="search"
@@ -17,9 +17,16 @@
           (ngModelChange)="onSearchChange($event)"
           class="min-w-0 flex-1"
         />
-        <button hlmBtn variant="outline" [hlmDropdownMenuTrigger]="statusMenu">
-          <ng-icon name="lucideFilter" size="16" /> Status
-          {{ statuses().length ? '(' + statuses().length + ')' : '' }}
+        <button
+          hlmBtn
+          variant="outline"
+          [hlmDropdownMenuTrigger]="statusMenu"
+          class="h-auto min-h-9 min-w-0 sm:max-w-80"
+        >
+          <ng-icon name="lucideFilter" size="16" />
+          <span class="text-left whitespace-normal">
+            {{ selectedStatusLabels() ? 'Status: ' + selectedStatusLabels() : 'Status: All' }}
+          </span>
         </button>
         <ng-template #statusMenu>
           <div hlmDropdownMenu>
@@ -30,11 +37,7 @@
                 (triggered)="toggleStatus(option.value)"
               >
                 {{ option.label }}
-              </button>
-            }
-            @if (statuses().length) {
-              <button hlmDropdownMenuItem (click)="updateFilters({ status: null })">
-                Clear status filters
+                <hlm-dropdown-menu-checkbox-indicator />
               </button>
             }
           </div>
@@ -49,6 +52,9 @@
           <option value="desc">Newest archived first</option>
           <option value="asc">Oldest archived first</option>
         </hlm-native-select>
+        @if (search() || statuses().length) {
+          <button hlmBtn variant="ghost" (click)="clearFilters()">Clear filters</button>
+        }
       </div>
     </section>
 
