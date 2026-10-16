@@ -60,9 +60,11 @@
 
     <div [attr.aria-busy]="loading()" aria-live="polite" class="flex flex-col gap-3">
       @if (loading()) {
-        @for (row of [1, 2, 3]; track row) {
-          <hlm-skeleton class="h-24 w-full rounded-xl" />
-        }
+        <div class="archive-grid">
+          @for (row of [1, 2, 3]; track row) {
+            <hlm-skeleton class="h-56 w-full rounded-xl" />
+          }
+        </div>
       } @else if (error()) {
         <hlm-empty>
           <hlm-empty-header
@@ -86,34 +88,65 @@
           </hlm-empty-header>
         </hlm-empty>
       } @else {
-        @for (application of applications(); track application.id) {
-          <article hlmCard>
-            <div
-              hlmCardContent
-              class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
-            >
-              <div class="flex min-w-0 flex-col gap-1">
-                <a
-                  [routerLink]="['/applications', application.id]"
-                  class="text-primary truncate font-semibold hover:underline"
-                  >{{ application.jobTitle }}</a
-                >
-                <p class="text-muted-foreground truncate text-sm">{{ application.companyName }}</p>
-                <div class="flex flex-wrap items-center gap-2 text-xs">
-                  <span hlmBadge variant="secondary">{{ application.status }}</span>
-                  <span class="text-muted-foreground"
-                    >Archived {{ application.archivedAt | date: 'mediumDate' }}</span
+        <div class="archive-grid">
+          @for (application of applications(); track application.id) {
+            <article hlmCard class="min-w-0">
+              <div hlmCardHeader class="min-w-0">
+                <h2 hlmCardTitle class="min-w-0">
+                  <a
+                    [routerLink]="['/applications', application.id]"
+                    [title]="application.jobTitle"
+                    class="font-heading hover:text-primary block truncate font-bold transition-colors"
+                    >{{ application.jobTitle }}</a
                   >
+                </h2>
+                <p
+                  class="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs font-semibold"
+                >
+                  <ng-icon
+                    name="lucideBuilding"
+                    size="14"
+                    class="text-primary/80 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span class="truncate" [title]="application.companyName">{{
+                    application.companyName
+                  }}</span>
+                </p>
+                <div hlmCardAction>
+                  <span hlmBadge variant="secondary">{{ statusLabel(application.status) }}</span>
                 </div>
               </div>
-              <div class="flex shrink-0 items-center gap-2">
+              <div hlmCardContent class="flex flex-1 flex-col gap-4">
+                <dl class="text-muted-foreground mt-auto flex justify-between gap-3 text-[11px]">
+                  <div class="flex min-w-0 items-baseline gap-1 whitespace-nowrap">
+                    <dt class="shrink-0">Added</dt>
+                    <dd class="truncate" [title]="application.createdAt | date: 'mediumDate'">
+                      <time [attr.datetime]="application.createdAt">{{
+                        application.createdAt | date: 'mediumDate'
+                      }}</time>
+                    </dd>
+                  </div>
+                  <div class="flex min-w-0 items-baseline gap-1 whitespace-nowrap">
+                    <dt class="shrink-0">Archived</dt>
+                    <dd class="truncate" [title]="application.archivedAt | date: 'mediumDate'">
+                      <time [attr.datetime]="application.archivedAt">{{
+                        application.archivedAt | date: 'mediumDate'
+                      }}</time>
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+              <div hlmCardFooter class="gap-2">
                 <button
                   hlmBtn
                   variant="outline"
                   size="sm"
+                  class="min-w-0 flex-1"
                   [disabled]="!!restoring()"
                   (click)="restore(application)"
                 >
+                  <ng-icon name="lucideRotateCcw" size="14" aria-hidden="true" />
                   {{ restoring() === application.id ? 'Restoring…' : 'Restore' }}
                 </button>
                 <button
@@ -126,9 +159,9 @@
                   <ng-icon name="lucideTrash2" size="16" />
                 </button>
               </div>
-            </div>
-          </article>
-        }
+            </article>
+          }
+        </div>
       }
     </div>
     <nav aria-label="Archived applications pages" class="flex items-center justify-between gap-3">

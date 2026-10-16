@@ -14,7 +14,13 @@ import { HlmNativeSelectImports } from '@spartan-ng/helm/native-select';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArchive, lucideTrash2, lucideFilter } from '@ng-icons/lucide';
+import {
+  lucideArchive,
+  lucideTrash2,
+  lucideFilter,
+  lucideBuilding,
+  lucideRotateCcw,
+} from '@ng-icons/lucide';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { Application, ApplicationStatus } from '../../core/models/application.model';
 import { AuthService } from '../../core/services/auth';
@@ -39,7 +45,10 @@ import { DeleteConfirmationComponent } from '../../shared/components/delete-conf
     ...HlmBadgeImports,
     NgIcon,
   ],
-  providers: [provideIcons({ lucideArchive, lucideTrash2, lucideFilter })],
+  providers: [
+    provideIcons({ lucideArchive, lucideTrash2, lucideFilter, lucideBuilding, lucideRotateCcw }),
+  ],
+  styleUrl: './archived.scss',
   templateUrl: './archived.html',
 })
 export class Archived {
@@ -136,6 +145,10 @@ export class Archived {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
+  }
+
+  statusLabel(status: ApplicationStatus) {
+    return this.statusOptions.find((option) => option.value === status)?.label ?? status;
   }
 
   clearFilters() {

@@ -1,0 +1,7 @@
+.archive-grid {
+  display: grid;
+  // Fit cards to the available content width, including the sidebar's footprint.
+  // The page container fits at most three readable cards, falling back to one on mobile.
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+}
