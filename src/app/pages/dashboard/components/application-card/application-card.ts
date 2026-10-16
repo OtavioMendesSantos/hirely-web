@@ -60,6 +60,7 @@ export class ApplicationCardComponent {
   }
 
   onCardClick(event: Event) {
+    if (event.target instanceof Element && event.target.closest('.drag-handle')) return;
     this.editClick.emit({ application: this.application(), event });
   }
 

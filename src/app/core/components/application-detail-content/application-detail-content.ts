@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -82,6 +93,7 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
 })
 export class ApplicationDetailContentComponent implements OnInit {
   private applicationService = inject(ApplicationService);
+  private readonly destroyRef = inject(DestroyRef);
   private dialogService = inject(HlmDialogService);
   private router = inject(Router);
   dialogRef = inject(BrnDialogRef, { optional: true });
@@ -247,7 +259,7 @@ export class ApplicationDetailContentComponent implements OnInit {
     const request = app.archivedAt
       ? this.applicationService.restoreApplication(app.id)
       : this.applicationService.archiveApplication(app.id);
-    request.subscribe({
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (updated) => {
         this.archivePending.set(false);
         this.application.set(updated);
@@ -293,27 +305,30 @@ export class ApplicationDetailContentComponent implements OnInit {
     if (!application || !event || this.deletingEvent()) return;
     this.deletingEvent.set(true);
     this.eventDeleteError.set(null);
-    this.applicationService.deleteEvent(application.id, event.id).subscribe({
-      next: () => {
-        this.deletingEvent.set(false);
-        this.eventToDelete.set(null);
-        this.application.update((current) =>
-          current
-            ? {
-                ...current,
-                events: current.events?.filter((item) => item.id !== event.id),
-              }
-            : current
-        );
-        toast.success('Event deleted');
-        // Reload canonical activity time and any other affected application fields.
-        this.loadApplication();
-      },
-      error: () => {
-        this.deletingEvent.set(false);
-        this.eventDeleteError.set("Couldn't delete the event. Try again.");
-      },
-    });
+    this.applicationService
+      .deleteEvent(application.id, event.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deletingEvent.set(false);
+          this.eventToDelete.set(null);
+          this.application.update((current) =>
+            current
+              ? {
+                  ...current,
+                  events: current.events?.filter((item) => item.id !== event.id),
+                }
+              : current
+          );
+          toast.success('Event deleted');
+          // Reload canonical activity time and any other affected application fields.
+          this.loadApplication();
+        },
+        error: () => {
+          this.deletingEvent.set(false);
+          this.eventDeleteError.set("Couldn't delete the event. Try again.");
+        },
+      });
   }
 
   getEventIcon(event: ApplicationEvent): string {

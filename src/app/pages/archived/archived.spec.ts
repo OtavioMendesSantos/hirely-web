@@ -1,3 +1,5 @@
+import { signal } from '@angular/core';
+import { AuthService } from '../../core/services/auth';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { BehaviorSubject, of, Subject } from 'rxjs';
@@ -17,6 +19,7 @@ const application: Application = {
 };
 
 describe('Archived pagination', () => {
+  const currentUser = signal<{ id: string } | null>({ id: 'u' });
   const requests: Subject<ListApplicationsResponse>[] = [];
   const params = new BehaviorSubject(convertToParamMap({}));
   const service = {
@@ -30,11 +33,14 @@ describe('Archived pagination', () => {
   };
 
   beforeEach(() => {
+    currentUser.set({ id: 'u' });
+    params.next(convertToParamMap({}));
     requests.length = 0;
     vi.clearAllMocks();
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        { provide: AuthService, useValue: { currentUser } },
         { provide: ActivatedRoute, useValue: { queryParamMap: params } },
         { provide: ApplicationService, useValue: service },
       ],
@@ -83,6 +89,30 @@ describe('Archived pagination', () => {
     page.askDelete(application);
     page.confirmDelete();
     expect(service.deleteApplication).toHaveBeenCalledWith('a');
+    expect(page.deleteTarget()).toBeNull();
+  });
+  it('does not invalidate a pending query for a filter that is unchanged', () => {
+    const page = TestBed.runInInjectionContext(() => new Archived());
+    page.updateFilters({ search: null, order: 'desc' });
+    requests[0].next({ applications: [application] });
+    expect(page.applications()).toEqual([application]);
+    expect(page.loading()).toBe(false);
+  });
+
+  it('clears old account results and ignores responses before the account effect runs', () => {
+    const page = TestBed.runInInjectionContext(() => new Archived());
+    TestBed.tick();
+    currentUser.set({ id: 'another-user' });
+    requests[0].next({ applications: [application], next_page_token: 'old-cursor' });
+    expect(page.applications()).toEqual([]);
+    TestBed.tick();
+    expect(page.cursors()).toEqual([undefined]);
+    expect(page.nextToken()).toBeUndefined();
+    requests[1].next({ applications: [] });
+    expect(page.loading()).toBe(false);
+    currentUser.set(null);
+    TestBed.tick();
+    expect(page.applications()).toEqual([]);
     expect(page.deleteTarget()).toBeNull();
   });
 });

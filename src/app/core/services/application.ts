@@ -87,7 +87,9 @@ export class ApplicationService {
       )
       .pipe(
         tap(() => {
+          if (uid !== this.userId) return;
           this.groupedGeneration++;
+          this.loading.set(false);
           // Keep active queries intact; their owners reload with their current filters.
           this.applications.update((list) => list.filter((app) => app.id !== applicationId));
           this.groupedApplications.update(
@@ -144,7 +146,7 @@ export class ApplicationService {
       .pipe(
         tap({
           next: (res) => {
-            if (generation !== this.groupedGeneration) return;
+            if (generation !== this.groupedGeneration || uid !== this.userId) return;
             const grouped: GroupedApplications = res.grouped_applications || {
               TO_APPLY: [],
               APPLIED: [],
@@ -161,6 +163,7 @@ export class ApplicationService {
             this.loading.set(false);
           },
           error: () => {
+            if (generation !== this.groupedGeneration || uid !== this.userId) return;
             this.loading.set(false);
           },
         })
@@ -317,6 +320,7 @@ export class ApplicationService {
       )
       .pipe(
         tap(() => {
+          if (uid !== this.userId) return;
           const removeEvent = (application: Application) =>
             application.id === applicationId
               ? {

@@ -47,4 +47,24 @@ describe('ApplicationCardComponent', () => {
     cardDiv.click();
     expect(editClickSpy).toHaveBeenCalledWith(expect.objectContaining({ application: mockApp }));
   });
+  it('opens the actions menu without opening the editor and keeps child keyboard events separate', () => {
+    const edit = vi.spyOn(component.editClick, 'emit');
+    const menu = fixture.nativeElement.querySelector(
+      'button[aria-label="Application actions"]'
+    ) as HTMLButtonElement;
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    expect(edit).not.toHaveBeenCalled();
+    menu.click();
+    fixture.detectChanges();
+    expect(edit).not.toHaveBeenCalled();
+    const overlay = document.querySelector('[role="menu"]');
+    expect(overlay).not.toBeNull();
+    const archive = vi.spyOn(component.archiveClick, 'emit');
+    const archiveAction = Array.from(overlay!.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Archive'
+    )!;
+    archiveAction.click();
+    expect(archive).toHaveBeenCalledWith(mockApp);
+    expect(edit).not.toHaveBeenCalled();
+  });
 });

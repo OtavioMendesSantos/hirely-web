@@ -17,15 +17,17 @@ const app: Application = {
 };
 
 describe('ApplicationService', () => {
+  const currentUser = signal({ id: 'u' });
   let service: ApplicationService;
   let http: HttpTestingController;
 
   beforeEach(() => {
+    currentUser.set({ id: 'u' });
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: AuthService, useValue: { currentUser: signal({ id: 'u' }) } },
+        { provide: AuthService, useValue: { currentUser } },
       ],
     });
     service = TestBed.inject(ApplicationService);
@@ -94,5 +96,15 @@ describe('ApplicationService', () => {
     });
     expect(service.groupedApplications().ACCEPTED[0].events).toEqual([]);
     expect(service.stats()).toBeNull();
+  });
+  it('ignores archive side effects after the user switches accounts', () => {
+    service.applications.set([app]);
+    service.archiveApplication('a').subscribe();
+    const request = http.expectOne((r) => r.url.endsWith('/a/archive'));
+    currentUser.set({ id: 'another-user' });
+    const otherApp = { ...app, id: 'b', userId: 'another-user' };
+    service.applications.set([otherApp]);
+    request.flush({ ...app, archivedAt: '2026-04-01' });
+    expect(service.applications()).toEqual([otherApp]);
   });
 });

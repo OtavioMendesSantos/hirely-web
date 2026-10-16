@@ -1,6 +1,7 @@
 import { toast } from '@spartan-ng/brain/sonner';
 import { DeleteConfirmationComponent } from '../../shared/components/delete-confirmation/delete-confirmation';
-import { Component, effect, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -111,6 +112,7 @@ export interface KanbanColumn {
 })
 export class Dashboard implements OnInit {
   private authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dialogService = inject(HlmDialogService);
@@ -126,17 +128,20 @@ export class Dashboard implements OnInit {
   archiveApplication(application: Application) {
     if (this.archivePending()) return;
     this.archivePending.set(application.id);
-    this.applicationService.archiveApplication(application.id).subscribe({
-      next: () => {
-        this.archivePending.set(null);
-        toast.success('Application archived');
-        this.loadGrouped();
-      },
-      error: () => {
-        this.archivePending.set(null);
-        toast.error("Couldn't archive the application. Try again.");
-      },
-    });
+    this.applicationService
+      .archiveApplication(application.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.archivePending.set(null);
+          toast.success('Application archived');
+          this.loadGrouped();
+        },
+        error: () => {
+          this.archivePending.set(null);
+          toast.error("Couldn't archive the application. Try again.");
+        },
+      });
   }
 
   askDelete(application: Application) {
@@ -149,18 +154,21 @@ export class Dashboard implements OnInit {
     if (!application || this.deletePending()) return;
     this.deletePending.set(true);
     this.deleteError.set(null);
-    this.applicationService.deleteApplication(application.id).subscribe({
-      next: () => {
-        this.deletePending.set(false);
-        this.deleteTarget.set(null);
-        toast.success('Application deleted');
-        this.loadGrouped();
-      },
-      error: () => {
-        this.deletePending.set(false);
-        this.deleteError.set("Couldn't delete the application. Try again.");
-      },
-    });
+    this.applicationService
+      .deleteApplication(application.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deletePending.set(false);
+          this.deleteTarget.set(null);
+          toast.success('Application deleted');
+          this.loadGrouped();
+        },
+        error: () => {
+          this.deletePending.set(false);
+          this.deleteError.set("Couldn't delete the application. Try again.");
+        },
+      });
   }
 
   currentUser = this.authService.currentUser;

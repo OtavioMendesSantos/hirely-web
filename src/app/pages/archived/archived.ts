@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,6 +17,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArchive, lucideTrash2, lucideFilter } from '@ng-icons/lucide';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { Application, ApplicationStatus } from '../../core/models/application.model';
+import { AuthService } from '../../core/services/auth';
 import { ApplicationService } from '../../core/services/application';
 import { DeleteConfirmationComponent } from '../../shared/components/delete-confirmation/delete-confirmation';
 
@@ -43,6 +44,8 @@ import { DeleteConfirmationComponent } from '../../shared/components/delete-conf
 })
 export class Archived {
   private readonly service = inject(ApplicationService);
+  private readonly auth = inject(AuthService);
+  private accountId = this.auth.currentUser()?.id ?? null;
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -72,6 +75,24 @@ export class Archived {
 
   constructor() {
     this.destroyRef.onDestroy(() => this.generation++);
+    effect(() => {
+      const accountId = this.auth.currentUser()?.id ?? null;
+      untracked(() => {
+        if (accountId === this.accountId) return;
+        this.accountId = accountId;
+        this.generation++;
+        this.applications.set([]);
+        this.nextToken.set(undefined);
+        this.cursors.set([undefined]);
+        this.restoring.set(null);
+        this.deleteTarget.set(null);
+        this.deleting.set(false);
+        this.deleteError.set(null);
+        this.loading.set(false);
+        this.error.set(null);
+        if (accountId) this.reload();
+      });
+    });
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.search.set(params.get('search') || '');
       this.statuses.set(
@@ -94,6 +115,12 @@ export class Archived {
   }
 
   updateFilters(params: Record<string, string | null>) {
+    const current: Record<string, string | null> = {
+      search: this.search().trim() || null,
+      status: this.statuses().join(',') || null,
+      order: this.order(),
+    };
+    if (!Object.entries(params).some(([key, value]) => current[key] !== value)) return;
     // Invalidate pending results as soon as a filter changes.
     this.generation++;
     this.router.navigate([], {
@@ -117,6 +144,8 @@ export class Archived {
   }
 
   load() {
+    const accountId = this.auth.currentUser()?.id;
+    if (!accountId) return;
     const generation = ++this.generation;
     this.loading.set(true);
     this.error.set(null);
@@ -133,13 +162,13 @@ export class Archived {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          if (generation !== this.generation) return;
+          if (generation !== this.generation || this.auth.currentUser()?.id !== accountId) return;
           this.applications.set(response.applications || []);
           this.nextToken.set(response.next_page_token || undefined);
           this.loading.set(false);
         },
         error: () => {
-          if (generation !== this.generation) return;
+          if (generation !== this.generation || this.auth.currentUser()?.id !== accountId) return;
           this.error.set("Couldn't load archived applications. Try again.");
           this.loading.set(false);
         },
@@ -160,18 +189,21 @@ export class Archived {
   }
 
   restore(application: Application) {
-    if (this.restoring()) return;
+    const accountId = this.auth.currentUser()?.id;
+    if (!accountId || this.restoring()) return;
     this.restoring.set(application.id);
     this.service
       .restoreApplication(application.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          if (this.auth.currentUser()?.id !== accountId) return;
           this.restoring.set(null);
           toast.success('Application restored');
           this.reload();
         },
         error: () => {
+          if (this.auth.currentUser()?.id !== accountId) return;
           this.restoring.set(null);
           toast.error("Couldn't restore the application. Try again.");
         },
@@ -185,7 +217,8 @@ export class Archived {
 
   confirmDelete() {
     const target = this.deleteTarget();
-    if (!target || this.deleting()) return;
+    const accountId = this.auth.currentUser()?.id;
+    if (!accountId || !target || this.deleting()) return;
     this.deleting.set(true);
     this.deleteError.set(null);
     this.service
@@ -193,12 +226,14 @@ export class Archived {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          if (this.auth.currentUser()?.id !== accountId) return;
           this.deleting.set(false);
           this.deleteTarget.set(null);
           toast.success('Application deleted');
           this.reload();
         },
         error: () => {
+          if (this.auth.currentUser()?.id !== accountId) return;
           this.deleting.set(false);
           this.deleteError.set("Couldn't delete the application. Try again.");
         },

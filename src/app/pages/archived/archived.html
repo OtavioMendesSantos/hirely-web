@@ -39,8 +39,9 @@
             }
           </div>
         </ng-template>
+        <label class="sr-only" for="archive-order">Order by archive date</label>
         <hlm-native-select
-          aria-label="Order by archive date"
+          selectId="archive-order"
           class="sm:w-48"
           [ngModel]="order()"
           (ngModelChange)="updateFilters({ order: $event })"
