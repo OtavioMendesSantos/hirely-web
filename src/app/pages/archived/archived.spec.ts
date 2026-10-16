@@ -54,7 +54,7 @@ describe('Archived pagination', () => {
     expect(service.queryApplications).toHaveBeenLastCalledWith(
       expect.objectContaining({
         archive_state: 'archived',
-        page_size: 20,
+        page_size: 21,
         page_token: 'second',
         order_by: 'archived_at',
       })

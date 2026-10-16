@@ -169,7 +169,7 @@ export class Archived {
     this.service
       .queryApplications({
         archive_state: 'archived',
-        page_size: 20,
+        page_size: 21,
         page_token: this.cursors().at(-1),
         search: this.search().trim() || undefined,
         status: this.statuses().join(',') || undefined,
