@@ -1,43 +1,130 @@
 <app-layout pageTitle="Profile">
   <section
     hlmCard
-    class="bg-surface-container-lowest border-border-subtle max-w-3xl mx-auto rounded-xl border p-6 shadow-sm sm:p-8"
+    class="bg-surface-container-lowest border-border-subtle mx-auto max-w-3xl rounded-xl border p-6 shadow-sm sm:p-8"
   >
     <div hlmCardHeader class="border-border-subtle mb-6 border-b p-0 pb-4">
-      <h3 hlmCardTitle class="font-heading text-on-surface text-xl font-bold">
-        Profile & Preferences
-      </h3>
-      <p class="text-on-surface-variant mt-1 text-sm">
-        Manage your personal information, workspace settings, and notification preferences.
-      </p>
+      <h3 hlmCardTitle class="font-heading text-on-surface text-xl font-bold">Your profile</h3>
+      <p class="text-on-surface-variant mt-1 text-sm">Your name and email address.</p>
     </div>
     <div class="space-y-4">
       <div>
-        <label
+        <span
           class="text-on-surface-variant mb-1 block text-xs font-semibold tracking-wider uppercase"
-          >Full Name</label
+          >Full name</span
         >
         <div
           class="text-on-surface bg-surface-container-low border-border-subtle/60 flex min-h-[42px] items-center rounded-md border px-3 py-2 text-base font-medium"
         >
-          @if (currentUser()) { {{ currentUser()?.name }} } @else {
-          <hlm-skeleton class="h-5 w-48 rounded" />
+          @if (currentUser()) {
+            {{ currentUser()?.name }}
+          } @else {
+            <hlm-skeleton class="h-5 w-48 rounded" />
           }
         </div>
       </div>
       <div>
-        <label
+        <span
           class="text-on-surface-variant mb-1 block text-xs font-semibold tracking-wider uppercase"
-          >Email Address</label
+          >Email address</span
         >
         <div
           class="text-on-surface bg-surface-container-low border-border-subtle/60 flex min-h-[42px] items-center rounded-md border px-3 py-2 text-base font-medium"
         >
-          @if (currentUser()) { {{ currentUser()?.email }} } @else {
-          <hlm-skeleton class="h-5 w-56 rounded" />
+          @if (currentUser()) {
+            {{ currentUser()?.email }}
+          } @else {
+            <hlm-skeleton class="h-5 w-56 rounded" />
           }
         </div>
       </div>
     </div>
+  </section>
+  <section
+    hlmCard
+    class="bg-surface-container-lowest border-border-subtle mx-auto mt-6 max-w-3xl rounded-xl border p-6 shadow-sm sm:p-8"
+    aria-labelledby="preferences-heading"
+    [attr.aria-busy]="preferencesService.loading() || preferencesService.saving()"
+  >
+    <div hlmCardHeader class="border-border-subtle mb-6 border-b p-0 pb-4">
+      <h3
+        id="preferences-heading"
+        hlmCardTitle
+        class="font-heading text-on-surface text-xl font-bold"
+      >
+        Preferences
+      </h3>
+      <p class="text-on-surface-variant mt-1 text-sm">
+        Your settings carry over when you sign in on another device.
+      </p>
+    </div>
+
+    @if (preferencesService.loading()) {
+      <div class="space-y-6" aria-label="Loading preferences">
+        <hlm-skeleton class="h-16 w-full rounded-md" />
+        <hlm-skeleton class="h-16 w-full rounded-md" />
+      </div>
+    } @else {
+      <div class="space-y-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <label for="preferred-theme" class="text-on-surface font-semibold">Theme</label>
+            <p id="theme-description" class="text-on-surface-variant mt-1 text-sm">
+              Choose light, dark, or your device's theme.
+            </p>
+          </div>
+          <hlm-native-select
+            selectId="preferred-theme"
+            class="w-full shrink-0 sm:w-36"
+            aria-describedby="theme-description"
+            [ngModel]="preferencesService.theme()"
+            (ngModelChange)="preferencesService.setTheme($event)"
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </hlm-native-select>
+        </div>
+        <div class="border-border-subtle flex items-center justify-between gap-4 border-t pt-6">
+          <div>
+            <label for="confetti-enabled" class="text-on-surface cursor-pointer font-semibold"
+              >Celebrate with confetti</label
+            >
+            <p id="confetti-description" class="text-on-surface-variant mt-1 text-sm">
+              Show confetti when you change an application's status to Accepted. Confetti stays off
+              if you've enabled reduced motion on your device.
+            </p>
+          </div>
+          <input
+            id="confetti-enabled"
+            type="checkbox"
+            role="switch"
+            class="bg-surface-container-high border-border-subtle checked:bg-primary focus-visible:ring-ring h-6 w-10 shrink-0 cursor-pointer appearance-none rounded-full border p-0.5 before:block before:size-4 before:rounded-full before:bg-white before:shadow-sm before:transition-transform checked:before:translate-x-4 focus-visible:ring-2"
+            aria-describedby="confetti-description"
+            [ngModel]="preferencesService.preferences().confetti_enabled"
+            (ngModelChange)="preferencesService.update({ confetti_enabled: $event })"
+          />
+        </div>
+      </div>
+    }
+
+    @if (preferencesService.saving()) {
+      <p class="text-on-surface-variant mt-4 text-sm" role="status" aria-live="polite">Saving…</p>
+    }
+    @if (preferencesService.error()) {
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <p class="text-destructive text-sm" role="alert">{{ preferencesService.error() }}</p>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          type="button"
+          [disabled]="preferencesService.saving()"
+          (click)="preferencesService.retry()"
+        >
+          Try again
+        </button>
+      </div>
+    }
   </section>
 </app-layout>

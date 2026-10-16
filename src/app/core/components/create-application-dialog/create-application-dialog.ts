@@ -41,6 +41,7 @@ import {
   CreateApplicationRequest,
   UpdateApplicationRequest,
 } from '../../models/application.model';
+import { CelebrationService } from '../../services/celebration';
 import { ApplicationService } from '../../services/application';
 import { TagService } from '../../services/tag';
 
@@ -84,6 +85,7 @@ import { MarkdownInputComponent } from '../markdown-input/markdown-input';
 export class CreateApplicationDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private applicationService = inject(ApplicationService);
+  private readonly celebrationService = inject(CelebrationService);
   tagService = inject(TagService);
   dialogRef = inject(BrnDialogRef);
   private readonly _dialogContext = injectBrnDialogContext<{
@@ -234,10 +236,12 @@ export class CreateApplicationDialogComponent implements OnInit {
         tag_ids: val.tag_ids || [],
       };
 
+      const previousStatus = this.applicationToEdit()!.status;
       this.applicationService.updateApplication(this.applicationToEdit()!.id, payload).subscribe({
         next: (updated) => {
           this.isSubmitting.set(false);
           this.dialogRef.close(updated);
+          this.celebrationService.celebrateAcceptance(previousStatus, updated.status);
         },
         error: (err) => {
           this.isSubmitting.set(false);

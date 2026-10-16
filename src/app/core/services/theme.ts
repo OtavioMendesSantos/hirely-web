@@ -15,7 +15,12 @@ export class ThemeService {
 
   private initTheme() {
     if (typeof localStorage !== 'undefined') {
-      const savedTheme = localStorage.getItem(this.STORAGE_KEY) as ThemeMode;
+      let savedTheme: string | null = null;
+      try {
+        savedTheme = localStorage.getItem(this.STORAGE_KEY);
+      } catch {
+        /* Browser storage is optional. */
+      }
       if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
         this.theme.set(savedTheme);
       } else {
@@ -37,7 +42,11 @@ export class ThemeService {
   setTheme(mode: ThemeMode) {
     this.theme.set(mode);
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(this.STORAGE_KEY, mode);
+      try {
+        localStorage.setItem(this.STORAGE_KEY, mode);
+      } catch {
+        /* Browser storage is optional. */
+      }
     }
     this.applyTheme(mode);
   }

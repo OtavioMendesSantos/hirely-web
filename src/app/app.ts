@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HlmToasterImports } from '@spartan-ng/helm/sonner';
 import { AuthService } from './core/services/auth';
-import { ThemeService } from './core/services/theme';
+import { PreferencesService } from './core/services/preferences';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ import { ThemeService } from './core/services/theme';
 export class App {
   protected readonly title = signal('Hirely');
   private authService = inject(AuthService);
-  private readonly themeService = inject(ThemeService);
+  private readonly preferencesService = inject(PreferencesService);
 
   constructor() {
     if (this.authService.getToken()) {

@@ -15,7 +15,7 @@ import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { AuthService } from '../../services/auth';
-import { ThemeService } from '../../services/theme';
+import { PreferencesService } from '../../services/preferences';
 
 @Component({
   selector: 'app-user-menu',
@@ -44,7 +44,7 @@ import { ThemeService } from '../../services/theme';
 export class UserMenuComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  themeService = inject(ThemeService);
+  themeService = inject(PreferencesService);
 
   readonly variant = input<'sidebar' | 'header'>('sidebar');
   readonly side = input<'top' | 'bottom' | 'left' | 'right'>('top');

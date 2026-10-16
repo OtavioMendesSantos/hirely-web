@@ -40,6 +40,7 @@ import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { AuthService } from '../../core/services/auth';
+import { CelebrationService } from '../../core/services/celebration';
 import { ApplicationService } from '../../core/services/application';
 import { TagService } from '../../core/services/tag';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
@@ -111,6 +112,7 @@ export class Dashboard implements OnInit {
   private router = inject(Router);
   private dialogService = inject(HlmDialogService);
   applicationService = inject(ApplicationService);
+  private readonly celebrationService = inject(CelebrationService);
   tagService = inject(TagService);
 
   currentUser = this.authService.currentUser;
@@ -432,7 +434,7 @@ export class Dashboard implements OnInit {
     );
 
     this.applicationService.updateApplication(app.id, { status: newStatus }).subscribe({
-      next: () => {},
+      next: (updated) => this.celebrationService.celebrateAcceptance(previousStatus, updated.status),
       error: (err) => {
         console.error('Failed to update application status:', err);
         this.applicationService.groupedApplications.set(oldGrouped);

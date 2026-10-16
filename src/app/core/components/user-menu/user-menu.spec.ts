@@ -49,7 +49,7 @@ describe('UserMenuComponent', () => {
 
     const dialogContent = document.querySelector('hlm-alert-dialog-content') as HTMLElement;
     expect(dialogContent).toBeTruthy();
-    expect(dialogContent.textContent).toContain('Confirm Log Out');
+    expect(dialogContent.textContent).toContain('Log out?');
 
     const actionBtn = document.querySelector('button[hlmAlertDialogAction]') as HTMLButtonElement;
     expect(actionBtn).toBeTruthy();

@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
-import { ThemeService } from '../../services/theme';
+import { PreferencesService } from '../../services/preferences';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMonitor, lucideSun, lucideMoon } from '@ng-icons/lucide';
@@ -16,7 +16,7 @@ import { UserMenuComponent } from '../user-menu/user-menu';
 })
 export class HeaderComponent {
   private authService = inject(AuthService);
-  themeService = inject(ThemeService);
+  themeService = inject(PreferencesService);
 
   isLoggedIn = computed(() => {
     const user = this.authService.currentUser();
