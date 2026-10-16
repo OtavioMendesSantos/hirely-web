@@ -7,6 +7,7 @@ import {
   lucideActivity,
   lucideChevronsUpDown,
   lucideKey,
+  lucideArchive,
 } from '@ng-icons/lucide';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
@@ -31,6 +32,7 @@ import { UserMenuComponent } from '../user-menu/user-menu';
       lucideActivity,
       lucideChevronsUpDown,
       lucideKey,
+      lucideArchive,
     }),
   ],
   templateUrl: './app-sidebar.html',

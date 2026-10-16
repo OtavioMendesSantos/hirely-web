@@ -31,6 +31,12 @@ export class ApplicationDetailPage implements OnInit {
 
   onApplicationLoaded(app: Application) {
     this.pageTitle.set(app.jobTitle);
-    this.breadcrumbItems.set([{ label: 'Dashboard', link: '/dashboard' }, { label: app.jobTitle }]);
+    this.breadcrumbItems.set([
+      {
+        label: app.archivedAt ? 'Archived' : 'Dashboard',
+        link: app.archivedAt ? '/archived' : '/dashboard',
+      },
+      { label: app.jobTitle },
+    ]);
   }
 }

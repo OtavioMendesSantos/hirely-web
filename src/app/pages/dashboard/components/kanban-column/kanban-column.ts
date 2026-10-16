@@ -35,9 +35,12 @@ import { ApplicationCardComponent } from '../application-card/application-card';
 export class KanbanColumnComponent {
   readonly column = input.required<KanbanColumn>();
   readonly applications = input.required<Application[]>();
+  readonly archivePending = input<string | null>(null);
   readonly loading = input.required<boolean>();
 
   readonly editApplication = output<{ application: Application; event: Event }>();
+  readonly archiveApplication = output<Application>();
+  readonly deleteApplication = output<Application>();
   readonly addApplication = output<ApplicationStatus>();
   readonly applicationDropped = output<CdkDragDrop<Application[]>>();
 

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  lucideArchive,
+  lucideArchiveRestore,
   lucideBriefcase,
   lucideBriefcaseBusiness,
   lucideBuilding,
@@ -32,6 +34,7 @@ import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmSkeletonImports } from '@spartan-ng/helm/skeleton';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { MarkdownComponent } from 'ngx-markdown';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation';
 import { Application, ApplicationEvent } from '../../models/application.model';
 import { ApplicationService } from '../../services/application';
 import { CreateApplicationDialogComponent } from '../create-application-dialog/create-application-dialog';
@@ -41,6 +44,7 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
   standalone: true,
   imports: [
     CommonModule,
+    DeleteConfirmationComponent,
     FormsModule,
     ...HlmCardImports,
     ...HlmButtonImports,
@@ -53,6 +57,8 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
   ],
   providers: [
     provideIcons({
+      lucideArchive,
+      lucideArchiveRestore,
       lucideBriefcase,
       lucideBriefcaseBusiness,
       lucideBuilding,
@@ -98,6 +104,9 @@ export class ApplicationDetailContentComponent implements OnInit {
   newNoteText = signal<string>('');
   isAddingNote = signal<boolean>(false);
   isDeleteConfirmOpen = signal<boolean>(false);
+  readonly deleting = signal(false);
+  readonly deleteError = signal<string | null>(null);
+  readonly archivePending = signal(false);
 
   showAllEvents = signal<boolean>(false);
   showFullNotes = signal<boolean>(false);
@@ -170,7 +179,7 @@ export class ApplicationDetailContentComponent implements OnInit {
 
   openEditDialog() {
     const app = this.application();
-    if (!app) return;
+    if (!app || app.archivedAt) return;
 
     const dialogRef = this.dialogService.open(CreateApplicationDialogComponent, {
       contentClass:
@@ -187,6 +196,7 @@ export class ApplicationDetailContentComponent implements OnInit {
   }
 
   openDeleteConfirm() {
+    this.deleteError.set(null);
     this.isDeleteConfirmOpen.set(true);
   }
 
@@ -197,27 +207,53 @@ export class ApplicationDetailContentComponent implements OnInit {
   }
 
   cancelDelete() {
-    this.isDeleteConfirmOpen.set(false);
+    if (!this.deleting()) this.isDeleteConfirmOpen.set(false);
   }
 
   confirmDelete() {
     const app = this.application();
-    if (!app) return;
+    if (!app || this.deleting()) return;
+    this.deleting.set(true);
+    this.deleteError.set(null);
 
     this.applicationService.deleteApplication(app.id).subscribe({
       next: () => {
-        toast.success('Application deleted successfully');
+        this.deleting.set(false);
+        this.isDeleteConfirmOpen.set(false);
+        toast.success('Application deleted');
         this.applicationDeleted.emit();
         if (this.isModal() || this.dialogRef) {
           this.dialogRef?.close({ deleted: true });
         } else {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([app.archivedAt ? '/archived' : '/dashboard']);
         }
       },
       error: (err) => {
         const msg =
           err.error?.error?.message || err.error?.message || 'Failed to delete application';
-        toast.error(msg);
+        this.deleting.set(false);
+        this.deleteError.set(msg);
+      },
+    });
+  }
+
+  toggleArchive() {
+    const app = this.application();
+    if (!app || this.archivePending()) return;
+    this.archivePending.set(true);
+    const request = app.archivedAt
+      ? this.applicationService.restoreApplication(app.id)
+      : this.applicationService.archiveApplication(app.id);
+    request.subscribe({
+      next: (updated) => {
+        this.archivePending.set(false);
+        this.application.set(updated);
+        this.applicationLoaded.emit(updated);
+        toast.success(app.archivedAt ? 'Application restored' : 'Application archived');
+      },
+      error: () => {
+        this.archivePending.set(false);
+        toast.error("Couldn't update the application. Try again.");
       },
     });
   }
@@ -225,7 +261,7 @@ export class ApplicationDetailContentComponent implements OnInit {
   addNote() {
     const app = this.application();
     const text = this.newNoteText().trim();
-    if (!app || !text || this.isAddingNote()) return;
+    if (!app || app.archivedAt || !text || this.isAddingNote()) return;
 
     this.isAddingNote.set(true);
     this.applicationService.addEvent(app.id, text).subscribe({
@@ -244,6 +280,8 @@ export class ApplicationDetailContentComponent implements OnInit {
   }
 
   getEventIcon(event: ApplicationEvent): string {
+    if (event.action === 'ARCHIVED') return 'lucideArchive';
+    if (event.action === 'UNARCHIVED') return 'lucideArchiveRestore';
     if (event.type === 'MANUAL') return 'lucideMessageSquare';
     if (
       event.description.toLowerCase().includes('status') ||
@@ -256,6 +294,8 @@ export class ApplicationDetailContentComponent implements OnInit {
   }
 
   getEventTitle(event: ApplicationEvent): string {
+    if (event.action === 'ARCHIVED') return 'Application archived';
+    if (event.action === 'UNARCHIVED') return 'Application restored';
     if (event.type === 'MANUAL') return 'Note Added';
     if (event.previousStatus && event.newStatus) return 'Stage Changed';
     if (event.description.toLowerCase().includes('created')) return 'Application Submitted';

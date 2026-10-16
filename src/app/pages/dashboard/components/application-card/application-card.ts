@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  lucideMoreHorizontal,
   lucideBuilding,
   lucideMapPin,
   lucideDollarSign,
@@ -14,14 +15,24 @@ import {
   lucideHourglass,
   lucideMonitor,
 } from '@ng-icons/lucide';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { Application, ApplicationEvent } from '../../../../core/models/application.model';
 
 @Component({
   selector: 'app-application-card',
   standalone: true,
-  imports: [CommonModule, RouterLink, NgIcon, DragDropModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    NgIcon,
+    DragDropModule,
+    ...HlmDropdownMenuImports,
+    ...HlmButtonImports,
+  ],
   providers: [
     provideIcons({
+      lucideMoreHorizontal,
       lucideBuilding,
       lucideMapPin,
       lucideDollarSign,
@@ -38,7 +49,15 @@ import { Application, ApplicationEvent } from '../../../../core/models/applicati
 })
 export class ApplicationCardComponent {
   readonly application = input.required<Application>();
+  readonly archivePending = input(false);
   readonly editClick = output<{ application: Application; event: Event }>();
+
+  readonly archiveClick = output<Application>();
+  readonly deleteClick = output<Application>();
+
+  onCardKeydown(event: Event) {
+    if (event.target === event.currentTarget) this.onCardClick(event);
+  }
 
   onCardClick(event: Event) {
     this.editClick.emit({ application: this.application(), event });

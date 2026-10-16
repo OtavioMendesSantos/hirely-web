@@ -6,3 +6,14 @@
     cursor: grabbing;
   }
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .card-actions {
+    opacity: 0;
+  }
+  .group:hover .card-actions,
+  .group:focus-within .card-actions,
+  .card-actions[aria-expanded='true'] {
+    opacity: 1;
+  }
+}

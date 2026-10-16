@@ -7,20 +7,20 @@
         <div class="flex min-w-0 flex-col gap-1">
           <div class="flex flex-wrap items-center gap-2.5">
             @if (!currentUser()) {
-            <hlm-skeleton class="my-0.5 h-8 w-64 rounded-lg" />
+              <hlm-skeleton class="my-0.5 h-8 w-64 rounded-lg" />
             } @else {
-            <h2
-              class="font-heading text-on-surface truncate text-xl font-bold tracking-tight sm:text-2xl"
-            >
-              Welcome back, {{ currentUser()?.name }}!
-            </h2>
+              <h2
+                class="font-heading text-on-surface truncate text-xl font-bold tracking-tight sm:text-2xl"
+              >
+                Welcome back, {{ currentUser()?.name }}!
+              </h2>
             }
           </div>
           <p class="text-on-surface-variant flex items-center gap-2 text-xs sm:text-sm">
             @if (applicationService.loading()) {
-            <hlm-skeleton class="my-0.5 h-4 w-72 rounded-md" />
+              <hlm-skeleton class="my-0.5 h-4 w-72 rounded-md" />
             } @else {
-            <span>{{ applicationService.applications().length }} applications tracked</span>
+              <span>{{ applicationService.applications().length }} applications tracked</span>
             }
           </p>
         </div>
@@ -74,11 +74,11 @@
             <ng-icon name="lucideFilter" class="text-primary size-3.5" />
             <span>Status</span>
             @if (selectedStatuses().length > 0) {
-            <span
-              class="bg-primary text-on-primary ml-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
-            >
-              {{ selectedStatuses().length }}
-            </span>
+              <span
+                class="bg-primary text-on-primary ml-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
+              >
+                {{ selectedStatuses().length }}
+              </span>
             }
           </button>
           <ng-template #filterMenu>
@@ -92,28 +92,29 @@
                 Filter by Status
               </div>
               @for (opt of allStatusOptions; track opt.value) {
-              <button
-                type="button"
-                hlmDropdownMenuCheckboxItem
-                [checked]="selectedStatuses().includes(opt.value)"
-                (triggered)="toggleStatusFilter(opt.value)"
-                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
-              >
-                <span>{{ opt.label }}</span>
-                @if (selectedStatuses().includes(opt.value)) {
-                <span class="bg-primary size-1.5 rounded-full"></span>
-                }
-              </button>
-              } @if (selectedStatuses().length > 0) {
-              <div class="border-border-subtle my-1 border-t"></div>
-              <button
-                type="button"
-                hlmDropdownMenuItem
-                (click)="clearStatusFilter()"
-                class="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center rounded-lg px-2 py-1.5 text-xs font-semibold"
-              >
-                Clear Filters
-              </button>
+                <button
+                  type="button"
+                  hlmDropdownMenuCheckboxItem
+                  [checked]="selectedStatuses().includes(opt.value)"
+                  (triggered)="toggleStatusFilter(opt.value)"
+                  class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+                >
+                  <span>{{ opt.label }}</span>
+                  @if (selectedStatuses().includes(opt.value)) {
+                    <span class="bg-primary size-1.5 rounded-full"></span>
+                  }
+                </button>
+              }
+              @if (selectedStatuses().length > 0) {
+                <div class="border-border-subtle my-1 border-t"></div>
+                <button
+                  type="button"
+                  hlmDropdownMenuItem
+                  (click)="clearStatusFilter()"
+                  class="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center rounded-lg px-2 py-1.5 text-xs font-semibold"
+                >
+                  Clear Filters
+                </button>
               }
             </div>
           </ng-template>
@@ -130,11 +131,11 @@
             <ng-icon name="lucideFilter" class="text-primary size-3.5" />
             <span>Tags</span>
             @if (activeTagCount() > 0) {
-            <span
-              class="bg-primary text-on-primary ml-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
-            >
-              {{ activeTagCount() }}
-            </span>
+              <span
+                class="bg-primary text-on-primary ml-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
+              >
+                {{ activeTagCount() }}
+              </span>
             }
           </button>
           <ng-template #tagsMenu>
@@ -148,33 +149,37 @@
                 Filter by Tag
               </div>
               @for (tag of tagService.tags(); track tag.id) {
-              <button
-                type="button"
-                hlmDropdownMenuCheckboxItem
-                [checked]="selectedTags().includes(tag.id)"
-                (triggered)="toggleTagFilter(tag.id)"
-                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="size-2 rounded-full" [style.backgroundColor]="tag.colorHex"></span>
-                  <span>{{ tag.name }}</span>
+                <button
+                  type="button"
+                  hlmDropdownMenuCheckboxItem
+                  [checked]="selectedTags().includes(tag.id)"
+                  (triggered)="toggleTagFilter(tag.id)"
+                  class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="size-2 rounded-full" [style.backgroundColor]="tag.colorHex"></span>
+                    <span>{{ tag.name }}</span>
+                  </div>
+                  @if (selectedTags().includes(tag.id)) {
+                    <span class="bg-primary size-1.5 rounded-full"></span>
+                  }
+                </button>
+              }
+              @if (tagService.tags().length === 0) {
+                <div class="text-on-surface-variant px-2 py-2 text-xs italic">
+                  No tags available
                 </div>
-                @if (selectedTags().includes(tag.id)) {
-                <span class="bg-primary size-1.5 rounded-full"></span>
-                }
-              </button>
-              } @if (tagService.tags().length === 0) {
-              <div class="text-on-surface-variant px-2 py-2 text-xs italic">No tags available</div>
-              } @if (selectedTags().length > 0) {
-              <div class="border-border-subtle my-1 border-t"></div>
-              <button
-                type="button"
-                hlmDropdownMenuItem
-                (click)="clearTagFilter()"
-                class="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center rounded-lg px-2 py-1.5 text-xs font-semibold"
-              >
-                Clear Filters
-              </button>
+              }
+              @if (selectedTags().length > 0) {
+                <div class="border-border-subtle my-1 border-t"></div>
+                <button
+                  type="button"
+                  hlmDropdownMenuItem
+                  (click)="clearTagFilter()"
+                  class="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center rounded-lg px-2 py-1.5 text-xs font-semibold"
+                >
+                  Clear Filters
+                </button>
               }
             </div>
           </ng-template>
@@ -202,17 +207,17 @@
                 Sort By
               </div>
               @for (opt of sortOptions; track opt.value) {
-              <button
-                type="button"
-                hlmDropdownMenuItem
-                (click)="onSortByChange(opt.value)"
-                class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
-              >
-                <span>{{ opt.label }}</span>
-                @if (sortBy() === opt.value) {
-                <span class="bg-primary size-1.5 rounded-full"></span>
-                }
-              </button>
+                <button
+                  type="button"
+                  hlmDropdownMenuItem
+                  (click)="onSortByChange(opt.value)"
+                  class="text-on-surface hover:bg-surface-container-low flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors"
+                >
+                  <span>{{ opt.label }}</span>
+                  @if (sortBy() === opt.value) {
+                    <span class="bg-primary size-1.5 rounded-full"></span>
+                  }
+                </button>
               }
               <div class="border-border-subtle my-1 border-t"></div>
               <button
@@ -230,38 +235,48 @@
             </div>
           </ng-template>
 
-          @if (selectedStatuses().length > 0 || sortBy() !== 'created_at' || searchQuery() ||
-          activeTagCount() > 0) {
-          <button
-            type="button"
-            (click)="resetAllFilters()"
-            class="text-primary hover:bg-primary/5 inline-flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors hover:underline"
-          >
-            <ng-icon name="lucideRotateCcw" class="size-3" />
-            <span>Reset</span>
-          </button>
+          @if (
+            selectedStatuses().length > 0 ||
+            sortBy() !== 'created_at' ||
+            searchQuery() ||
+            activeTagCount() > 0
+          ) {
+            <button
+              type="button"
+              (click)="resetAllFilters()"
+              class="text-primary hover:bg-primary/5 inline-flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors hover:underline"
+            >
+              <ng-icon name="lucideRotateCcw" class="size-3" />
+              <span>Reset</span>
+            </button>
           }
         </div>
       </div>
     </div>
 
-    <div
-      class="scrollbar-thin min-w-0 overflow-x-auto pt-1 pb-4"
-      cdkScrollable
-      cdkDropListGroup
-    >
+    <div class="min-w-0 scrollbar-thin overflow-x-auto pt-1 pb-4" cdkScrollable cdkDropListGroup>
       <div class="flex w-max min-w-full items-stretch justify-center gap-5">
         @for (col of columns(); track col.status) {
-        <app-kanban-column
-          [column]="col"
-          [applications]="getCardsForStatus(col.status)"
-          [loading]="applicationService.loading()"
-          (editApplication)="openEditModal($event.application, $event.event)"
-          (addApplication)="openCreateModal($event)"
-          (applicationDropped)="onApplicationDrop($event)"
-        />
+          <app-kanban-column
+            [column]="col"
+            [archivePending]="archivePending()"
+            [applications]="getCardsForStatus(col.status)"
+            [loading]="applicationService.loading()"
+            (editApplication)="openEditModal($event.application, $event.event)"
+            (addApplication)="openCreateModal($event)"
+            (archiveApplication)="archiveApplication($event)"
+            (deleteApplication)="askDelete($event)"
+            (applicationDropped)="onApplicationDrop($event)"
+          />
         }
       </div>
     </div>
   </div>
+  <app-delete-confirmation
+    [open]="!!deleteTarget()"
+    [pending]="deletePending()"
+    [error]="deleteError()"
+    (cancelled)="deleteTarget.set(null)"
+    (confirmed)="confirmDelete()"
+  />
 </app-layout>

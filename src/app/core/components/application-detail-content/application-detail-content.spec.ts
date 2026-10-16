@@ -11,7 +11,13 @@ import { Application } from '../../models/application.model';
 describe('ApplicationDetailContentComponent', () => {
   let component: ApplicationDetailContentComponent;
   let fixture: ComponentFixture<ApplicationDetailContentComponent>;
-  let appServiceMock: any;
+  let appServiceMock: {
+    getApplication: ReturnType<typeof vi.fn>;
+    addEvent: ReturnType<typeof vi.fn>;
+    deleteApplication: ReturnType<typeof vi.fn>;
+    archiveApplication: ReturnType<typeof vi.fn>;
+    restoreApplication: ReturnType<typeof vi.fn>;
+  };
 
   const mockApp: Application = {
     id: 'app-1',
@@ -39,6 +45,8 @@ describe('ApplicationDetailContentComponent', () => {
     appServiceMock = {
       getApplication: vi.fn().mockReturnValue(of(mockApp)),
       addEvent: vi.fn().mockReturnValue(of({})),
+      archiveApplication: vi.fn().mockReturnValue(of({ ...mockApp, archivedAt: '2026-04-01' })),
+      restoreApplication: vi.fn().mockReturnValue(of(mockApp)),
       deleteApplication: vi.fn().mockReturnValue(of({})),
     };
 
@@ -81,5 +89,23 @@ describe('ApplicationDetailContentComponent', () => {
     component.newNoteText.set('New check-in note');
     component.addNote();
     expect(appServiceMock.addEvent).toHaveBeenCalledWith('app-1', 'New check-in note');
+  });
+  it('archives after confirmation from the API and restores without changing status', () => {
+    component.toggleArchive();
+    expect(appServiceMock.archiveApplication).toHaveBeenCalledWith('app-1');
+    expect(component.application()?.archivedAt).toBe('2026-04-01');
+    expect(component.application()?.status).toBe('INTERVIEW');
+    component.toggleArchive();
+    expect(appServiceMock.restoreApplication).toHaveBeenCalledWith('app-1');
+    expect(component.application()?.archivedAt).toBeUndefined();
+  });
+
+  it('keeps archived applications read-only until restored', () => {
+    component.application.set({ ...mockApp, archivedAt: '2026-04-01' });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('input[placeholder]')).toBeNull();
+    component.newNoteText.set('Must not be submitted');
+    component.addNote();
+    expect(appServiceMock.addEvent).not.toHaveBeenCalled();
   });
 });

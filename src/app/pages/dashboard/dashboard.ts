@@ -1,3 +1,5 @@
+import { toast } from '@spartan-ng/brain/sonner';
+import { DeleteConfirmationComponent } from '../../shared/components/delete-confirmation/delete-confirmation';
 import { Component, effect, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -65,6 +67,7 @@ export interface KanbanColumn {
   standalone: true,
   imports: [
     CommonModule,
+    DeleteConfirmationComponent,
     FormsModule,
     AppLayoutComponent,
     ...HlmCardImports,
@@ -114,6 +117,51 @@ export class Dashboard implements OnInit {
   applicationService = inject(ApplicationService);
   private readonly celebrationService = inject(CelebrationService);
   tagService = inject(TagService);
+
+  readonly archivePending = signal<string | null>(null);
+  readonly deleteTarget = signal<Application | null>(null);
+  readonly deletePending = signal(false);
+  readonly deleteError = signal<string | null>(null);
+
+  archiveApplication(application: Application) {
+    if (this.archivePending()) return;
+    this.archivePending.set(application.id);
+    this.applicationService.archiveApplication(application.id).subscribe({
+      next: () => {
+        this.archivePending.set(null);
+        toast.success('Application archived');
+        this.loadGrouped();
+      },
+      error: () => {
+        this.archivePending.set(null);
+        toast.error("Couldn't archive the application. Try again.");
+      },
+    });
+  }
+
+  askDelete(application: Application) {
+    this.deleteError.set(null);
+    this.deleteTarget.set(application);
+  }
+
+  confirmDelete() {
+    const application = this.deleteTarget();
+    if (!application || this.deletePending()) return;
+    this.deletePending.set(true);
+    this.deleteError.set(null);
+    this.applicationService.deleteApplication(application.id).subscribe({
+      next: () => {
+        this.deletePending.set(false);
+        this.deleteTarget.set(null);
+        toast.success('Application deleted');
+        this.loadGrouped();
+      },
+      error: () => {
+        this.deletePending.set(false);
+        this.deleteError.set("Couldn't delete the application. Try again.");
+      },
+    });
+  }
 
   currentUser = this.authService.currentUser;
 
@@ -434,7 +482,8 @@ export class Dashboard implements OnInit {
     );
 
     this.applicationService.updateApplication(app.id, { status: newStatus }).subscribe({
-      next: (updated) => this.celebrationService.celebrateAcceptance(previousStatus, updated.status),
+      next: (updated) =>
+        this.celebrationService.celebrateAcceptance(previousStatus, updated.status),
       error: (err) => {
         console.error('Failed to update application status:', err);
         this.applicationService.groupedApplications.set(oldGrouped);

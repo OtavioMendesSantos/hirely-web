@@ -22,6 +22,8 @@ export class ApplicationService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
+  private groupedGeneration = 0;
+
   readonly applications = signal<Application[]>([]);
   readonly groupedApplications = signal<GroupedApplications>({
     TO_APPLY: [],
@@ -44,6 +46,7 @@ export class ApplicationService {
     let httpParams = new HttpParams();
     if (!params) return httpParams;
 
+    if (params.archive_state) httpParams = httpParams.set('archive_state', params.archive_state);
     if (params.status) httpParams = httpParams.set('status', params.status);
     if (params.tag_ids && params.tag_ids.length > 0)
       httpParams = httpParams.set('tag_ids', params.tag_ids.join(','));
@@ -54,6 +57,50 @@ export class ApplicationService {
     if (params.search) httpParams = httpParams.set('search', params.search);
 
     return httpParams;
+  }
+
+  /** A read without side effects: archive pagination must not replace the Kanban state. */
+  queryApplications(params: ApplicationQueryParams) {
+    const uid = this.userId;
+    if (!uid) throw new Error('User not authenticated');
+    return this.http.get<ListApplicationsResponse>(
+      `${environment.apiUrl}/users/${uid}/applications`,
+      { params: this.buildHttpParams(params) }
+    );
+  }
+
+  archiveApplication(applicationId: string) {
+    return this.changeArchiveState(applicationId, 'archive');
+  }
+
+  restoreApplication(applicationId: string) {
+    return this.changeArchiveState(applicationId, 'restore');
+  }
+
+  private changeArchiveState(applicationId: string, action: 'archive' | 'restore') {
+    const uid = this.userId;
+    if (!uid) throw new Error('User not authenticated');
+    return this.http
+      .post<Application>(
+        `${environment.apiUrl}/users/${uid}/applications/${applicationId}/${action}`,
+        {}
+      )
+      .pipe(
+        tap(() => {
+          this.groupedGeneration++;
+          // Keep active queries intact; their owners reload with their current filters.
+          this.applications.update((list) => list.filter((app) => app.id !== applicationId));
+          this.groupedApplications.update(
+            (current) =>
+              Object.fromEntries(
+                Object.entries(current).map(([status, list]) => [
+                  status,
+                  list.filter((app) => app.id !== applicationId),
+                ])
+              ) as GroupedApplications
+          );
+        })
+      );
   }
 
   loadApplications(params?: ApplicationQueryParams) {
@@ -82,6 +129,7 @@ export class ApplicationService {
   }
 
   loadGroupedApplications(params?: ApplicationQueryParams) {
+    const generation = ++this.groupedGeneration;
     const uid = this.userId;
     if (!uid) return;
 
@@ -96,6 +144,7 @@ export class ApplicationService {
       .pipe(
         tap({
           next: (res) => {
+            if (generation !== this.groupedGeneration) return;
             const grouped: GroupedApplications = res.grouped_applications || {
               TO_APPLY: [],
               APPLIED: [],

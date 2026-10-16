@@ -11,6 +11,7 @@ export interface ApplicationEvent {
   applicationId: string;
   type: EventType;
   description: string;
+  action?: 'ARCHIVED' | 'UNARCHIVED';
   previousStatus?: string;
   newStatus?: string;
   createdAt: string;
@@ -35,7 +36,7 @@ export interface Application {
   contractType?: ContractType;
   workModality?: WorkModality;
   appliedAt?: string;
-  
+
   submittedDocuments?: string[];
   jobDescription?: string;
   notes?: string;
@@ -43,6 +44,7 @@ export interface Application {
   events?: ApplicationEvent[];
   createdAt: string;
   updatedAt: string;
+  archivedAt?: string | null;
 }
 
 export interface CreateApplicationRequest {
@@ -54,7 +56,7 @@ export interface CreateApplicationRequest {
   contract_type?: ContractType;
   work_modality?: WorkModality;
   applied_at?: string;
-  
+
   submitted_documents?: string[];
   job_description?: string;
   notes?: string;
@@ -70,7 +72,7 @@ export interface UpdateApplicationRequest {
   contract_type?: ContractType;
   work_modality?: WorkModality;
   applied_at?: string;
-  
+
   submitted_documents?: string[];
   job_description?: string;
   notes?: string;
@@ -111,6 +113,7 @@ export interface GroupedApplicationsResponse {
 }
 
 export interface ApplicationQueryParams {
+  archive_state?: 'active' | 'archived' | 'all';
   search?: string;
   status?: string;
   tag_ids?: string[];

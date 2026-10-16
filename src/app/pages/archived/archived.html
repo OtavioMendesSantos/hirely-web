@@ -1,0 +1,154 @@
+<app-layout pageTitle="Archived">
+  <div class="flex flex-col gap-6 pb-8">
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h1 hlmCardTitle>Archived applications</h1>
+        <p hlmCardDescription>
+          Keep past applications here. Restore one to bring it back to your dashboard.
+        </p>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <input
+          hlmInput
+          type="search"
+          aria-label="Search archived applications"
+          placeholder="Search job titles or companies…"
+          [ngModel]="search()"
+          (ngModelChange)="onSearchChange($event)"
+          class="min-w-0 flex-1"
+        />
+        <button hlmBtn variant="outline" [hlmDropdownMenuTrigger]="statusMenu">
+          <ng-icon name="lucideFilter" size="16" /> Status
+          {{ statuses().length ? '(' + statuses().length + ')' : '' }}
+        </button>
+        <ng-template #statusMenu>
+          <div hlmDropdownMenu>
+            @for (option of statusOptions; track option.value) {
+              <button
+                hlmDropdownMenuCheckboxItem
+                [checked]="statuses().includes(option.value)"
+                (triggered)="toggleStatus(option.value)"
+              >
+                {{ option.label }}
+              </button>
+            }
+            @if (statuses().length) {
+              <button hlmDropdownMenuItem (click)="updateFilters({ status: null })">
+                Clear status filters
+              </button>
+            }
+          </div>
+        </ng-template>
+        <hlm-native-select
+          aria-label="Order by archive date"
+          class="sm:w-48"
+          [ngModel]="order()"
+          (ngModelChange)="updateFilters({ order: $event })"
+        >
+          <option value="desc">Newest archived first</option>
+          <option value="asc">Oldest archived first</option>
+        </hlm-native-select>
+      </div>
+    </section>
+
+    <div [attr.aria-busy]="loading()" aria-live="polite" class="flex flex-col gap-3">
+      @if (loading()) {
+        @for (row of [1, 2, 3]; track row) {
+          <hlm-skeleton class="h-24 w-full rounded-xl" />
+        }
+      } @else if (error()) {
+        <hlm-empty>
+          <hlm-empty-header
+            ><h2 hlmEmptyTitle>Couldn't load applications</h2>
+            <p hlmEmptyDescription>{{ error() }}</p></hlm-empty-header
+          >
+          <button hlmBtn variant="outline" (click)="load()">Try again</button>
+        </hlm-empty>
+      } @else if (!applications().length) {
+        <hlm-empty>
+          <hlm-empty-header
+            ><hlm-empty-media><ng-icon name="lucideArchive" /></hlm-empty-media>
+            <h2 hlmEmptyTitle>No archived applications</h2>
+            <p hlmEmptyDescription>
+              {{
+                search() || statuses().length
+                  ? 'Try another search or clear your filters.'
+                  : 'Applications you archive will appear here.'
+              }}
+            </p>
+          </hlm-empty-header>
+        </hlm-empty>
+      } @else {
+        @for (application of applications(); track application.id) {
+          <article hlmCard>
+            <div
+              hlmCardContent
+              class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+            >
+              <div class="flex min-w-0 flex-col gap-1">
+                <a
+                  [routerLink]="['/applications', application.id]"
+                  class="text-primary truncate font-semibold hover:underline"
+                  >{{ application.jobTitle }}</a
+                >
+                <p class="text-muted-foreground truncate text-sm">{{ application.companyName }}</p>
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                  <span hlmBadge variant="secondary">{{ application.status }}</span>
+                  <span class="text-muted-foreground"
+                    >Archived {{ application.archivedAt | date: 'mediumDate' }}</span
+                  >
+                </div>
+              </div>
+              <div class="flex shrink-0 items-center gap-2">
+                <button
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  [disabled]="!!restoring()"
+                  (click)="restore(application)"
+                >
+                  {{ restoring() === application.id ? 'Restoring…' : 'Restore' }}
+                </button>
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon-sm"
+                  [attr.aria-label]="'Delete ' + application.jobTitle"
+                  (click)="askDelete(application)"
+                >
+                  <ng-icon name="lucideTrash2" size="16" />
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      }
+    </div>
+    <nav aria-label="Archived applications pages" class="flex items-center justify-between gap-3">
+      <button
+        hlmBtn
+        variant="outline"
+        [disabled]="loading() || cursors().length === 1"
+        (click)="previous()"
+      >
+        Previous
+      </button>
+      <span class="text-muted-foreground text-sm">Page {{ cursors().length }}</span>
+      <button
+        hlmBtn
+        variant="outline"
+        [disabled]="loading() || !!error() || !nextToken()"
+        (click)="next()"
+      >
+        Next
+      </button>
+    </nav>
+  </div>
+  <app-delete-confirmation
+    [open]="!!deleteTarget()"
+    [pending]="deleting()"
+    [error]="deleteError()"
+    (cancelled)="deleteTarget.set(null)"
+    (confirmed)="confirmDelete()"
+  />
+</app-layout>
