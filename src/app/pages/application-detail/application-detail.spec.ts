@@ -1,18 +1,22 @@
+import { signal } from '@angular/core';
+import { AuthService } from '../../core/services/auth';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApplicationDetailPage } from './application-detail';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { ApplicationService } from '../../core/services/application';
 import { vi } from 'vitest';
 
 describe('ApplicationDetailPage', () => {
   let component: ApplicationDetailPage;
   let fixture: ComponentFixture<ApplicationDetailPage>;
-  let appServiceMock: any;
+  let appServiceMock: { getApplication: ReturnType<typeof vi.fn> };
+  const currentUser = signal<{ id: string } | null>({ id: 'user-1' });
 
   beforeEach(async () => {
+    currentUser.set({ id: 'user-1' });
     appServiceMock = {
       getApplication: vi.fn().mockReturnValue(
         of({
@@ -31,6 +35,7 @@ describe('ApplicationDetailPage', () => {
       imports: [ApplicationDetailPage],
       providers: [
         provideRouter([]),
+        { provide: AuthService, useValue: { currentUser } },
         provideHttpClient(),
         {
           provide: ActivatedRoute,
@@ -51,5 +56,15 @@ describe('ApplicationDetailPage', () => {
   it('should create and update pageTitle on loaded', () => {
     expect(component).toBeTruthy();
     expect(component.applicationId()).toBe('app-1');
+  });
+  it('clears the previous application title and breadcrumbs when accounts change', () => {
+    expect(component.pageTitle()).toBe('Senior Backend Engineer');
+    appServiceMock.getApplication.mockReturnValue(NEVER);
+    currentUser.set({ id: 'user-2' });
+    fixture.detectChanges();
+    expect(component.pageTitle()).toBe('Application Details');
+    expect(component.breadcrumbItems().map((item) => item.label)).not.toContain(
+      'Senior Backend Engineer'
+    );
   });
 });

@@ -9,6 +9,7 @@ import {
   OnInit,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -47,6 +48,7 @@ import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { MarkdownComponent } from 'ngx-markdown';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation';
 import { Application, ApplicationEvent } from '../../models/application.model';
+import { AuthService } from '../../services/auth';
 import { ApplicationService } from '../../services/application';
 import { CreateApplicationDialogComponent } from '../create-application-dialog/create-application-dialog';
 
@@ -93,6 +95,9 @@ import { CreateApplicationDialogComponent } from '../create-application-dialog/c
 })
 export class ApplicationDetailContentComponent implements OnInit {
   private applicationService = inject(ApplicationService);
+  private readonly auth = inject(AuthService);
+  private contextVersion = 0;
+  private loadGeneration = 0;
   private readonly destroyRef = inject(DestroyRef);
   private dialogService = inject(HlmDialogService);
   private router = inject(Router);
@@ -145,18 +150,49 @@ export class ApplicationDetailContentComponent implements OnInit {
 
   constructor() {
     effect(() => {
+      const accountId = this.auth.currentUser()?.id;
       const id =
         this.applicationId() ||
         this._dialogContext?.applicationId ||
         this._dialogContext?.application?.id;
-      if (id) {
-        this.loadApplication(id);
-      }
+      untracked(() => {
+        this.contextVersion++;
+        this.loadGeneration++;
+        this.application.set(null);
+        this.loading.set(false);
+        this.errorMessage.set(null);
+        this.archivePending.set(false);
+        this.isAddingNote.set(false);
+        this.newNoteText.set('');
+        this.deleting.set(false);
+        this.isDeleteConfirmOpen.set(false);
+        this.deleteError.set(null);
+        this.eventToDelete.set(null);
+        this.deletingEvent.set(false);
+        this.eventDeleteError.set(null);
+        if (accountId && id) this.loadApplication(id);
+      });
     });
   }
 
+  private isCurrentOperation(accountId: string, applicationId: string, version: number): boolean {
+    const currentId =
+      this.applicationId() ||
+      this._dialogContext?.applicationId ||
+      this._dialogContext?.application?.id ||
+      this.application()?.id;
+    return (
+      this.auth.currentUser()?.id === accountId &&
+      currentId === applicationId &&
+      this.contextVersion === version
+    );
+  }
+
   ngOnInit() {
-    if (this._dialogContext?.application) {
+    if (
+      this._dialogContext?.application?.userId === this.auth.currentUser()?.id &&
+      this._dialogContext?.application
+    ) {
       this.application.set(this._dialogContext.application);
       this.loading.set(false);
     }
@@ -169,32 +205,50 @@ export class ApplicationDetailContentComponent implements OnInit {
       this._dialogContext?.applicationId ||
       this._dialogContext?.application?.id ||
       this.application()?.id;
-    if (!targetId) return;
+    const accountId = this.auth.currentUser()?.id;
+    if (!targetId || !accountId) return;
+    const version = this.contextVersion;
+    const generation = ++this.loadGeneration;
 
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.applicationService.getApplication(targetId).subscribe({
-      next: (app) => {
-        this.application.set(app);
-        this.loading.set(false);
-        this.applicationLoaded.emit(app);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        const msg =
-          err.error?.error?.message ||
-          err.error?.message ||
-          'Failed to load job application details.';
-        this.errorMessage.set(msg);
-        toast.error(msg);
-      },
-    });
+    this.applicationService
+      .getApplication(targetId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (app) => {
+          if (
+            generation !== this.loadGeneration ||
+            !this.isCurrentOperation(accountId, targetId, version)
+          )
+            return;
+          this.application.set(app);
+          this.loading.set(false);
+          this.applicationLoaded.emit(app);
+        },
+        error: (err) => {
+          if (
+            generation !== this.loadGeneration ||
+            !this.isCurrentOperation(accountId, targetId, version)
+          )
+            return;
+          this.loading.set(false);
+          const msg =
+            err.error?.error?.message ||
+            err.error?.message ||
+            'Failed to load job application details.';
+          this.errorMessage.set(msg);
+          toast.error(msg);
+        },
+      });
   }
 
   openEditDialog() {
     const app = this.application();
-    if (!app || app.archivedAt) return;
+    const accountId = this.auth.currentUser()?.id;
+    const version = this.contextVersion;
+    if (!app || app.archivedAt || !accountId || app.userId !== accountId) return;
 
     const dialogRef = this.dialogService.open(CreateApplicationDialogComponent, {
       contentClass:
@@ -202,7 +256,8 @@ export class ApplicationDetailContentComponent implements OnInit {
       context: { application: app },
     });
 
-    dialogRef.closed$.subscribe((updatedApp) => {
+    dialogRef.closed$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((updatedApp) => {
+      if (!this.isCurrentOperation(accountId, app.id, version)) return;
       if (updatedApp) {
         toast.success('Application updated successfully');
         this.loadApplication();
@@ -227,46 +282,58 @@ export class ApplicationDetailContentComponent implements OnInit {
 
   confirmDelete() {
     const app = this.application();
-    if (!app || this.deleting()) return;
+    const accountId = this.auth.currentUser()?.id;
+    const version = this.contextVersion;
+    if (!app || !accountId || app.userId !== accountId || this.deleting()) return;
     this.deleting.set(true);
     this.deleteError.set(null);
 
-    this.applicationService.deleteApplication(app.id).subscribe({
-      next: () => {
-        this.deleting.set(false);
-        this.isDeleteConfirmOpen.set(false);
-        toast.success('Application deleted');
-        this.applicationDeleted.emit();
-        if (this.isModal() || this.dialogRef) {
-          this.dialogRef?.close({ deleted: true });
-        } else {
-          this.router.navigate([app.archivedAt ? '/archived' : '/dashboard']);
-        }
-      },
-      error: (err) => {
-        const msg =
-          err.error?.error?.message || err.error?.message || 'Failed to delete application';
-        this.deleting.set(false);
-        this.deleteError.set(msg);
-      },
-    });
+    this.applicationService
+      .deleteApplication(app.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          if (!this.isCurrentOperation(accountId, app.id, version)) return;
+          this.deleting.set(false);
+          this.isDeleteConfirmOpen.set(false);
+          toast.success('Application deleted');
+          this.applicationDeleted.emit();
+          if (this.isModal() || this.dialogRef) {
+            this.dialogRef?.close({ deleted: true });
+          } else {
+            this.router.navigate([app.archivedAt ? '/archived' : '/dashboard']);
+          }
+        },
+        error: (err) => {
+          if (!this.isCurrentOperation(accountId, app.id, version)) return;
+          const msg =
+            err.error?.error?.message || err.error?.message || 'Failed to delete application';
+          this.deleting.set(false);
+          this.deleteError.set(msg);
+        },
+      });
   }
 
   toggleArchive() {
     const app = this.application();
-    if (!app || this.archivePending()) return;
+    const accountId = this.auth.currentUser()?.id;
+    const version = this.contextVersion;
+    if (!app || !accountId || app.userId !== accountId || this.archivePending()) return;
     this.archivePending.set(true);
     const request = app.archivedAt
       ? this.applicationService.restoreApplication(app.id)
       : this.applicationService.archiveApplication(app.id);
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (updated) => {
+        if (!this.isCurrentOperation(accountId, app.id, version)) return;
+        this.loadGeneration++;
         this.archivePending.set(false);
         this.application.set(updated);
         this.applicationLoaded.emit(updated);
         toast.success(app.archivedAt ? 'Application restored' : 'Application archived');
       },
       error: () => {
+        if (!this.isCurrentOperation(accountId, app.id, version)) return;
         this.archivePending.set(false);
         toast.error("Couldn't update the application. Try again.");
       },
@@ -276,22 +343,37 @@ export class ApplicationDetailContentComponent implements OnInit {
   addNote() {
     const app = this.application();
     const text = this.newNoteText().trim();
-    if (!app || app.archivedAt || !text || this.isAddingNote()) return;
+    const accountId = this.auth.currentUser()?.id;
+    const version = this.contextVersion;
+    if (
+      !app ||
+      !accountId ||
+      app.userId !== accountId ||
+      app.archivedAt ||
+      !text ||
+      this.isAddingNote()
+    )
+      return;
 
     this.isAddingNote.set(true);
-    this.applicationService.addEvent(app.id, text).subscribe({
-      next: () => {
-        toast.success('Note added to timeline');
-        this.newNoteText.set('');
-        this.isAddingNote.set(false);
-        this.loadApplication();
-      },
-      error: (err) => {
-        this.isAddingNote.set(false);
-        const msg = err.error?.error?.message || err.error?.message || 'Failed to add note';
-        toast.error(msg);
-      },
-    });
+    this.applicationService
+      .addEvent(app.id, text)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          if (!this.isCurrentOperation(accountId, app.id, version)) return;
+          toast.success('Note added to timeline');
+          this.newNoteText.set('');
+          this.isAddingNote.set(false);
+          this.loadApplication();
+        },
+        error: (err) => {
+          if (!this.isCurrentOperation(accountId, app.id, version)) return;
+          this.isAddingNote.set(false);
+          const msg = err.error?.error?.message || err.error?.message || 'Failed to add note';
+          toast.error(msg);
+        },
+      });
   }
 
   askDeleteEvent(event: ApplicationEvent) {
@@ -302,7 +384,16 @@ export class ApplicationDetailContentComponent implements OnInit {
   confirmDeleteEvent() {
     const application = this.application();
     const event = this.eventToDelete();
-    if (!application || !event || this.deletingEvent()) return;
+    const accountId = this.auth.currentUser()?.id;
+    const version = this.contextVersion;
+    if (
+      !application ||
+      !event ||
+      !accountId ||
+      application.userId !== accountId ||
+      this.deletingEvent()
+    )
+      return;
     this.deletingEvent.set(true);
     this.eventDeleteError.set(null);
     this.applicationService
@@ -310,6 +401,7 @@ export class ApplicationDetailContentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          if (!this.isCurrentOperation(accountId, application.id, version)) return;
           this.deletingEvent.set(false);
           this.eventToDelete.set(null);
           this.application.update((current) =>
@@ -325,6 +417,7 @@ export class ApplicationDetailContentComponent implements OnInit {
           this.loadApplication();
         },
         error: () => {
+          if (!this.isCurrentOperation(accountId, application.id, version)) return;
           this.deletingEvent.set(false);
           this.eventDeleteError.set("Couldn't delete the event. Try again.");
         },

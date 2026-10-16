@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { ApplicationDetailContentComponent } from '../../core/components/application-detail-content/application-detail-content';
+import { AuthService } from '../../core/services/auth';
 import { Application } from '../../core/models/application.model';
 
 @Component({
@@ -12,6 +13,8 @@ import { Application } from '../../core/models/application.model';
 })
 export class ApplicationDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
+  private context: string | undefined;
 
   applicationId = signal<string>('');
   pageTitle = signal<string>('Application Details');
@@ -19,6 +22,21 @@ export class ApplicationDetailPage implements OnInit {
     { label: 'Dashboard', link: '/dashboard' },
     { label: 'Application Details' },
   ]);
+
+  constructor() {
+    effect(() => {
+      const context = `${this.auth.currentUser()?.id ?? ''}:${this.applicationId()}`;
+      if (context === this.context) return;
+      this.context = context;
+      untracked(() => {
+        this.pageTitle.set('Application Details');
+        this.breadcrumbItems.set([
+          { label: 'Dashboard', link: '/dashboard' },
+          { label: 'Application Details' },
+        ]);
+      });
+    });
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
@@ -30,6 +48,7 @@ export class ApplicationDetailPage implements OnInit {
   }
 
   onApplicationLoaded(app: Application) {
+    if (app.userId !== this.auth.currentUser()?.id || app.id !== this.applicationId()) return;
     this.pageTitle.set(app.jobTitle);
     this.breadcrumbItems.set([
       {
