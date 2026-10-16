@@ -14,8 +14,10 @@ import {
   lucideTrendingUp,
   lucideXCircle,
   lucideChevronDown,
+  lucideArrowUpRight,
 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDatePickerImports } from '@spartan-ng/helm/date-picker';
 import { HlmEmptyImports } from '@spartan-ng/helm/empty';
@@ -56,6 +58,7 @@ export interface ChartOptions {
     AppLayoutComponent,
     RouterLink,
     ...HlmCardImports,
+    ...HlmBadgeImports,
     ...HlmDatePickerImports,
     ...HlmEmptyImports,
     ...HlmSkeletonImports,
@@ -76,6 +79,7 @@ export interface ChartOptions {
       lucideXCircle,
       lucideHourglass,
       lucideChevronDown,
+      lucideArrowUpRight,
     }),
   ],
   templateUrl: './metrics.html',

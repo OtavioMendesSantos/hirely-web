@@ -119,211 +119,157 @@
           </hlm-empty-header>
         </hlm-empty>
       } @else {
-        <!-- KPI Cards Row -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <!-- Total Applications -->
-          <div
-            hlmCard
-            class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
-          >
-            <div class="flex items-start justify-between">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section hlmCard class="min-w-0 gap-4">
+            <div hlmCardHeader class="flex flex-row items-center justify-between gap-3">
+              <h2 hlmCardTitle class="text-sm">Total applications</h2>
+              <span class="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg">
+                <ng-icon name="lucideFileText" size="16" class="text-primary" aria-hidden="true" />
+              </span>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <a
+                  [routerLink]="['/applications']"
+                  [queryParams]="applicationFilters({})"
+                  aria-label="View all applications in this period"
+                  class="text-foreground text-4xl font-semibold tracking-tight tabular-nums underline-offset-4 hover:underline"
+                  >{{ totalApplications() }}</a
+                >
+              </div>
+              <p class="text-muted-foreground text-xs">Active and archived</p>
+            </div>
+            <div hlmCardFooter class="mt-auto min-h-14 justify-between gap-3">
               <a
                 [routerLink]="['/applications']"
                 [queryParams]="applicationFilters({})"
-                class="text-on-surface-variant text-sm font-medium hover:underline"
-                >Total Applications</a
+                class="text-muted-foreground hover:text-foreground flex w-full items-center justify-between gap-2 text-xs font-medium"
               >
-              <ng-icon name="lucideFileText" class="text-primary size-5" />
+                <span>View applications</span>
+                <ng-icon name="lucideArrowUpRight" size="14" aria-hidden="true" />
+              </a>
             </div>
-            <div class="mt-4 flex items-baseline gap-2">
-              <a
-                [routerLink]="['/applications']"
-                [queryParams]="applicationFilters({})"
-                aria-label="View all applications in this period"
-                class="text-on-surface text-3xl font-bold hover:underline"
-                >{{ totalApplications() }}</a
-              >
+          </section>
+          <section hlmCard class="min-w-0 gap-4">
+            <div hlmCardHeader class="flex flex-row items-center justify-between gap-3">
+              <h2 hlmCardTitle class="text-sm">Interview rate</h2>
+              <span class="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg">
+                <ng-icon
+                  name="lucideTrendingUp"
+                  size="16"
+                  class="text-(--status-interview)"
+                  aria-hidden="true"
+                />
+              </span>
             </div>
-          </div>
-
-          <!-- Conversion Rate -->
-          <div
-            hlmCard
-            class="border-border-subtle bg-surface-container-lowest relative rounded-xl border p-6 shadow-sm"
-          >
-            <div class="bg-primary absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
-            <div class="flex items-start justify-between">
+            <div hlmCardContent class="flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <a
+                  [routerLink]="['/applications']"
+                  [queryParams]="applicationFilters({ metric: 'interviews' })"
+                  aria-label="View applications that reached interview"
+                  class="text-foreground text-4xl font-semibold tracking-tight tabular-nums underline-offset-4 hover:underline"
+                  >{{ interviewCount() }}</a
+                >
+                <span hlmBadge variant="outline" class="tabular-nums">{{ conversionRate() }}%</span>
+              </div>
+              <p class="text-muted-foreground text-xs">Reached interview or beyond</p>
+            </div>
+            <div hlmCardFooter class="mt-auto min-h-14 justify-between gap-3">
               <a
                 [routerLink]="['/applications']"
                 [queryParams]="applicationFilters({ metric: 'interviews' })"
-                class="text-primary text-sm font-medium hover:underline"
-                >Interview Rate</a
+                class="text-muted-foreground hover:text-foreground flex w-full items-center justify-between gap-2 text-xs font-medium"
               >
-              <ng-icon name="lucideTrendingUp" class="text-primary size-5" />
+                <span>View applications</span>
+                <ng-icon name="lucideArrowUpRight" size="14" aria-hidden="true" />
+              </a>
             </div>
-            <div class="mt-4 flex items-baseline gap-2">
-              <a
-                [routerLink]="['/applications']"
-                [queryParams]="applicationFilters({ metric: 'interviews' })"
-                aria-label="View applications that reached interview"
-                class="text-primary text-3xl font-bold hover:underline"
-                >{{ interviewCount() }}</a
-              >
-              <span class="text-primary/80 ml-1 text-sm font-medium"
-                >({{ conversionRate() }}%)</span
-              >
+          </section>
+          <section hlmCard class="min-w-0 gap-4">
+            <div hlmCardHeader class="flex flex-row items-center justify-between gap-3">
+              <h2 hlmCardTitle class="text-sm">Rejections</h2>
+              <span class="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg">
+                <ng-icon
+                  name="lucideXCircle"
+                  size="16"
+                  class="text-destructive"
+                  aria-hidden="true"
+                />
+              </span>
             </div>
-          </div>
-
-          <!-- Rejection Rate -->
-          <div
-            hlmCard
-            class="border-border-subtle bg-surface-container-lowest relative flex flex-col justify-between !overflow-visible rounded-xl border p-6 shadow-sm hover:z-10"
-          >
-            <div class="bg-destructive absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
-            <div class="flex items-start justify-between">
-              <a
-                [routerLink]="['/applications']"
-                [queryParams]="applicationFilters({ metric: 'rejections' })"
-                class="text-destructive text-sm font-medium hover:underline"
-                >Rejections</a
-              >
-              <ng-icon name="lucideXCircle" class="text-destructive size-5" />
-            </div>
-
-            <div class="mt-4 flex items-center justify-between gap-2">
-              <div class="flex items-baseline gap-2">
+            <div hlmCardContent class="flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-3">
                 <a
                   [routerLink]="['/applications']"
                   [queryParams]="applicationFilters({ metric: 'rejections' })"
                   aria-label="View rejected applications"
-                  class="text-destructive text-3xl font-bold hover:underline"
+                  class="text-foreground text-4xl font-semibold tracking-tight tabular-nums underline-offset-4 hover:underline"
                   >{{ rejectedCount() }}</a
                 >
-                <span class="text-destructive/80 ml-1 text-sm font-medium"
-                  >({{ rejectionRate() }}%)</span
-                >
+                <span hlmBadge variant="outline" class="tabular-nums">{{ rejectionRate() }}%</span>
               </div>
-
-              <!-- Desktop: Circular Progress with Tooltip -->
-              @if (rejectedCount() > 0) {
-                <div class="group relative hidden lg:block">
-                  <svg class="size-8 -rotate-90 transform" viewBox="0 0 36 36">
-                    <!-- Background Circle (Direct) -->
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="16"
-                      fill="none"
-                      class="stroke-destructive/40"
-                      stroke-width="4"
-                    ></circle>
-                    <!-- Foreground Circle (Advanced) -->
-                    <circle
-                      cx="18"
-                      cy="18"
-                      r="16"
-                      fill="none"
-                      class="stroke-destructive"
-                      stroke-width="4"
-                      pathLength="100"
-                      stroke-dasharray="100"
-                      [style.stroke-dashoffset]="
-                        100 - (advancedRejectionsCount() / rejectedCount()) * 100
-                      "
-                      stroke-linecap="round"
-                    ></circle>
-                  </svg>
-                  <!-- Tooltip -->
-                  <div
-                    class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-max -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <div
-                      class="bg-surface-container-highest border-border-subtle text-on-surface relative flex flex-col gap-1 rounded-lg border px-2.5 py-1.5 text-xs shadow-md"
-                    >
-                      <div class="flex items-center gap-1.5">
-                        <span class="bg-destructive/40 size-2 rounded-full"></span>
-                        <span>{{ directRejectionsCount() }} Direct</span>
-                      </div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="bg-destructive size-2 rounded-full"></span>
-                        <span>{{ advancedRejectionsCount() }} After Process</span>
-                      </div>
-                      <div
-                        class="bg-surface-container-highest border-border-subtle absolute -bottom-1 left-1/2 size-2 -translate-x-1/2 rotate-45 border-r border-b"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              }
+              <p class="text-muted-foreground text-xs">Currently marked rejected</p>
             </div>
-
-            <!-- Mobile: Progress bar -->
-            @if (rejectedCount() > 0) {
-              <div
-                class="border-border-subtle/50 mt-4 flex flex-col gap-2.5 border-t pt-3 lg:hidden"
-              >
-                <!-- Progress bar -->
-                <div
-                  class="bg-surface-container-high flex h-1.5 w-full overflow-hidden rounded-full"
-                >
-                  <div
-                    class="bg-destructive/40 h-full transition-all duration-500"
-                    [style.width]="(directRejectionsCount() / rejectedCount()) * 100 + '%'"
-                  ></div>
-                  <div
-                    class="bg-destructive h-full transition-all duration-500"
-                    [style.width]="(advancedRejectionsCount() / rejectedCount()) * 100 + '%'"
-                  ></div>
-                </div>
-              </div>
-            }
-            <div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
+            <div hlmCardFooter class="mt-auto min-h-14 justify-between gap-3">
               <a
                 [routerLink]="['/applications']"
                 [queryParams]="applicationFilters({ metric: 'direct_rejections' })"
-                class="text-destructive hover:underline"
-                >{{ directRejectionsCount() }} Direct</a
+                class="text-muted-foreground flex flex-wrap items-baseline gap-x-1.5 text-xs underline-offset-4 hover:underline"
               >
+                <span class="text-foreground font-semibold tabular-nums">{{
+                  directRejectionsCount()
+                }}</span>
+                <span>Direct</span>
+              </a>
               <a
                 [routerLink]="['/applications']"
                 [queryParams]="applicationFilters({ metric: 'advanced_rejections' })"
-                class="text-destructive hover:underline"
-                >{{ advancedRejectionsCount() }} After process</a
+                class="text-muted-foreground flex flex-wrap items-baseline gap-x-1.5 text-xs underline-offset-4 hover:underline"
               >
+                <span class="text-foreground font-semibold tabular-nums">{{
+                  advancedRejectionsCount()
+                }}</span>
+                <span>After process</span>
+              </a>
             </div>
-          </div>
-
-          <!-- Ghosting Count -->
-          <div
-            hlmCard
-            class="border-border-subtle bg-surface-container-lowest relative rounded-xl border p-6 shadow-sm"
-          >
-            <div
-              class="bg-on-surface-variant absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"
-            ></div>
-            <div class="flex items-start justify-between">
+          </section>
+          <section hlmCard class="min-w-0 gap-4">
+            <div hlmCardHeader class="flex flex-row items-center justify-between gap-3">
+              <h2 hlmCardTitle class="text-sm">Ghosting</h2>
+              <span class="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg">
+                <ng-icon
+                  name="lucideHourglass"
+                  size="16"
+                  class="text-(--status-offer)"
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <a
+                  [routerLink]="['/applications']"
+                  [queryParams]="applicationFilters({ metric: 'ghosting' })"
+                  aria-label="View applications without a response for 30 days"
+                  class="text-foreground text-4xl font-semibold tracking-tight tabular-nums underline-offset-4 hover:underline"
+                  >{{ ghostedCount() }}</a
+                >
+                <span hlmBadge variant="outline" class="tabular-nums">{{ ghostingRate() }}%</span>
+              </div>
+              <p class="text-muted-foreground text-xs">No activity for 30+ days</p>
+            </div>
+            <div hlmCardFooter class="mt-auto min-h-14 justify-between gap-3">
               <a
                 [routerLink]="['/applications']"
                 [queryParams]="applicationFilters({ metric: 'ghosting' })"
-                class="text-on-surface-variant text-sm font-medium hover:underline"
-                >Ghosting (30+ days)</a
+                class="text-muted-foreground hover:text-foreground flex w-full items-center justify-between gap-2 text-xs font-medium"
               >
-              <ng-icon name="lucideHourglass" class="text-on-surface-variant/80 size-5" />
+                <span>View applications</span>
+                <ng-icon name="lucideArrowUpRight" size="14" aria-hidden="true" />
+              </a>
             </div>
-            <div class="mt-4 flex items-baseline gap-2">
-              <a
-                [routerLink]="['/applications']"
-                [queryParams]="applicationFilters({ metric: 'ghosting' })"
-                aria-label="View applications without a response for 30 days"
-                class="text-on-surface text-3xl font-bold hover:underline"
-                >{{ ghostedCount() }}</a
-              >
-              <span class="text-on-surface-variant/80 ml-1 text-sm font-medium"
-                >({{ ghostingRate() }}%)</span
-              >
-            </div>
-          </div>
+          </section>
         </div>
 
         <!-- Charts -->
