@@ -85,16 +85,18 @@
             <option value="system">System</option>
           </hlm-native-select>
         </div>
-        <div hlmField class="border-border-subtle border-t pt-6">
-          <label hlmFieldLabel for="auto-archive-days">Auto-archive after</label>
-          <p hlmFieldDescription id="auto-archive-description">
-            Archive applications after this many days without activity. Overdue applications move on
-            the next automatic check. You can always restore them from Archived.
-          </p>
+        <div hlmField orientation="horizontal" class="border-border-subtle gap-4 border-t pt-6">
+          <div hlmFieldContent class="min-w-0 flex-1">
+            <label hlmFieldLabel for="auto-archive-days">Auto-archive after</label>
+            <p hlmFieldDescription id="auto-archive-description">
+              Archive applications after this many days without activity. Overdue applications move
+              on the next automatic check. You can always restore them from Archived.
+            </p>
+          </div>
           <hlm-native-select
             selectId="auto-archive-days"
             aria-describedby="auto-archive-description"
-            class="w-full sm:w-40"
+            class="w-36 shrink-0"
             [ngModel]="preferencesService.preferences().auto_archive_days"
             (ngModelChange)="setAutoArchiveDays($event)"
           >
