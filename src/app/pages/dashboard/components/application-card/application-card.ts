@@ -20,6 +20,7 @@ import {
   lucideMonitor,
 } from '@ng-icons/lucide';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { Application, ApplicationEvent } from '../../../../core/models/application.model';
 
@@ -33,6 +34,7 @@ import { Application, ApplicationEvent } from '../../../../core/models/applicati
     DragDropModule,
     ...HlmDropdownMenuImports,
     ...HlmButtonImports,
+    ...HlmCardImports,
   ],
   providers: [
     provideIcons({

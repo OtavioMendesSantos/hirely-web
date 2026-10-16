@@ -1,9 +1,9 @@
 <app-layout pageTitle="API Keys">
   <div class="mx-auto flex max-w-5xl flex-col gap-6 pb-12">
-    
     <!-- Top Bar: Title & Controls -->
     <div
-      class="bg-surface-container-lowest border-border-subtle flex flex-col items-start justify-between gap-4 rounded-2xl border p-6 shadow-sm md:flex-row md:items-center"
+      hlmCard
+      class="flex flex-col items-start justify-between gap-4 p-6 md:flex-row md:items-center"
     >
       <div>
         <h3 class="font-heading text-on-surface text-xl font-bold">API Keys (MCP)</h3>
@@ -11,17 +11,22 @@
           Manage your API keys for external AI integrations like Claude Code or Gemini CLI.
         </p>
       </div>
-      
-      <div class="flex w-full flex-col sm:flex-row items-stretch sm:items-center gap-2 md:w-auto">
+
+      <div class="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center md:w-auto">
         <input
           hlmInput
           placeholder="New Key Name (e.g., CLI)"
           [ngModel]="newKeyName()"
           (ngModelChange)="newKeyName.set($event)"
-          class="bg-surface border-border-subtle h-9 w-full sm:w-64 text-sm"
+          class="bg-surface border-border-subtle h-9 w-full text-sm sm:w-64"
           (keyup.enter)="createKey()"
         />
-        <button hlmBtn size="sm" (click)="createKey()" [disabled]="!newKeyName().trim() || isCreating()">
+        <button
+          hlmBtn
+          size="sm"
+          (click)="createKey()"
+          [disabled]="!newKeyName().trim() || isCreating()"
+        >
           @if (isCreating()) {
             <hlm-spinner class="mr-2 h-4 w-4" /> Creating...
           } @else {
@@ -33,10 +38,14 @@
 
     <!-- Feedback de nova chave gerada -->
     @if (generatedKey()) {
-      <div class="rounded-2xl bg-green-50/50 border border-green-200 dark:bg-green-900/20 dark:border-green-900 p-6 shadow-sm">
+      <div
+        class="rounded-2xl border border-green-200 bg-green-50/50 p-6 shadow-sm dark:border-green-900 dark:bg-green-900/20"
+      >
         <div class="flex flex-col gap-4">
           <div>
-            <h3 class="text-base font-semibold text-green-900 dark:text-green-300 flex items-center gap-2">
+            <h3
+              class="flex items-center gap-2 text-base font-semibold text-green-900 dark:text-green-300"
+            >
               <ng-icon name="lucideCheck" class="size-5" />
               API Key Generated Successfully
             </h3>
@@ -44,18 +53,31 @@
               Please copy this API key now. You won't be able to see it again!
             </p>
           </div>
-          
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <code class="flex-1 bg-white dark:bg-black p-3 rounded-lg border border-green-300 dark:border-green-800 font-mono text-sm break-all">
+
+          <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+            <code
+              class="flex-1 rounded-lg border border-green-300 bg-white p-3 font-mono text-sm break-all dark:border-green-800 dark:bg-black"
+            >
               {{ generatedKey()?.key }}
             </code>
-            <button hlmBtn variant="outline" class="shrink-0 bg-white dark:bg-black border-green-300 dark:border-green-800 text-green-900 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/50" (click)="copyKey()">
+            <button
+              hlmBtn
+              variant="outline"
+              class="shrink-0 border-green-300 bg-white text-green-900 hover:bg-green-50 dark:border-green-800 dark:bg-black dark:text-green-300 dark:hover:bg-green-900/50"
+              (click)="copyKey()"
+            >
               <ng-icon name="lucideCopy" class="mr-2 size-4" /> Copy
             </button>
           </div>
-          
+
           <div>
-            <button hlmBtn variant="ghost" size="sm" class="text-green-800 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-800/50" (click)="closeGeneratedKey()">
+            <button
+              hlmBtn
+              variant="ghost"
+              size="sm"
+              class="text-green-800 hover:bg-green-100 dark:text-green-300 dark:hover:bg-green-800/50"
+              (click)="closeGeneratedKey()"
+            >
               I have saved it securely
             </button>
           </div>
@@ -64,14 +86,14 @@
     }
 
     <!-- Lista de Chaves -->
-    <div hlmCard class="bg-surface-container-lowest border-border-subtle rounded-2xl border shadow-sm">
+    <div hlmCard>
       <div hlmCardHeader class="border-border-subtle border-b px-6 py-5">
         <h4 class="font-heading text-on-surface text-lg font-bold">Active Keys</h4>
       </div>
       <div hlmCardContent class="p-0">
         @if (isLoading()) {
           <div class="flex justify-center py-12">
-            <hlm-spinner class="h-8 w-8 text-primary" />
+            <hlm-spinner class="text-primary h-8 w-8" />
           </div>
         } @else if (apiKeys().length === 0) {
           <hlm-empty class="p-12">
@@ -85,53 +107,66 @@
         } @else {
           <div class="divide-border-subtle flex flex-col divide-y">
             @for (key of apiKeys(); track key.ID) {
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between p-6 gap-4 hover:bg-surface-container-low/50 transition-colors">
-                <div class="flex flex-col flex-1 gap-2">
+              <div
+                class="hover:bg-surface-container-low/50 flex flex-col justify-between gap-4 p-6 transition-colors sm:flex-row sm:items-center"
+              >
+                <div class="flex flex-1 flex-col gap-2">
                   <div class="flex items-center gap-3">
                     <ng-icon name="lucideKey" class="text-on-surface-variant size-5" />
-                    <span class="font-semibold text-on-surface text-base">{{ key.Name }}</span>
+                    <span class="text-on-surface text-base font-semibold">{{ key.Name }}</span>
                     @if (key.Revoked) {
-                      <span hlmBadge variant="destructive" class="text-[10px] px-1.5 py-0">Revoked</span>
+                      <span hlmBadge variant="destructive" class="px-1.5 py-0 text-[10px]"
+                        >Revoked</span
+                      >
                     } @else {
-                      <span hlmBadge variant="outline" class="border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400 text-[10px] px-1.5 py-0">Active</span>
+                      <span
+                        hlmBadge
+                        variant="outline"
+                        class="border-green-500/30 bg-green-500/10 px-1.5 py-0 text-[10px] text-green-700 dark:text-green-400"
+                        >Active</span
+                      >
                     }
                   </div>
-                  
-                  <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-on-surface-variant">
+
+                  <div
+                    class="text-on-surface-variant flex flex-wrap items-center gap-x-4 gap-y-2 text-xs"
+                  >
                     <span class="flex items-center gap-1">
-                      <span class="font-medium text-on-surface/70">Created:</span>
-                      {{ key.CreatedAt | date:'mediumDate' }}
+                      <span class="text-on-surface/70 font-medium">Created:</span>
+                      {{ key.CreatedAt | date: 'mediumDate' }}
                     </span>
-                    <span class="bg-border-subtle h-3 w-px hidden sm:block"></span>
+                    <span class="bg-border-subtle hidden h-3 w-px sm:block"></span>
                     <span class="flex items-center gap-1">
-                      <span class="font-medium text-on-surface/70">Uses:</span>
+                      <span class="text-on-surface/70 font-medium">Uses:</span>
                       {{ key.UsageCount }}
                     </span>
-                    <span class="bg-border-subtle h-3 w-px hidden sm:block"></span>
+                    <span class="bg-border-subtle hidden h-3 w-px sm:block"></span>
                     <span class="flex items-center gap-1">
-                      <span class="font-medium text-on-surface/70">Last used:</span>
+                      <span class="text-on-surface/70 font-medium">Last used:</span>
                       @if (key.LastUsedAt) {
-                        {{ key.LastUsedAt | date:'short' }}
+                        {{ key.LastUsedAt | date: 'short' }}
                       } @else {
                         Never
                       }
                     </span>
-                    
+
                     @if (key.LastIP) {
-                      <span class="bg-border-subtle h-3 w-px hidden sm:block"></span>
-                      <span class="font-mono bg-surface-container-high px-1.5 py-0.5 rounded text-[10px]">
+                      <span class="bg-border-subtle hidden h-3 w-px sm:block"></span>
+                      <span
+                        class="bg-surface-container-high rounded px-1.5 py-0.5 font-mono text-[10px]"
+                      >
                         {{ key.LastIP }}
                       </span>
                     }
                   </div>
                 </div>
-                
-                <div class="flex justify-end shrink-0">
+
+                <div class="flex shrink-0 justify-end">
                   @if (!key.Revoked) {
-                    <button 
-                      hlmBtn 
-                      variant="ghost" 
-                      size="sm" 
+                    <button
+                      hlmBtn
+                      variant="ghost"
+                      size="sm"
                       (click)="openRevokeConfirm(key.ID)"
                       class="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
@@ -148,28 +183,34 @@
     </div>
 
     <!-- MCP Configuration Guide -->
-    <div hlmCard class="bg-surface-container-lowest border-border-subtle rounded-2xl border shadow-sm">
+    <div hlmCard>
       <div hlmCardHeader class="border-border-subtle border-b px-6 py-5">
         <h4 class="font-heading text-on-surface text-lg font-bold">MCP Configuration</h4>
-        <p class="text-on-surface-variant text-sm mt-1">
-          Use this snippet to connect the Hirely MCP server to your AI assistant (e.g. Roo Code, Cursor, Claude Desktop, etc). Just paste it into your MCP settings and replace <code>&lt;YOUR_TOKEN&gt;</code> with your generated API key.
+        <p class="text-on-surface-variant mt-1 text-sm">
+          Use this snippet to connect the Hirely MCP server to your AI assistant (e.g. Roo Code,
+          Cursor, Claude Desktop, etc). Just paste it into your MCP settings and replace
+          <code>&lt;YOUR_TOKEN&gt;</code> with your generated API key.
         </p>
       </div>
-      <div hlmCardContent class="p-6 flex flex-col gap-4">
-        <div class="relative group border border-border-subtle rounded-xl overflow-hidden bg-[#1e1e1e] dark:bg-black">
-          <div class="flex items-center justify-between px-4 py-2 bg-black/40 border-b border-white/10">
-            <span class="text-xs font-mono text-gray-400">mcp-config.json</span>
+      <div hlmCardContent class="flex flex-col gap-4 p-6">
+        <div
+          class="group border-border-subtle relative overflow-hidden rounded-xl border bg-[#1e1e1e] dark:bg-black"
+        >
+          <div
+            class="flex items-center justify-between border-b border-white/10 bg-black/40 px-4 py-2"
+          >
+            <span class="font-mono text-xs text-gray-400">mcp-config.json</span>
             <button
               hlmBtn
               variant="ghost"
               size="sm"
-              class="h-7 px-2 text-gray-400 hover:text-white hover:bg-white/10"
+              class="h-7 px-2 text-gray-400 hover:bg-white/10 hover:text-white"
               (click)="copyMcpConfig()"
             >
               <ng-icon name="lucideCopy" class="mr-1.5 size-3" /> Copy
             </button>
           </div>
-          <pre class="font-mono text-sm p-4 overflow-x-auto text-[#d4d4d4]"><code>&#123;
+          <pre class="overflow-x-auto p-4 font-mono text-sm text-[#d4d4d4]"><code>&#123;
   "mcpServers": &#123;
     "hirely-backend": &#123;
       "type": "remote",
@@ -181,8 +222,9 @@
   &#125;
 &#125;</code></pre>
         </div>
-        <p class="text-sm text-on-surface-variant">
-          <strong>Note:</strong> Some IDE extensions might use <code>"mcp"</code> as the root key instead of <code>"mcpServers"</code>. Adjust according to your extension's documentation.
+        <p class="text-on-surface-variant text-sm">
+          <strong>Note:</strong> Some IDE extensions might use <code>"mcp"</code> as the root key
+          instead of <code>"mcpServers"</code>. Adjust according to your extension's documentation.
         </p>
       </div>
     </div>
@@ -197,7 +239,8 @@
       <hlm-alert-dialog-header>
         <h2 hlmAlertDialogTitle class="font-heading text-on-surface font-bold">Revoke API Key</h2>
         <p hlmAlertDialogDescription class="font-body text-on-surface-variant leading-relaxed">
-          Are you sure you want to revoke this API Key? Any application using this key will immediately lose access.
+          Are you sure you want to revoke this API Key? Any application using this key will
+          immediately lose access.
         </p>
       </hlm-alert-dialog-header>
       <hlm-alert-dialog-footer>
@@ -208,5 +251,4 @@
       </hlm-alert-dialog-footer>
     </hlm-alert-dialog-content>
   </hlm-alert-dialog>
-
 </app-layout>

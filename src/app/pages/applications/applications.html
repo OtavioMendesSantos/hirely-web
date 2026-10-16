@@ -173,62 +173,64 @@
           }
         </hlm-empty>
       } @else if (!dateError()) {
-        <div hlmTableContainer class="border-border hidden rounded-xl border md:block">
-          <table hlmTable>
-            <caption class="sr-only">
-              Applications matching the selected filters
-            </caption>
-            <thead hlmTHead>
-              <tr hlmTr>
-                <th hlmTh scope="col">Job title</th>
-                <th hlmTh scope="col">Company</th>
-                <th hlmTh scope="col">Status</th>
-                <th hlmTh scope="col">Created</th>
-                <th hlmTh scope="col">State</th>
-              </tr>
-            </thead>
-            <tbody hlmTBody>
-              @for (application of applications(); track application.id) {
+        <div hlmCard class="hidden gap-0 py-0 md:block">
+          <div hlmTableContainer>
+            <table hlmTable>
+              <caption class="sr-only">
+                Applications matching the selected filters
+              </caption>
+              <thead hlmTHead>
                 <tr hlmTr>
-                  <td hlmTd>
-                    <a
-                      [routerLink]="['/applications', application.id]"
-                      (click)="rememberPosition()"
-                      [title]="application.jobTitle"
-                      class="text-primary block max-w-72 truncate font-medium hover:underline"
-                      >{{ application.jobTitle }}</a
-                    >
-                  </td>
-                  <td hlmTd>
-                    <span [title]="application.companyName" class="block max-w-48 truncate">{{
-                      application.companyName
-                    }}</span>
-                  </td>
-                  <td hlmTd>
-                    <span
-                      hlmBadge
-                      variant="status"
-                      [style.--application-status-color]="
-                        statusPresentation[application.status].color
-                      "
-                      >{{ statusPresentation[application.status].label }}</span
-                    >
-                  </td>
-                  <td hlmTd>{{ application.createdAt | date: 'mediumDate' : 'UTC' }}</td>
-                  <td hlmTd>
-                    <span hlmBadge [variant]="application.archivedAt ? 'secondary' : 'outline'">{{
-                      application.archivedAt ? 'Archived' : 'Active'
-                    }}</span>
-                    @if (application.archivedAt) {
-                      <span class="text-muted-foreground mt-1 block text-xs">{{
-                        application.archivedAt | date: 'mediumDate' : 'UTC'
-                      }}</span>
-                    }
-                  </td>
+                  <th hlmTh scope="col">Job title</th>
+                  <th hlmTh scope="col">Company</th>
+                  <th hlmTh scope="col">Status</th>
+                  <th hlmTh scope="col">Created</th>
+                  <th hlmTh scope="col">State</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody hlmTBody>
+                @for (application of applications(); track application.id) {
+                  <tr hlmTr>
+                    <td hlmTd>
+                      <a
+                        [routerLink]="['/applications', application.id]"
+                        (click)="rememberPosition()"
+                        [title]="application.jobTitle"
+                        class="text-primary block max-w-72 truncate font-medium hover:underline"
+                        >{{ application.jobTitle }}</a
+                      >
+                    </td>
+                    <td hlmTd>
+                      <span [title]="application.companyName" class="block max-w-48 truncate">{{
+                        application.companyName
+                      }}</span>
+                    </td>
+                    <td hlmTd>
+                      <span
+                        hlmBadge
+                        variant="status"
+                        [style.--application-status-color]="
+                          statusPresentation[application.status].color
+                        "
+                        >{{ statusPresentation[application.status].label }}</span
+                      >
+                    </td>
+                    <td hlmTd>{{ application.createdAt | date: 'mediumDate' : 'UTC' }}</td>
+                    <td hlmTd>
+                      <span hlmBadge [variant]="application.archivedAt ? 'secondary' : 'outline'">{{
+                        application.archivedAt ? 'Archived' : 'Active'
+                      }}</span>
+                      @if (application.archivedAt) {
+                        <span class="text-muted-foreground mt-1 block text-xs">{{
+                          application.archivedAt | date: 'mediumDate' : 'UTC'
+                        }}</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
         <div class="flex flex-col gap-3 md:hidden">
           @for (application of applications(); track application.id) {
@@ -237,7 +239,7 @@
               [routerLink]="['/applications', application.id]"
               (click)="rememberPosition()"
               [attr.aria-labelledby]="'mobile-application-' + application.id"
-              class="group focus-visible:outline-ring min-w-0 transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2"
+              class="group focus-visible:outline-ring min-w-0 transition-shadow focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <div hlmCardHeader class="min-w-0">
                 <div class="flex items-center justify-between gap-2">
