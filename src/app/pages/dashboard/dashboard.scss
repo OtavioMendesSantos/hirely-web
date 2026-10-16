@@ -1,0 +1,25 @@
+.dashboard-content {
+  --kanban-column-width: min(85vw, 340px);
+  --kanban-gap: 1.25rem;
+
+  // Share the board's natural width with the heading and filters, without
+  // extending the page when the columns need horizontal scrolling.
+  width: 100%;
+  max-width: calc(
+    var(--kanban-column-count) * var(--kanban-column-width) + (var(--kanban-column-count) - 1) *
+      var(--kanban-gap)
+  );
+  margin-inline: auto;
+
+  @media (min-width: 40rem) {
+    --kanban-column-width: 22rem;
+  }
+
+  @media (min-width: 48rem) {
+    --kanban-column-width: 24rem;
+  }
+}
+
+.kanban-columns {
+  gap: var(--kanban-gap);
+}

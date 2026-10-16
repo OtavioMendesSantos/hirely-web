@@ -109,6 +109,7 @@ export interface KanbanColumn {
     }),
   ],
   templateUrl: './dashboard.html',
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
   private authService = inject(AuthService);
