@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ApplicationStatus } from '../../core/models/application.model';
 import { APPLICATION_STATUS_PRESENTATION } from '../../core/constants/application-status';
@@ -37,6 +37,10 @@ import {
 } from 'ng-apexcharts';
 import { AppLayoutComponent } from '../../core/components/app-layout/app-layout';
 import { ApplicationService } from '../../core/services/application';
+
+const METRICS_PERIOD_KEY = 'hirely.metrics.period.v1';
+const METRICS_PRESETS = ['7days', '30days', 'thisMonth', 'lastMonth', 'thisYear'] as const;
+type MetricsPreset = (typeof METRICS_PRESETS)[number];
 
 export interface ChartOptions {
   series: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -87,6 +91,7 @@ export interface ChartOptions {
 export class Metrics implements OnInit {
   private applicationService = inject(ApplicationService);
   private datePipe = inject(DatePipe);
+  private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
   readonly loading = signal(true);
   readonly loadError = signal(false);
@@ -145,9 +150,10 @@ export class Metrics implements OnInit {
       this.startDate.set(null);
       this.endDate.set(null);
     }
+    this.savePeriod(null);
   }
 
-  setPreset(preset: '7days' | '30days' | 'thisMonth' | 'lastMonth' | 'thisYear') {
+  setPreset(preset: MetricsPreset) {
     let today = new Date();
     let start = new Date();
 
@@ -177,6 +183,55 @@ export class Metrics implements OnInit {
 
     this.startDate.set(start);
     this.endDate.set(today);
+    this.savePeriod(preset);
+  }
+
+  private savePeriod(preset: MetricsPreset | null) {
+    try {
+      this.document.defaultView?.localStorage.setItem(
+        METRICS_PERIOD_KEY,
+        JSON.stringify({
+          version: 1,
+          preset,
+          start: this.datePipe.transform(this.startDate(), 'yyyy-MM-dd'),
+          end: this.datePipe.transform(this.endDate(), 'yyyy-MM-dd'),
+        })
+      );
+    } catch {
+      /* Storage may be unavailable; the current selection still works. */
+    }
+  }
+
+  private restorePeriod(): boolean {
+    try {
+      const raw = this.document.defaultView?.localStorage.getItem(METRICS_PERIOD_KEY);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!saved || saved.version !== 1) return false;
+      if (METRICS_PRESETS.includes(saved.preset)) {
+        this.setPreset(saved.preset);
+        return true;
+      }
+      if (saved.preset !== null) return false;
+      const parse = (value: unknown): Date | null | undefined => {
+        if (value === null) return null;
+        if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
+        const date = new Date(value + 'T00:00:00');
+        return !Number.isNaN(date.getTime()) &&
+          this.datePipe.transform(date, 'yyyy-MM-dd') === value
+          ? date
+          : undefined;
+      };
+      const start = parse(saved.start),
+        end = parse(saved.end);
+      if (start === undefined || end === undefined || (start && end && start > end)) return false;
+      this.startDate.set(start);
+      this.endDate.set(end);
+      this.selectedPreset.set(null);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   stats = this.applicationService.stats;
@@ -400,11 +455,6 @@ export class Metrics implements OnInit {
   }
 
   ngOnInit() {
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    this.startDate.set(thirtyDaysAgo);
-    this.endDate.set(today);
+    if (!this.restorePeriod()) this.setPreset('30days');
   }
 }

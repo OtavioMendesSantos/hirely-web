@@ -41,6 +41,13 @@ describe('Metrics drill-down navigation', () => {
   };
 
   beforeEach(async () => {
+    vi.restoreAllMocks();
+    const values = new Map<string, string>();
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn((key: string) => values.get(key) ?? null),
+      setItem: vi.fn((key: string, value: string) => values.set(key, value)),
+      removeItem: vi.fn((key: string) => values.delete(key)),
+    });
     requests.length = 0;
     service.stats.set(null);
     vi.clearAllMocks();
@@ -54,6 +61,8 @@ describe('Metrics drill-down navigation', () => {
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
+
+  afterEach(() => vi.unstubAllGlobals());
 
   it('passes actual calendar dates and metric criteria without fetching a list early', async () => {
     component.startDate.set(new Date(2026, 0, 1));
@@ -113,6 +122,57 @@ describe('Metrics drill-down navigation', () => {
     // A real mouse activation is handled by dataPointSelection, not a second marker navigation.
     events.markerClick!(new MouseEvent('mouseup'), undefined, { dataPointIndex: 2 } as never);
     expect(navigate).toHaveBeenCalledTimes(2);
+  });
+
+  it('restores a saved relative preset when returning to metrics', async () => {
+    component.setPreset('thisYear');
+    fixture.destroy();
+    fixture = TestBed.createComponent(Metrics);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+    expect(component.selectedPreset()).toBe('This Year');
+    expect(component.startDate()!.getFullYear()).toBe(new Date().getFullYear());
+    expect(component.startDate()!.getMonth()).toBe(0);
+    expect(component.startDate()!.getDate()).toBe(1);
+  });
+
+  it('restores exact custom calendar dates', async () => {
+    component.onDateChange([new Date(2026, 0, 12), new Date(2026, 2, 8)]);
+    fixture.destroy();
+    fixture = TestBed.createComponent(Metrics);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+    expect(component.selectedPreset()).toBeNull();
+    expect(component.applicationFilters()).toMatchObject({
+      start_date: '2026-01-12',
+      end_date: '2026-03-08',
+    });
+    expect(service.loadStats).toHaveBeenLastCalledWith('2026-01-12', '2026-03-08');
+  });
+
+  it('falls back safely for malformed storage or unavailable browser storage', async () => {
+    fixture.destroy();
+    localStorage.setItem(
+      'hirely.metrics.period.v1',
+      JSON.stringify({ version: 1, preset: null, start: '2026-02-30', end: '2026-03-10' })
+    );
+    fixture = TestBed.createComponent(Metrics);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+    expect(component.selectedPreset()).toBe('Last 30 days');
+    fixture.destroy();
+    vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    fixture = TestBed.createComponent(Metrics);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+    expect(component.selectedPreset()).toBe('Last 30 days');
+    expect(() => component.setPreset('7days')).not.toThrow();
+    expect(component.selectedPreset()).toBe('Last 7 days');
   });
 
   it('exposes a retry after a metrics request fails', async () => {
