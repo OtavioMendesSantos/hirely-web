@@ -58,7 +58,7 @@
       </nav>
     </header>
 
-    <div class="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 md:p-8">
+    <div class="mx-auto w-full min-w-0 flex-1 p-4 sm:p-6 md:p-8" [class.max-w-7xl]="!fullWidth()">
       <ng-content />
     </div>
   </main>

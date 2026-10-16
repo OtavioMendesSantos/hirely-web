@@ -12,5 +12,6 @@ import { AppSidebarComponent } from '../app-sidebar/app-sidebar';
 })
 export class AppLayoutComponent {
   readonly pageTitle = input<string>('Dashboard');
+  readonly fullWidth = input<boolean>(false);
   readonly breadcrumbItems = input<{ label: string; link?: string }[]>();
 }
