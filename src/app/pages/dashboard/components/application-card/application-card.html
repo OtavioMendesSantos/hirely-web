@@ -41,16 +41,24 @@
     </button>
     <ng-template #actions>
       <div hlmDropdownMenu>
-        <a hlmDropdownMenuItem [routerLink]="['/applications', application().id]">View details</a>
-        <button hlmDropdownMenuItem (click)="onEditButtonClick($event)">Edit</button>
+        <a hlmDropdownMenuItem [routerLink]="['/applications', application().id]">
+          <ng-icon name="lucideEye" size="16" aria-hidden="true" />
+          View details
+        </a>
+        <button hlmDropdownMenuItem (click)="onEditButtonClick($event)">
+          <ng-icon name="lucidePencil" size="16" aria-hidden="true" />
+          Edit
+        </button>
         <button
           hlmDropdownMenuItem
           [disabled]="archivePending()"
           (click)="archiveClick.emit(application())"
         >
+          <ng-icon name="lucideArchive" size="16" aria-hidden="true" />
           {{ archivePending() ? 'Archiving…' : 'Archive' }}
         </button>
         <button hlmDropdownMenuItem variant="destructive" (click)="deleteClick.emit(application())">
+          <ng-icon name="lucideTrash2" size="16" aria-hidden="true" />
           Delete
         </button>
       </div>
