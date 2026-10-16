@@ -517,21 +517,31 @@
                     </div>
 
                     <div
-                      class="bg-surface-muted/50 border-border-subtle/70 hover:border-border-subtle flex flex-1 flex-col gap-1 rounded-xl border p-4 transition-colors"
+                      class="bg-surface-muted/50 border-border-subtle/70 hover:border-border-subtle @container/event flex min-w-0 flex-1 flex-col gap-1 rounded-xl border p-4 transition-colors"
                     >
-                      <div class="flex flex-wrap items-center justify-between gap-2">
-                        <span class="font-heading text-on-surface text-sm font-bold">
+                      <div
+                        class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 @md/event:grid-cols-[minmax(0,1fr)_auto_auto]"
+                      >
+                        <span
+                          class="font-heading text-on-surface col-start-1 row-start-1 min-w-0 text-sm font-bold"
+                        >
                           {{ getEventTitle(event) }}
                         </span>
-                        <span class="text-on-surface-variant/70 text-xs font-medium">
-                          {{ event.createdAt | date: 'medium' }}
-                        </span>
+                        <time
+                          [attr.datetime]="event.createdAt"
+                          [title]="event.createdAt | date: 'full'"
+                          class="text-on-surface-variant/70 col-span-2 col-start-1 row-start-2 text-xs @md/event:col-span-1 @md/event:col-start-2 @md/event:row-start-1 @md/event:whitespace-nowrap"
+                        >
+                          {{ event.createdAt | date: 'mediumDate' }} ·
+                          {{ event.createdAt | date: 'shortTime' }}
+                        </time>
                         <button
                           hlmBtn
                           variant="ghost"
                           size="icon-sm"
                           type="button"
                           aria-label="Delete event"
+                          class="col-start-2 row-start-1 @md/event:col-start-3"
                           title="Delete event"
                           (click)="askDeleteEvent(event)"
                         >
@@ -540,7 +550,7 @@
                       </div>
 
                       <p
-                        class="text-on-surface-variant font-body mt-1 text-sm leading-relaxed whitespace-pre-wrap"
+                        class="text-on-surface-variant font-body mt-1 text-sm leading-relaxed wrap-anywhere whitespace-pre-wrap"
                       >
                         @if (!event.action && event.previousStatus && event.newStatus) {
                           Moved from
