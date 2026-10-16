@@ -243,7 +243,20 @@ export class Metrics implements OnInit {
       chart: {
         type: 'bar',
         events: {
-          dataPointSelection: (_event, _chart, options) => this.openStatus(options.dataPointIndex),
+          dataPointSelection: (_event, _chart, options) =>
+            this.openStatus(options?.dataPointIndex ?? -1),
+          xAxisLabelClick: (_event, _chart, options) =>
+            this.openStatus(options?.['labelIndex'] ?? -1),
+          // Apex's keyboard activation emits markerClick with a synthetic event.
+          markerClick: (event, _chart, options) => {
+            if (!(event instanceof MouseEvent)) this.openStatus(options?.dataPointIndex ?? -1);
+          },
+        },
+        accessibility: {
+          enabled: true,
+          description:
+            'Applications by current status. Select a bar or status to open its applications. Use arrow keys to choose a bar and Enter to open it.',
+          keyboard: { enabled: true, navigation: { enabled: true } },
         },
         height: 350,
         toolbar: { show: false },
@@ -270,7 +283,13 @@ export class Metrics implements OnInit {
       },
       yaxis: {
         labels: {
-          style: { cssClass: 'fill-on-surface font-semibold' },
+          formatter: (value) => {
+            const key = String(value) as ApplicationStatus;
+            return APPLICATION_STATUS_PRESENTATION[key]
+              ? APPLICATION_STATUS_PRESENTATION[key].label + ' ↗'
+              : String(value);
+          },
+          style: { cssClass: 'fill-on-surface font-semibold cursor-pointer' },
         },
       },
       colors: ['#3b82f6'], // primary blue

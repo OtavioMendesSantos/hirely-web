@@ -96,6 +96,25 @@ describe('Metrics drill-down navigation', () => {
     expect(component.stats()?.total_applications).toBe(100);
   });
 
+  it('opens a status from chart labels and keyboard activation', () => {
+    requests.at(-1)!.next(stats);
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const events = component.funnelChartOptions()!.chart.events!;
+    events.xAxisLabelClick!(new MouseEvent('click'), undefined, { labelIndex: 5 } as never);
+    expect(navigate).toHaveBeenLastCalledWith(['/applications'], {
+      queryParams: { ...component.applicationFilters(), status: 'REJECTED' },
+    });
+    events.markerClick!({ type: 'mouseup' } as MouseEvent, undefined, {
+      dataPointIndex: 2,
+    } as never);
+    expect(navigate).toHaveBeenLastCalledWith(['/applications'], {
+      queryParams: { ...component.applicationFilters(), status: 'INTERVIEW' },
+    });
+    // A real mouse activation is handled by dataPointSelection, not a second marker navigation.
+    events.markerClick!(new MouseEvent('mouseup'), undefined, { dataPointIndex: 2 } as never);
+    expect(navigate).toHaveBeenCalledTimes(2);
+  });
+
   it('exposes a retry after a metrics request fails', async () => {
     requests.at(-1)!.error(new Error('offline'));
     expect(component.loadError()).toBe(true);
