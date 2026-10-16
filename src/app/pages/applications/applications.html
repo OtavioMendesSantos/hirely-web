@@ -104,7 +104,7 @@
           </div>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <p class="text-muted-foreground text-xs">Created dates include the full day in UTC.</p>
+          <p class="text-muted-foreground text-xs">Filter by date added.</p>
           @if (hasFilters()) {
             <button hlmBtn variant="ghost" size="sm" (click)="clearFilters()">Clear filters</button>
           }
@@ -232,38 +232,77 @@
         </div>
         <div class="flex flex-col gap-3 md:hidden">
           @for (application of applications(); track application.id) {
-            <article hlmCard>
+            <a
+              hlmCard
+              [routerLink]="['/applications', application.id]"
+              (click)="rememberPosition()"
+              [attr.aria-labelledby]="'mobile-application-' + application.id"
+              class="group focus-visible:outline-ring min-w-0 transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
               <div hlmCardHeader class="min-w-0">
-                <h2 hlmCardTitle class="min-w-0">
-                  <a
-                    [routerLink]="['/applications', application.id]"
-                    (click)="rememberPosition()"
-                    class="text-primary line-clamp-2 wrap-anywhere hover:underline"
-                    >{{ application.jobTitle }}</a
+                <div class="flex items-center justify-between gap-2">
+                  <span
+                    hlmBadge
+                    variant="status"
+                    [style.--application-status-color]="
+                      statusPresentation[application.status].color
+                    "
+                    >{{ statusPresentation[application.status].label }}</span
                   >
-                </h2>
-                <p hlmCardDescription class="line-clamp-2 wrap-anywhere">
-                  {{ application.companyName }}
-                </p>
-              </div>
-              <div hlmCardContent class="flex flex-wrap items-center gap-2">
-                <span
-                  hlmBadge
-                  variant="status"
-                  [style.--application-status-color]="statusPresentation[application.status].color"
-                  >{{ statusPresentation[application.status].label }}</span
-                >
-                <span hlmBadge [variant]="application.archivedAt ? 'secondary' : 'outline'">{{
-                  application.archivedAt ? 'Archived' : 'Active'
-                }}</span>
-                <p class="text-muted-foreground w-full text-xs">
-                  Created {{ application.createdAt | date: 'mediumDate' : 'UTC' }}
                   @if (application.archivedAt) {
-                    · Archived {{ application.archivedAt | date: 'mediumDate' : 'UTC' }}
+                    <span class="text-muted-foreground flex shrink-0 items-center gap-1 text-xs">
+                      <ng-icon name="lucideArchive" size="13" aria-hidden="true" />
+                      Archived
+                    </span>
                   }
+                </div>
+                <h2
+                  hlmCardTitle
+                  [id]="'mobile-application-' + application.id"
+                  class="font-heading mt-2 line-clamp-2 min-w-0 font-semibold wrap-anywhere"
+                  [title]="application.jobTitle"
+                >
+                  {{ application.jobTitle }}
+                </h2>
+                <p hlmCardDescription class="flex min-w-0 items-center gap-1.5">
+                  <ng-icon name="lucideBuilding" size="14" class="shrink-0" aria-hidden="true" />
+                  <span class="truncate" [title]="application.companyName">{{
+                    application.companyName
+                  }}</span>
                 </p>
               </div>
-            </article>
+              <div hlmCardContent>
+                <dl class="text-muted-foreground grid grid-cols-2 gap-3 text-xs">
+                  <div class="flex min-w-0 flex-col gap-1">
+                    <dt>Added</dt>
+                    <dd class="text-foreground font-medium">
+                      <time [attr.datetime]="application.createdAt">{{
+                        application.createdAt | date: 'mediumDate' : 'UTC'
+                      }}</time>
+                    </dd>
+                  </div>
+                  @if (application.archivedAt) {
+                    <div class="flex min-w-0 flex-col gap-1">
+                      <dt>Archived</dt>
+                      <dd class="text-foreground font-medium">
+                        <time [attr.datetime]="application.archivedAt">{{
+                          application.archivedAt | date: 'mediumDate' : 'UTC'
+                        }}</time>
+                      </dd>
+                    </div>
+                  }
+                </dl>
+              </div>
+              <div hlmCardFooter class="justify-between gap-2">
+                <span class="text-primary text-xs font-semibold">View application</span>
+                <ng-icon
+                  name="lucideArrowUpRight"
+                  size="16"
+                  class="text-primary shrink-0"
+                  aria-hidden="true"
+                />
+              </div>
+            </a>
           }
         </div>
       }

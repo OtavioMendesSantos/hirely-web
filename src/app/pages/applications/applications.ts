@@ -15,7 +15,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideBriefcaseBusiness, lucideFilter, lucideX } from '@ng-icons/lucide';
+import {
+  lucideBriefcaseBusiness,
+  lucideFilter,
+  lucideX,
+  lucideBuilding,
+  lucideArrowUpRight,
+  lucideArchive,
+} from '@ng-icons/lucide';
 import { HlmBadgeImports } from '@spartan-ng/helm/badge';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
@@ -67,7 +74,16 @@ const METRIC_DESCRIPTION: Record<ApplicationMetric, string> = {
     ...HlmSkeletonImports,
     ...HlmTableImports,
   ],
-  providers: [provideIcons({ lucideBriefcaseBusiness, lucideFilter, lucideX })],
+  providers: [
+    provideIcons({
+      lucideBriefcaseBusiness,
+      lucideFilter,
+      lucideX,
+      lucideBuilding,
+      lucideArrowUpRight,
+      lucideArchive,
+    }),
+  ],
   templateUrl: './applications.html',
 })
 export class Applications {
