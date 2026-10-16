@@ -114,7 +114,14 @@
                   }}</span>
                 </p>
                 <div hlmCardAction>
-                  <span hlmBadge variant="secondary">{{ statusLabel(application.status) }}</span>
+                  <span
+                    hlmBadge
+                    variant="status"
+                    [style.--application-status-color]="
+                      statusPresentation[application.status].color
+                    "
+                    >{{ statusPresentation[application.status].label }}</span
+                  >
                 </div>
               </div>
               <div hlmCardContent class="flex flex-1 flex-col gap-4">

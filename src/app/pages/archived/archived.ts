@@ -1,3 +1,4 @@
+import { APPLICATION_STATUS_PRESENTATION } from '../../core/constants/application-status';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -72,15 +73,10 @@ export class Archived {
   readonly deleteTarget = signal<Application | null>(null);
   readonly deleting = signal(false);
   readonly deleteError = signal<string | null>(null);
-  readonly statusOptions: { value: ApplicationStatus; label: string }[] = [
-    { value: 'TO_APPLY', label: 'To Apply' },
-    { value: 'APPLIED', label: 'Applied' },
-    { value: 'INTERVIEW', label: 'Interviewing' },
-    { value: 'OFFER', label: 'Offer' },
-    { value: 'ACCEPTED', label: 'Accepted' },
-    { value: 'REJECTED', label: 'Rejected' },
-    { value: 'OTHER', label: 'Other' },
-  ];
+  readonly statusPresentation = APPLICATION_STATUS_PRESENTATION;
+  readonly statusOptions = (
+    Object.keys(APPLICATION_STATUS_PRESENTATION) as ApplicationStatus[]
+  ).map((value) => ({ value, label: APPLICATION_STATUS_PRESENTATION[value].label }));
 
   readonly selectedStatusLabels = computed(() =>
     this.statusOptions
@@ -145,10 +141,6 @@ export class Archived {
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
-  }
-
-  statusLabel(status: ApplicationStatus) {
-    return this.statusOptions.find((option) => option.value === status)?.label ?? status;
   }
 
   clearFilters() {

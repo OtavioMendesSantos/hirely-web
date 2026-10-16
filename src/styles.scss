@@ -297,3 +297,24 @@ ngx-sonner-toaster,
 [data-sonner-toaster] {
   z-index: 100 !important;
 }
+
+// Shared application status palette. Foregrounds also tint badge fills and borders.
+:root {
+  --status-to-apply: #475569;
+  --status-applied: #1d4ed8;
+  --status-interview: #7e22ce;
+  --status-offer: #92400e;
+  --status-accepted: #047857;
+  --status-rejected: #b91c1c;
+  --status-other: #0e7490;
+}
+
+.dark {
+  --status-to-apply: #cbd5e1;
+  --status-applied: #93c5fd;
+  --status-interview: #d8b4fe;
+  --status-offer: #fcd34d;
+  --status-accepted: #6ee7b7;
+  --status-rejected: #fca5a5;
+  --status-other: #67e8f9;
+}
