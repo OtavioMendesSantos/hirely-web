@@ -1,0 +1,295 @@
+<app-layout pageTitle="Applications">
+  <div class="flex flex-col gap-6 pb-8">
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h1 hlmCardTitle>Applications</h1>
+        <p hlmCardDescription>
+          Search your applications across every stage, including archived ones.
+        </p>
+      </div>
+      <div hlmCardContent class="flex flex-col gap-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <input
+            hlmInput
+            type="search"
+            aria-label="Search applications"
+            placeholder="Search job titles or companies…"
+            [ngModel]="search()"
+            (ngModelChange)="onSearchChange($event)"
+            class="min-w-0 flex-1 sm:min-w-56"
+          />
+          <button
+            hlmBtn
+            variant="outline"
+            [hlmDropdownMenuTrigger]="statusMenu"
+            class="h-auto min-h-9 min-w-0 sm:max-w-80"
+          >
+            <ng-icon name="lucideFilter" size="16" />
+            <span class="text-left whitespace-normal">{{
+              selectedStatusLabels() ? 'Status: ' + selectedStatusLabels() : 'Status: All'
+            }}</span>
+          </button>
+          <ng-template #statusMenu>
+            <div hlmDropdownMenu>
+              @for (option of statusOptions; track option.value) {
+                <button
+                  hlmDropdownMenuCheckboxItem
+                  [checked]="statuses().includes(option.value)"
+                  (triggered)="toggleStatus(option.value)"
+                >
+                  {{ option.label }}<hlm-dropdown-menu-checkbox-indicator />
+                </button>
+              }
+            </div>
+          </ng-template>
+          <label class="sr-only" for="application-archive-state">Archive state</label>
+          <hlm-native-select
+            selectId="application-archive-state"
+            [ngModel]="archiveState()"
+            (ngModelChange)="updateFilters({ archive_state: $event })"
+            class="w-full sm:w-44"
+          >
+            <option value="all">Active and archived</option>
+            <option value="active">Active only</option>
+            <option value="archived">Archived only</option>
+          </hlm-native-select>
+        </div>
+        <div class="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div hlmField>
+            <label hlmFieldLabel for="applications-start-date">Created from</label>
+            <input
+              hlmInput
+              id="applications-start-date"
+              type="date"
+              [attr.max]="endDate() || null"
+              [ngModel]="startDate()"
+              (ngModelChange)="updateFilters({ start_date: $event || null })"
+            />
+          </div>
+          <div hlmField>
+            <label hlmFieldLabel for="applications-end-date">Created through</label>
+            <input
+              hlmInput
+              id="applications-end-date"
+              type="date"
+              [attr.min]="startDate() || null"
+              [ngModel]="endDate()"
+              (ngModelChange)="updateFilters({ end_date: $event || null })"
+            />
+          </div>
+          <div hlmField>
+            <label hlmFieldLabel for="applications-sort">Sort by</label>
+            <hlm-native-select
+              selectId="applications-sort"
+              [ngModel]="sortBy()"
+              (ngModelChange)="updateFilters({ order_by: $event })"
+              class="w-full"
+            >
+              @for (option of sortOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </hlm-native-select>
+          </div>
+          <div hlmField>
+            <label hlmFieldLabel for="applications-order">Order</label>
+            <hlm-native-select
+              selectId="applications-order"
+              [ngModel]="order()"
+              (ngModelChange)="updateFilters({ order: $event })"
+              class="w-full"
+            >
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </hlm-native-select>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-muted-foreground text-xs">Created dates include the full day in UTC.</p>
+          @if (hasFilters()) {
+            <button hlmBtn variant="ghost" size="sm" (click)="clearFilters()">Clear filters</button>
+          }
+        </div>
+        @if (dateError()) {
+          <p class="text-destructive text-sm" role="alert">{{ dateError() }}</p>
+        }
+        @if (metric()) {
+          <div class="bg-muted flex items-start justify-between gap-3 rounded-lg p-3" role="status">
+            <p class="text-muted-foreground text-sm">{{ metricDescription() }}</p>
+            <button
+              hlmBtn
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Remove metric filter"
+              (click)="updateFilters({ metric: null })"
+            >
+              <ng-icon name="lucideX" size="16" />
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section
+      [attr.aria-busy]="loading()"
+      aria-label="Application results"
+      class="flex flex-col gap-3"
+    >
+      <p class="text-muted-foreground text-sm" aria-live="polite">
+        @if (!loading() && !error() && !dateError() && total() !== null) {
+          {{ total() }} {{ total() === 1 ? 'application' : 'applications' }} found
+        }
+      </p>
+      @if (loading()) {
+        @for (row of [1, 2, 3, 4]; track row) {
+          <hlm-skeleton class="h-20 w-full rounded-lg" />
+        }
+      } @else if (error()) {
+        <hlm-empty
+          ><hlm-empty-header
+            ><h2 hlmEmptyTitle>Couldn't load applications</h2>
+            <p hlmEmptyDescription>{{ error() }}</p></hlm-empty-header
+          >
+          <button hlmBtn variant="outline" (click)="load()">Try again</button>
+        </hlm-empty>
+      } @else if (!dateError() && !applications().length) {
+        <hlm-empty>
+          <hlm-empty-header
+            ><hlm-empty-media><ng-icon name="lucideBriefcaseBusiness" /></hlm-empty-media>
+            <h2 hlmEmptyTitle>
+              {{ hasFilters() ? 'No matching applications' : 'No applications yet' }}
+            </h2>
+            <p hlmEmptyDescription>
+              {{
+                hasFilters()
+                  ? 'Try another search or clear your filters.'
+                  : 'Applications you add to your dashboard will appear here.'
+              }}
+            </p>
+          </hlm-empty-header>
+          @if (hasFilters()) {
+            <button hlmBtn variant="outline" (click)="clearFilters()">Clear filters</button>
+          } @else {
+            <a hlmBtn variant="outline" routerLink="/dashboard">Go to dashboard</a>
+          }
+        </hlm-empty>
+      } @else if (!dateError()) {
+        <div hlmTableContainer class="border-border hidden rounded-xl border md:block">
+          <table hlmTable>
+            <caption class="sr-only">
+              Applications matching the selected filters
+            </caption>
+            <thead hlmTHead>
+              <tr hlmTr>
+                <th hlmTh scope="col">Job title</th>
+                <th hlmTh scope="col">Company</th>
+                <th hlmTh scope="col">Status</th>
+                <th hlmTh scope="col">Created</th>
+                <th hlmTh scope="col">State</th>
+              </tr>
+            </thead>
+            <tbody hlmTBody>
+              @for (application of applications(); track application.id) {
+                <tr hlmTr>
+                  <td hlmTd>
+                    <a
+                      [routerLink]="['/applications', application.id]"
+                      (click)="rememberPosition()"
+                      [title]="application.jobTitle"
+                      class="text-primary block max-w-72 truncate font-medium hover:underline"
+                      >{{ application.jobTitle }}</a
+                    >
+                  </td>
+                  <td hlmTd>
+                    <span [title]="application.companyName" class="block max-w-48 truncate">{{
+                      application.companyName
+                    }}</span>
+                  </td>
+                  <td hlmTd>
+                    <span
+                      hlmBadge
+                      variant="status"
+                      [style.--application-status-color]="
+                        statusPresentation[application.status].color
+                      "
+                      >{{ statusPresentation[application.status].label }}</span
+                    >
+                  </td>
+                  <td hlmTd>{{ application.createdAt | date: 'mediumDate' : 'UTC' }}</td>
+                  <td hlmTd>
+                    <span hlmBadge [variant]="application.archivedAt ? 'secondary' : 'outline'">{{
+                      application.archivedAt ? 'Archived' : 'Active'
+                    }}</span>
+                    @if (application.archivedAt) {
+                      <span class="text-muted-foreground mt-1 block text-xs">{{
+                        application.archivedAt | date: 'mediumDate' : 'UTC'
+                      }}</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="flex flex-col gap-3 md:hidden">
+          @for (application of applications(); track application.id) {
+            <article hlmCard>
+              <div hlmCardHeader class="min-w-0">
+                <h2 hlmCardTitle class="min-w-0">
+                  <a
+                    [routerLink]="['/applications', application.id]"
+                    (click)="rememberPosition()"
+                    class="text-primary line-clamp-2 wrap-anywhere hover:underline"
+                    >{{ application.jobTitle }}</a
+                  >
+                </h2>
+                <p hlmCardDescription class="line-clamp-2 wrap-anywhere">
+                  {{ application.companyName }}
+                </p>
+              </div>
+              <div hlmCardContent class="flex flex-wrap items-center gap-2">
+                <span
+                  hlmBadge
+                  variant="status"
+                  [style.--application-status-color]="statusPresentation[application.status].color"
+                  >{{ statusPresentation[application.status].label }}</span
+                >
+                <span hlmBadge [variant]="application.archivedAt ? 'secondary' : 'outline'">{{
+                  application.archivedAt ? 'Archived' : 'Active'
+                }}</span>
+                <p class="text-muted-foreground w-full text-xs">
+                  Created {{ application.createdAt | date: 'mediumDate' : 'UTC' }}
+                  @if (application.archivedAt) {
+                    · Archived {{ application.archivedAt | date: 'mediumDate' : 'UTC' }}
+                  }
+                </p>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+    <nav aria-label="Application pages" class="flex items-center justify-between gap-3">
+      <button
+        hlmBtn
+        variant="outline"
+        [disabled]="loading() || cursors().length === 1"
+        (click)="previous()"
+      >
+        Previous
+      </button>
+      <span class="text-muted-foreground text-sm">{{
+        applications().length && !loading() && !error() && !dateError()
+          ? applications().length + ' on this page'
+          : ''
+      }}</span>
+      <button
+        hlmBtn
+        variant="outline"
+        [disabled]="loading() || !!error() || !!dateError() || !nextToken()"
+        (click)="next()"
+      >
+        Next
+      </button>
+    </nav>
+  </div>
+</app-layout>

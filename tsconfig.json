@@ -40,7 +40,8 @@
       "@spartan-ng/helm/input-group": ["./libs/ui/input-group/src/index.ts"],
       "@spartan-ng/helm/native-select": ["./libs/ui/native-select/src/index.ts"],
       "@spartan-ng/helm/date-picker": ["./libs/ui/date-picker/src/index.ts"],
-      "@spartan-ng/helm/tabs": ["./libs/ui/tabs/src/index.ts"]
+      "@spartan-ng/helm/tabs": ["./libs/ui/tabs/src/index.ts"],
+      "@spartan-ng/helm/table": ["./libs/ui/table/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

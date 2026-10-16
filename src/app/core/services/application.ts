@@ -47,6 +47,9 @@ export class ApplicationService {
     if (!params) return httpParams;
 
     if (params.archive_state) httpParams = httpParams.set('archive_state', params.archive_state);
+    if (params.metric) httpParams = httpParams.set('metric', params.metric);
+    if (params.start_date) httpParams = httpParams.set('start_date', params.start_date);
+    if (params.end_date) httpParams = httpParams.set('end_date', params.end_date);
     if (params.status) httpParams = httpParams.set('status', params.status);
     if (params.tag_ids && params.tag_ids.length > 0)
       httpParams = httpParams.set('tag_ids', params.tag_ids.join(','));

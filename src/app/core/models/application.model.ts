@@ -80,6 +80,7 @@ export interface UpdateApplicationRequest {
 }
 
 export interface ListApplicationsResponse {
+  total_count?: number;
   applications: Application[];
   next_page_token?: string;
 }
@@ -112,7 +113,13 @@ export interface GroupedApplicationsResponse {
   next_page_token?: string;
 }
 
+export type ApplicationMetric =
+  'interviews' | 'rejections' | 'direct_rejections' | 'advanced_rejections' | 'ghosting';
+
 export interface ApplicationQueryParams {
+  metric?: ApplicationMetric;
+  start_date?: string;
+  end_date?: string;
   archive_state?: 'active' | 'archived' | 'all';
   search?: string;
   status?: string;

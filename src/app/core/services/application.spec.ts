@@ -107,4 +107,21 @@ describe('ApplicationService', () => {
     request.flush({ ...app, archivedAt: '2026-04-01' });
     expect(service.applications()).toEqual([otherApp]);
   });
+  it('sends list metric and date-only filters without converting dates to timestamps', () => {
+    service
+      .queryApplications({
+        metric: 'advanced_rejections',
+        archive_state: 'all',
+        start_date: '2026-01-01',
+        end_date: '2026-01-31',
+        page_size: 20,
+      })
+      .subscribe();
+    const request = http.expectOne((r) => r.url.endsWith('/users/u/applications'));
+    expect(request.request.params.get('metric')).toBe('advanced_rejections');
+    expect(request.request.params.get('start_date')).toBe('2026-01-01');
+    expect(request.request.params.get('end_date')).toBe('2026-01-31');
+    expect(request.request.params.get('archive_state')).toBe('all');
+    request.flush({ applications: [], total_count: 0 });
+  });
 });
