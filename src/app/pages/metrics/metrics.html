@@ -63,7 +63,15 @@
       </div>
     </div>
 
-    @if (!stats()) {
+    @if (loadError()) {
+      <hlm-empty>
+        <hlm-empty-header>
+          <h2 hlmEmptyTitle>Couldn't load metrics</h2>
+          <p hlmEmptyDescription>Try loading this period again.</p>
+        </hlm-empty-header>
+        <button hlmBtn variant="outline" (click)="retry()">Try again</button>
+      </hlm-empty>
+    } @else if (loading() || !stats()) {
       <div class="flex flex-col gap-6">
         <!-- Skeleton KPI Cards -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -119,11 +127,22 @@
             class="border-border-subtle bg-surface-container-lowest rounded-xl border p-6 shadow-sm"
           >
             <div class="flex items-start justify-between">
-              <span class="text-on-surface-variant text-sm font-medium">Total Applications</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({})"
+                class="text-on-surface-variant text-sm font-medium hover:underline"
+                >Total Applications</a
+              >
               <ng-icon name="lucideFileText" class="text-primary size-5" />
             </div>
             <div class="mt-4 flex items-baseline gap-2">
-              <span class="text-on-surface text-3xl font-bold">{{ totalApplications() }}</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({})"
+                aria-label="View all applications in this period"
+                class="text-on-surface text-3xl font-bold hover:underline"
+                >{{ totalApplications() }}</a
+              >
             </div>
           </div>
 
@@ -134,11 +153,22 @@
           >
             <div class="bg-primary absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
             <div class="flex items-start justify-between">
-              <span class="text-primary text-sm font-medium">Interview Rate</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'interviews' })"
+                class="text-primary text-sm font-medium hover:underline"
+                >Interview Rate</a
+              >
               <ng-icon name="lucideTrendingUp" class="text-primary size-5" />
             </div>
             <div class="mt-4 flex items-baseline gap-2">
-              <span class="text-primary text-3xl font-bold">{{ interviewCount() }}</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'interviews' })"
+                aria-label="View applications that reached interview"
+                class="text-primary text-3xl font-bold hover:underline"
+                >{{ interviewCount() }}</a
+              >
               <span class="text-primary/80 ml-1 text-sm font-medium"
                 >({{ conversionRate() }}%)</span
               >
@@ -148,17 +178,28 @@
           <!-- Rejection Rate -->
           <div
             hlmCard
-            class="border-border-subtle bg-surface-container-lowest relative flex flex-col justify-between rounded-xl border p-6 shadow-sm hover:z-10 !overflow-visible"
+            class="border-border-subtle bg-surface-container-lowest relative flex flex-col justify-between !overflow-visible rounded-xl border p-6 shadow-sm hover:z-10"
           >
             <div class="bg-destructive absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"></div>
             <div class="flex items-start justify-between">
-              <span class="text-destructive text-sm font-medium">Rejections</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'rejections' })"
+                class="text-destructive text-sm font-medium hover:underline"
+                >Rejections</a
+              >
               <ng-icon name="lucideXCircle" class="text-destructive size-5" />
             </div>
 
             <div class="mt-4 flex items-center justify-between gap-2">
               <div class="flex items-baseline gap-2">
-                <span class="text-destructive text-3xl font-bold">{{ rejectedCount() }}</span>
+                <a
+                  [routerLink]="['/applications']"
+                  [queryParams]="applicationFilters({ metric: 'rejections' })"
+                  aria-label="View rejected applications"
+                  class="text-destructive text-3xl font-bold hover:underline"
+                  >{{ rejectedCount() }}</a
+                >
                 <span class="text-destructive/80 ml-1 text-sm font-medium"
                   >({{ rejectionRate() }}%)</span
                 >
@@ -235,22 +276,22 @@
                     [style.width]="(advancedRejectionsCount() / rejectedCount()) * 100 + '%'"
                   ></div>
                 </div>
-
-                <!-- Legend -->
-                <div
-                  class="text-on-surface-variant flex items-center justify-between text-[11px] font-semibold"
-                >
-                  <div class="flex items-center gap-1.5" title="Rejected immediately (no process)">
-                    <span class="bg-destructive/40 size-2 rounded-full"></span>
-                    <span>{{ directRejectionsCount() }} Direct</span>
-                  </div>
-                  <div class="flex items-center gap-1.5" title="Rejected after some stage">
-                    <span class="bg-destructive size-2 rounded-full"></span>
-                    <span>{{ advancedRejectionsCount() }} After Process</span>
-                  </div>
-                </div>
               </div>
             }
+            <div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'direct_rejections' })"
+                class="text-destructive hover:underline"
+                >{{ directRejectionsCount() }} Direct</a
+              >
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'advanced_rejections' })"
+                class="text-destructive hover:underline"
+                >{{ advancedRejectionsCount() }} After process</a
+              >
+            </div>
           </div>
 
           <!-- Ghosting Count -->
@@ -262,11 +303,22 @@
               class="bg-on-surface-variant absolute top-0 bottom-0 left-0 w-1 rounded-l-xl"
             ></div>
             <div class="flex items-start justify-between">
-              <span class="text-on-surface-variant text-sm font-medium">Ghosting (30+ days)</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'ghosting' })"
+                class="text-on-surface-variant text-sm font-medium hover:underline"
+                >Ghosting (30+ days)</a
+              >
               <ng-icon name="lucideHourglass" class="text-on-surface-variant/80 size-5" />
             </div>
             <div class="mt-4 flex items-baseline gap-2">
-              <span class="text-on-surface text-3xl font-bold">{{ ghostedCount() }}</span>
+              <a
+                [routerLink]="['/applications']"
+                [queryParams]="applicationFilters({ metric: 'ghosting' })"
+                aria-label="View applications without a response for 30 days"
+                class="text-on-surface text-3xl font-bold hover:underline"
+                >{{ ghostedCount() }}</a
+              >
               <span class="text-on-surface-variant/80 ml-1 text-sm font-medium"
                 >({{ ghostingRate() }}%)</span
               >
@@ -303,6 +355,18 @@
                 </div>
               }
             </div>
+            <nav aria-label="View applications by current status" class="mt-3 flex flex-wrap gap-2">
+              @for (option of statusOptions; track option.value) {
+                <a
+                  hlmBtn
+                  variant="link"
+                  size="sm"
+                  [routerLink]="['/applications']"
+                  [queryParams]="applicationFilters({ status: option.value })"
+                  >{{ option.label }}</a
+                >
+              }
+            </nav>
           </div>
 
           <!-- Top Job Titles Chart -->

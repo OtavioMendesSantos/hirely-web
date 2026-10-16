@@ -1,4 +1,7 @@
 import { DatePipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { ApplicationStatus } from '../../core/models/application.model';
+import { APPLICATION_STATUS_PRESENTATION } from '../../core/constants/application-status';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -36,14 +39,14 @@ import { ApplicationService } from '../../core/services/application';
 export interface ChartOptions {
   series: ApexAxisChartSeries | ApexNonAxisChartSeries;
   chart: ApexChart;
-  xaxis?: ApexXAxis | any;
-  yaxis?: ApexYAxis | any;
-  dataLabels?: ApexDataLabels | any;
-  plotOptions?: ApexPlotOptions | any;
-  colors?: string[] | any;
-  labels?: string[] | any;
-  legend?: ApexLegend | any;
-  tooltip?: ApexTooltip | any;
+  xaxis?: ApexXAxis;
+  yaxis?: ApexYAxis;
+  dataLabels?: ApexDataLabels;
+  plotOptions?: ApexPlotOptions;
+  colors?: string[];
+  labels?: string[];
+  legend?: ApexLegend;
+  tooltip?: ApexTooltip;
 }
 
 @Component({
@@ -51,6 +54,7 @@ export interface ChartOptions {
   standalone: true,
   imports: [
     AppLayoutComponent,
+    RouterLink,
     ...HlmCardImports,
     ...HlmDatePickerImports,
     ...HlmEmptyImports,
@@ -79,6 +83,32 @@ export interface ChartOptions {
 export class Metrics implements OnInit {
   private applicationService = inject(ApplicationService);
   private datePipe = inject(DatePipe);
+  private readonly router = inject(Router);
+  readonly loading = signal(true);
+  readonly loadError = signal(false);
+  readonly refreshKey = signal(0);
+  readonly statusOptions = (
+    Object.keys(APPLICATION_STATUS_PRESENTATION) as ApplicationStatus[]
+  ).map((value) => ({ value, label: APPLICATION_STATUS_PRESENTATION[value].label }));
+
+  applicationFilters(filters: Record<string, string> = {}) {
+    return {
+      archive_state: 'all',
+      start_date: this.datePipe.transform(this.startDate(), 'yyyy-MM-dd') ?? undefined,
+      end_date: this.datePipe.transform(this.endDate(), 'yyyy-MM-dd') ?? undefined,
+      ...filters,
+    };
+  }
+
+  retry() {
+    this.refreshKey.update((value) => value + 1);
+  }
+
+  openStatus(index: number) {
+    const status = this.statusOptions[index]?.value;
+    if (!status || this.loading() || this.loadError()) return;
+    this.router.navigate(['/applications'], { queryParams: this.applicationFilters({ status }) });
+  }
 
   startDate = signal<Date | null>(null);
   endDate = signal<Date | null>(null);
@@ -208,6 +238,9 @@ export class Metrics implements OnInit {
       ],
       chart: {
         type: 'bar',
+        events: {
+          dataPointSelection: (_event, _chart, options) => this.openStatus(options.dataPointIndex),
+        },
         height: 350,
         toolbar: { show: false },
         fontFamily: 'inherit',
@@ -322,16 +355,24 @@ export class Metrics implements OnInit {
   });
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const start = this.startDate();
       const end = this.endDate();
-
+      this.refreshKey();
       const startStr = start
         ? (this.datePipe.transform(start, 'yyyy-MM-dd') ?? undefined)
         : undefined;
       const endStr = end ? (this.datePipe.transform(end, 'yyyy-MM-dd') ?? undefined) : undefined;
-
-      this.applicationService.loadStats(startStr, endStr)?.subscribe();
+      this.loading.set(true);
+      this.loadError.set(false);
+      const subscription = this.applicationService.loadStats(startStr, endStr)?.subscribe({
+        next: () => this.loading.set(false),
+        error: () => {
+          this.loading.set(false);
+          this.loadError.set(true);
+        },
+      });
+      onCleanup(() => subscription?.unsubscribe());
     });
   }
 
