@@ -550,6 +550,17 @@
                         <span class="text-on-surface-variant/70 text-xs font-medium">
                           {{ event.createdAt | date: 'medium' }}
                         </span>
+                        <button
+                          hlmBtn
+                          variant="ghost"
+                          size="icon-sm"
+                          type="button"
+                          aria-label="Delete event"
+                          title="Delete event"
+                          (click)="askDeleteEvent(event)"
+                        >
+                          <ng-icon name="lucideTrash2" size="14" />
+                        </button>
                       </div>
 
                       <p
@@ -595,5 +606,14 @@
     [error]="deleteError()"
     (cancelled)="cancelDelete()"
     (confirmed)="confirmDelete()"
+  />
+  <app-delete-confirmation
+    [open]="!!eventToDelete()"
+    [pending]="deletingEvent()"
+    [error]="eventDeleteError()"
+    title="Delete event?"
+    description="This permanently deletes the event. It won't undo status changes or archiving, and it may change metrics based on your history."
+    (cancelled)="eventToDelete.set(null)"
+    (confirmed)="confirmDeleteEvent()"
   />
 }

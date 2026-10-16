@@ -107,6 +107,9 @@ export class ApplicationDetailContentComponent implements OnInit {
   readonly deleting = signal(false);
   readonly deleteError = signal<string | null>(null);
   readonly archivePending = signal(false);
+  readonly eventToDelete = signal<ApplicationEvent | null>(null);
+  readonly deletingEvent = signal(false);
+  readonly eventDeleteError = signal<string | null>(null);
 
   showAllEvents = signal<boolean>(false);
   showFullNotes = signal<boolean>(false);
@@ -275,6 +278,40 @@ export class ApplicationDetailContentComponent implements OnInit {
         this.isAddingNote.set(false);
         const msg = err.error?.error?.message || err.error?.message || 'Failed to add note';
         toast.error(msg);
+      },
+    });
+  }
+
+  askDeleteEvent(event: ApplicationEvent) {
+    this.eventDeleteError.set(null);
+    this.eventToDelete.set(event);
+  }
+
+  confirmDeleteEvent() {
+    const application = this.application();
+    const event = this.eventToDelete();
+    if (!application || !event || this.deletingEvent()) return;
+    this.deletingEvent.set(true);
+    this.eventDeleteError.set(null);
+    this.applicationService.deleteEvent(application.id, event.id).subscribe({
+      next: () => {
+        this.deletingEvent.set(false);
+        this.eventToDelete.set(null);
+        this.application.update((current) =>
+          current
+            ? {
+                ...current,
+                events: current.events?.filter((item) => item.id !== event.id),
+              }
+            : current
+        );
+        toast.success('Event deleted');
+        // Reload canonical activity time and any other affected application fields.
+        this.loadApplication();
+      },
+      error: () => {
+        this.deletingEvent.set(false);
+        this.eventDeleteError.set("Couldn't delete the event. Try again.");
       },
     });
   }

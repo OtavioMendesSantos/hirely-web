@@ -308,6 +308,34 @@ export class ApplicationService {
     );
   }
 
+  deleteEvent(applicationId: string, eventId: string) {
+    const uid = this.userId;
+    if (!uid) throw new Error('User not authenticated');
+    return this.http
+      .delete<void>(
+        `${environment.apiUrl}/users/${uid}/applications/${applicationId}/events/${eventId}`
+      )
+      .pipe(
+        tap(() => {
+          const removeEvent = (application: Application) =>
+            application.id === applicationId
+              ? {
+                  ...application,
+                  events: application.events?.filter((event) => event.id !== eventId),
+                }
+              : application;
+          this.applications.update((list) => list.map(removeEvent));
+          this.groupedApplications.update(
+            (current) =>
+              Object.fromEntries(
+                Object.entries(current).map(([status, list]) => [status, list.map(removeEvent)])
+              ) as GroupedApplications
+          );
+          this.stats.set(null);
+        })
+      );
+  }
+
   addEvent(applicationId: string, description: string) {
     const uid = this.userId;
     if (!uid) {

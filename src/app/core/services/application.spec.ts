@@ -65,4 +65,34 @@ describe('ApplicationService', () => {
     expect(service.applications()).toEqual([]);
     expect(service.groupedApplications().ACCEPTED).toEqual([]);
   });
+  it('permanently deletes events without changing application status or archive date', () => {
+    const archived = {
+      ...app,
+      archivedAt: '2026-04-01',
+      events: [
+        {
+          id: 'e',
+          applicationId: 'a',
+          description: 'Archived',
+          type: 'AUTOMATIC' as const,
+          action: 'ARCHIVED' as const,
+          createdAt: '2026-04-01',
+        },
+      ],
+    };
+    service.applications.set([archived]);
+    service.groupedApplications.update((groups) => ({ ...groups, ACCEPTED: [archived] }));
+    service.deleteEvent('a', 'e').subscribe();
+    const request = http.expectOne((r) => r.url.endsWith('/a/events/e'));
+    expect(request.request.method).toBe('DELETE');
+    expect(service.applications()[0].events).toHaveLength(1);
+    request.flush(null, { status: 204, statusText: 'No Content' });
+    expect(service.applications()[0]).toMatchObject({
+      status: 'ACCEPTED',
+      archivedAt: '2026-04-01',
+      events: [],
+    });
+    expect(service.groupedApplications().ACCEPTED[0].events).toEqual([]);
+    expect(service.stats()).toBeNull();
+  });
 });

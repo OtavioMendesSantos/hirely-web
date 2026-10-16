@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideMarkdown } from 'ngx-markdown';
 import { ApplicationService } from '../../services/application';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 import { Application } from '../../models/application.model';
 
@@ -17,6 +17,7 @@ describe('ApplicationDetailContentComponent', () => {
     deleteApplication: ReturnType<typeof vi.fn>;
     archiveApplication: ReturnType<typeof vi.fn>;
     restoreApplication: ReturnType<typeof vi.fn>;
+    deleteEvent: ReturnType<typeof vi.fn>;
   };
 
   const mockApp: Application = {
@@ -43,6 +44,7 @@ describe('ApplicationDetailContentComponent', () => {
 
   beforeEach(async () => {
     appServiceMock = {
+      deleteEvent: vi.fn().mockReturnValue(of(undefined)),
       getApplication: vi.fn().mockReturnValue(of(mockApp)),
       addEvent: vi.fn().mockReturnValue(of({})),
       archiveApplication: vi.fn().mockReturnValue(of({ ...mockApp, archivedAt: '2026-04-01' })),
@@ -107,5 +109,38 @@ describe('ApplicationDetailContentComponent', () => {
     component.newNoteText.set('Must not be submitted');
     component.addNote();
     expect(appServiceMock.addEvent).not.toHaveBeenCalled();
+  });
+  it.each(['MANUAL', 'AUTOMATIC'] as const)(
+    'deletes a %s event only after confirmation, including archived applications',
+    (type) => {
+      const event = { ...mockApp.events![0], type };
+      component.application.set({ ...mockApp, archivedAt: '2026-04-01', events: [event] });
+      component.askDeleteEvent(event);
+      expect(appServiceMock.deleteEvent).not.toHaveBeenCalled();
+      appServiceMock.getApplication.mockReturnValue(
+        of({ ...mockApp, archivedAt: '2026-04-01', events: [] })
+      );
+      component.confirmDeleteEvent();
+      expect(appServiceMock.deleteEvent).toHaveBeenCalledWith('app-1', 'evt-1');
+      expect(component.application()?.events).toEqual([]);
+      expect(component.application()?.status).toBe('INTERVIEW');
+      expect(component.application()?.archivedAt).toBe('2026-04-01');
+      expect(component.eventToDelete()).toBeNull();
+    }
+  );
+
+  it('keeps the delete event dialog open after failure and prevents duplicate submissions', () => {
+    const request = new Subject<void>();
+    appServiceMock.deleteEvent.mockReturnValue(request);
+    component.askDeleteEvent(mockApp.events![0]);
+    component.confirmDeleteEvent();
+    component.confirmDeleteEvent();
+    expect(appServiceMock.deleteEvent).toHaveBeenCalledTimes(1);
+    expect(component.deletingEvent()).toBe(true);
+    request.error(new Error('Unavailable'));
+    expect(component.deletingEvent()).toBe(false);
+    expect(component.eventToDelete()?.id).toBe('evt-1');
+    expect(component.eventDeleteError()).toContain("Couldn't delete");
+    expect(component.application()?.events).toHaveLength(1);
   });
 });
