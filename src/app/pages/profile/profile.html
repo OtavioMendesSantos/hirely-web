@@ -85,6 +85,25 @@
             <option value="system">System</option>
           </hlm-native-select>
         </div>
+        <div hlmField class="border-border-subtle border-t pt-6">
+          <label hlmFieldLabel for="auto-archive-days">Auto-archive after</label>
+          <p hlmFieldDescription id="auto-archive-description">
+            Archive applications after this many days without activity. Overdue applications move on
+            the next automatic check. You can always restore them from Archived.
+          </p>
+          <hlm-native-select
+            selectId="auto-archive-days"
+            aria-describedby="auto-archive-description"
+            class="w-full sm:w-40"
+            [ngModel]="preferencesService.preferences().auto_archive_days"
+            (ngModelChange)="setAutoArchiveDays($event)"
+          >
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
+            <option value="90">90 days</option>
+            <option value="0">Never</option>
+          </hlm-native-select>
+        </div>
         <div class="border-border-subtle flex items-center justify-between gap-4 border-t pt-6">
           <div>
             <label for="confetti-enabled" class="text-on-surface cursor-pointer font-semibold"

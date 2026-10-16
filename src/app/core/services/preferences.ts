@@ -71,10 +71,10 @@ export class PreferencesService {
         this.loadPending = false;
         this.loading.set(false);
         if (revision !== this.revision || this.saving()) return;
-        this.confirmed = preferences;
+        this.confirmed = { ...DEFAULT_PREFERENCES, ...preferences };
         this.failedPatch = null;
-        this.apply(preferences);
-        this.writeCache(preferences);
+        this.apply(this.confirmed);
+        this.writeCache(this.confirmed);
         this.error.set(null);
       },
       error: () => {
@@ -123,7 +123,7 @@ export class PreferencesService {
     this.http.patch<UserPreferences>(this.url, patch).subscribe({
       next: (preferences) => {
         if (generation !== this.generation || this.auth.currentUser()?.id !== this.userId) return;
-        this.confirmed = preferences;
+        this.confirmed = { ...DEFAULT_PREFERENCES, ...preferences };
         this.finishSave();
       },
       error: () => {
@@ -166,7 +166,13 @@ export class PreferencesService {
         ['light', 'dark', 'system'].includes(cached.theme) &&
         typeof cached.confetti_enabled === 'boolean'
       ) {
-        return { theme: cached.theme, confetti_enabled: cached.confetti_enabled };
+        return {
+          theme: cached.theme,
+          confetti_enabled: cached.confetti_enabled,
+          auto_archive_days: [0, 30, 60, 90].includes(cached.auto_archive_days)
+            ? cached.auto_archive_days
+            : 60,
+        };
       }
     } catch {
       /* Storage can be unavailable or contain an older value. */

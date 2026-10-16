@@ -55,7 +55,11 @@ describe('PreferencesService', () => {
 
   it('loads account preferences and applies the theme', () => {
     signIn().flush({ theme: 'dark', confetti_enabled: false });
-    expect(service.preferences()).toEqual({ theme: 'dark', confetti_enabled: false });
+    expect(service.preferences()).toEqual({
+      ...DEFAULT_PREFERENCES,
+      theme: 'dark',
+      confetti_enabled: false,
+    });
     expect(TestBed.inject(ThemeService).theme()).toBe('dark');
     expect(toast.success).not.toHaveBeenCalled();
     expect(JSON.parse(localStorage.getItem('hirely_preferences:a')!)).toEqual(
@@ -155,5 +159,33 @@ describe('PreferencesService', () => {
     document.dispatchEvent(new Event('visibilitychange'));
     http.expectNone(url);
     save.flush({ theme: 'light', confetti_enabled: false });
+  });
+  it('saves Never as zero and preserves it in the cache and across reloads', () => {
+    signIn().flush(DEFAULT_PREFERENCES);
+    service.update({ auto_archive_days: 0 });
+    const save = http.expectOne(url);
+    expect(save.request.body).toEqual({ auto_archive_days: 0 });
+    save.flush({ ...DEFAULT_PREFERENCES, auto_archive_days: 0 });
+    expect(service.preferences().auto_archive_days).toBe(0);
+    expect(JSON.parse(localStorage.getItem('hirely_preferences:a')!).auto_archive_days).toBe(0);
+    currentUser.set(null);
+    TestBed.tick();
+    const reload = signIn();
+    expect(service.preferences().auto_archive_days).toBe(0);
+    reload.flush({ ...DEFAULT_PREFERENCES, auto_archive_days: 0 });
+  });
+
+  it('defaults an older cache to 60 days without losing the other preferences', () => {
+    localStorage.setItem(
+      'hirely_preferences:a',
+      JSON.stringify({ theme: 'dark', confetti_enabled: false })
+    );
+    const load = signIn();
+    expect(service.preferences()).toEqual({
+      ...DEFAULT_PREFERENCES,
+      theme: 'dark',
+      confetti_enabled: false,
+    });
+    load.flush(DEFAULT_PREFERENCES);
   });
 });

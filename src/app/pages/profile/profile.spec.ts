@@ -11,7 +11,7 @@ describe('Profile', () => {
   let fixture: ComponentFixture<Profile>;
 
   const preferences = {
-    preferences: signal({ theme: 'system', confetti_enabled: true }),
+    preferences: signal({ theme: 'system', confetti_enabled: true, auto_archive_days: 60 }),
     theme: signal('system'),
     loading: signal(false),
     saving: signal(false),
@@ -73,5 +73,19 @@ describe('Profile', () => {
     expect(element.querySelector('[role="alert"]')?.textContent).toContain('Could not save');
     element.querySelector<HTMLButtonElement>('button[hlmBtn]')!.click();
     expect(preferences.retry).toHaveBeenCalledOnce();
+  });
+  it('offers only the supported archive delays and saves Never as zero', () => {
+    const select = (fixture.nativeElement as HTMLElement).querySelector<HTMLSelectElement>(
+      '#auto-archive-days'
+    )!;
+    expect(Array.from(select.options).map((option) => option.textContent?.trim())).toEqual([
+      '30 days',
+      '60 days',
+      '90 days',
+      'Never',
+    ]);
+    select.selectedIndex = 3;
+    select.dispatchEvent(new Event('change'));
+    expect(preferences.update).toHaveBeenCalledWith({ auto_archive_days: 0 });
   });
 });
