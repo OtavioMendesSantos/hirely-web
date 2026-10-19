@@ -1,7 +1,16 @@
-<app-layout pageTitle="Dashboard" [fullWidth]="true">
-  @if (initialLoading()) {
-    <app-brand-loading animate.leave="loading-exit" message="Getting your applications ready" />
-  } @else if (initialError()) {
+@if (initialLoading()) {
+  <div
+    animate.leave="loading-exit"
+    class="bg-background fixed inset-0 z-[100] flex items-center justify-center"
+    role="dialog"
+    aria-label="Loading your workspace"
+    aria-modal="true"
+  >
+    <app-brand-loading message="Getting your applications ready" />
+  </div>
+}
+<app-layout pageTitle="Dashboard" [fullWidth]="true" [attr.inert]="initialLoading() ? '' : null">
+  @if (initialError()) {
     <div
       role="alert"
       class="flex min-h-80 flex-col items-center justify-center gap-4 px-6 text-center"
