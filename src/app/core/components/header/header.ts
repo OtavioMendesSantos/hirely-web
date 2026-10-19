@@ -1,3 +1,4 @@
+import { BrandComponent } from '../../../shared/components/brand/brand';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -10,7 +11,7 @@ import { UserMenuComponent } from '../user-menu/user-menu';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, ...HlmButtonImports, NgIcon, UserMenuComponent],
+  imports: [BrandComponent, RouterLink, ...HlmButtonImports, NgIcon, UserMenuComponent],
   providers: [provideIcons({ lucideMonitor, lucideSun, lucideMoon })],
   templateUrl: './header.html',
 })

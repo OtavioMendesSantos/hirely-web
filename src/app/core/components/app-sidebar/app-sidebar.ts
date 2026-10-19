@@ -1,3 +1,4 @@
+import { BrandComponent } from '../../../shared/components/brand/brand';
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -19,6 +20,7 @@ import { UserMenuComponent } from '../user-menu/user-menu';
   selector: 'app-sidebar',
   standalone: true,
   imports: [
+    BrandComponent,
     RouterLink,
     RouterLinkActive,
     NgIcon,

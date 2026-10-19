@@ -6,21 +6,13 @@
     <ul hlmSidebarMenu class="m-0 flex w-full list-none items-center p-0">
       <li hlmSidebarMenuItem class="flex w-full list-none">
         <a
+          aria-label="Hirely — Dashboard"
           routerLink="/dashboard"
           hlmSidebarMenuButton
           size="lg"
           class="hover:bg-sidebar-accent group/logo flex cursor-pointer items-center gap-2.5 transition-colors"
         >
-          <div
-            class="bg-primary/10 border-primary/20 text-primary flex size-8 shrink-0 items-center justify-center rounded-lg border font-bold shadow-xs transition-transform group-hover/logo:scale-105"
-          >
-            <img src="hirely_logo.png" alt="Hirely Logo" class="size-6 object-contain" />
-          </div>
-          <div class="flex flex-1 items-center justify-between overflow-hidden">
-            <span class="font-heading text-on-surface truncate text-base font-bold tracking-tight"
-              >Hirely</span
-            >
-          </div>
+          <app-brand class="!h-7" />
         </a>
       </li>
     </ul>

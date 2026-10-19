@@ -7,8 +7,7 @@
         routerLink="/"
         class="font-heading text-primary mb-4 inline-flex cursor-pointer items-center gap-2.5 text-3xl font-bold tracking-tight transition-opacity hover:opacity-90 sm:text-4xl"
       >
-        <img src="hirely_logo.png" alt="Hirely Logo" class="h-8 w-auto object-contain sm:h-10" />
-        <span>Hirely</span>
+        <app-brand class="!h-9 sm:!h-10" />
       </a>
       <h2 class="font-heading text-on-surface mb-1 text-2xl font-bold">Create an account</h2>
       <p class="text-on-surface-variant text-sm">Enter your details to get started.</p>
@@ -70,13 +69,10 @@
           <button
             type="button"
             (click)="toggleShowPassword()"
-            class="text-on-surface-variant/70 hover:text-on-surface absolute right-3 flex items-center justify-center rounded-lg p-1 transition-colors cursor-pointer"
+            class="text-on-surface-variant/70 hover:text-on-surface absolute right-3 flex cursor-pointer items-center justify-center rounded-lg p-1 transition-colors"
             [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
           >
-            <ng-icon
-              [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'"
-              class="size-4"
-            />
+            <ng-icon [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" class="size-4" />
           </button>
         </div>
         <hlm-field-description>Must be at least 8 characters.</hlm-field-description>
@@ -87,19 +83,24 @@
 
       <button hlmBtn type="submit" [disabled]="isLoading()" class="w-full">
         @if (isLoading()) {
-        <hlm-spinner data-icon="inline-start" />
-        Creating account...
+          <hlm-spinner data-icon="inline-start" />
+          Creating account...
         } @else {
-        Create account
+          Create account
         }
       </button>
     </form>
 
-    <app-social-auth-buttons [isGoogleLoading]="isGoogleLoading()" (socialClick)="onSocialClick($event)" />
+    <app-social-auth-buttons
+      [isGoogleLoading]="isGoogleLoading()"
+      (socialClick)="onSocialClick($event)"
+    />
 
     <p class="text-on-surface-variant mt-8 text-center text-sm">
       Already have an account?
-      <a (click)="toggleMode.emit()" class="text-primary ml-1 cursor-pointer font-bold hover:underline"
+      <a
+        (click)="toggleMode.emit()"
+        class="text-primary ml-1 cursor-pointer font-bold hover:underline"
         >Log in</a
       >
     </p>

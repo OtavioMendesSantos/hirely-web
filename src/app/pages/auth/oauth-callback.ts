@@ -2,16 +2,15 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { toast } from '@spartan-ng/brain/sonner';
-import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { BrandLoadingComponent } from '../../shared/components/brand-loading/brand-loading';
 
 @Component({
   selector: 'app-oauth-callback',
   standalone: true,
-  imports: [...HlmSpinnerImports],
+  imports: [BrandLoadingComponent],
   template: `
     <div class="bg-surface flex min-h-screen flex-col items-center justify-center">
-      <hlm-spinner class="text-primary inline-flex text-[3rem]" />
-      <p class="text-on-surface mt-4 font-medium">Authenticating...</p>
+      <app-brand-loading message="Finishing your Google sign-in" />
     </div>
   `,
 })

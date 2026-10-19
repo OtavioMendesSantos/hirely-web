@@ -1,3 +1,4 @@
+import { BrandComponent } from '../../../../shared/components/brand/brand';
 import { Component, inject, output, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,6 +18,7 @@ import { SocialAuthButtonsComponent } from '../social-auth-buttons/social-auth-b
   selector: 'app-login-form',
   standalone: true,
   imports: [
+    BrandComponent,
     RouterLink,
     FormsModule,
     ...HlmInputImports,

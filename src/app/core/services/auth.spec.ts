@@ -146,4 +146,37 @@ describe('AuthService', () => {
     const req = httpMock.expectOne(`${environment.apiUrl}/users/me`);
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
   });
+
+  it('shares a pending session check between startup and route protection', () => {
+    const results: User[] = [];
+    service.checkAuth().subscribe((user) => results.push(user));
+    service.checkAuth().subscribe((user) => results.push(user));
+    const request = httpMock.expectOne(`${environment.apiUrl}/users/me`);
+    const user = { id: '1', name: 'Demo', email: 'demo@example.com', createdAt: '2026-01-01' };
+    request.flush(user);
+    expect(results).toEqual([user, user]);
+    // A later validation is a new request, rather than a permanently cached session.
+    service.checkAuth().subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/users/me`).flush(user);
+  });
+
+  it('keeps the login marker after a server outage and allows a new attempt', () => {
+    const navigate = vi.spyOn(router, 'navigate');
+    localStorage.setItem('is_logged_in', 'true');
+    service.checkAuth().subscribe({ error: vi.fn() });
+    httpMock.expectOne(`${environment.apiUrl}/users/me`).flush('Unavailable', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    expect(service.getToken()).toBe('true');
+    expect(navigate).not.toHaveBeenCalled();
+    service.checkAuth().subscribe();
+    httpMock.expectOne(`${environment.apiUrl}/users/me`).flush({
+      id: '1',
+      name: 'Demo',
+      email: 'demo@example.com',
+      createdAt: '2026-01-01',
+    });
+    expect(service.currentUser()?.id).toBe('1');
+  });
 });

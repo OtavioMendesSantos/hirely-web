@@ -55,6 +55,7 @@ import {
   ApplicationStatus,
 } from '../../core/models/application.model';
 import { KanbanColumnComponent } from './components/kanban-column/kanban-column';
+import { BrandLoadingComponent } from '../../shared/components/brand-loading/brand-loading';
 
 export interface KanbanColumn {
   status: ApplicationStatus;
@@ -67,6 +68,7 @@ export interface KanbanColumn {
   selector: 'app-dashboard',
   standalone: true,
   imports: [
+    BrandLoadingComponent,
     CommonModule,
     DeleteConfirmationComponent,
     FormsModule,
@@ -173,6 +175,9 @@ export class Dashboard implements OnInit {
   }
 
   currentUser = this.authService.currentUser;
+  readonly initialLoading = signal(true);
+  readonly initialError = signal(false);
+  private loadGeneration = 0;
 
   readonly searchQuery = signal<string>('');
   private searchSubject = new Subject<string>();
@@ -324,6 +329,8 @@ export class Dashboard implements OnInit {
   }
 
   loadGrouped() {
+    const generation = ++this.loadGeneration;
+    this.initialError.set(false);
     const params: ApplicationQueryParams = {};
     const statuses = this.selectedStatuses();
     if (statuses.length > 0) {
@@ -337,7 +344,24 @@ export class Dashboard implements OnInit {
     if (this.sortOrder()) params.order = this.sortOrder();
     if (this.searchQuery()) params.search = this.searchQuery();
 
-    this.applicationService.loadGroupedApplications(params)?.subscribe();
+    this.applicationService
+      .loadGroupedApplications(params)
+      ?.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          if (generation === this.loadGeneration) this.initialLoading.set(false);
+        },
+        error: () => {
+          if (generation !== this.loadGeneration) return;
+          this.initialLoading.set(false);
+          this.initialError.set(true);
+        },
+      });
+  }
+
+  retryInitialLoad() {
+    this.initialLoading.set(true);
+    this.loadGrouped();
   }
 
   toggleStatusFilter(status: ApplicationStatus) {

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, finalize, Observable, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/user.model';
 
@@ -16,6 +16,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   currentUser = signal<User | null>(null);
+  private authRequest?: Observable<User>;
 
   getToken(): string | null {
     if (typeof localStorage !== 'undefined') {
@@ -75,17 +76,26 @@ export class AuthService {
   }
 
   checkAuth() {
-    return this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
+    if (this.authRequest) return this.authRequest;
+    this.authRequest = this.http.get<User>(`${environment.apiUrl}/users/me`).pipe(
       tap((user) => {
         this.setLoginState(true);
         this.currentUser.set(user);
       }),
       catchError((error) => {
-        this.logout();
-        this.router.navigate(['/auth']);
+        // A slow or unavailable server is not proof that the session has expired.
+        if (error.status === 401 || error.status === 403) {
+          this.logout();
+          this.router.navigate(['/auth']);
+        }
         return throwError(() => error);
-      })
+      }),
+      finalize(() => {
+        this.authRequest = undefined;
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
+    return this.authRequest;
   }
 
   logout() {

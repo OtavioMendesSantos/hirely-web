@@ -318,3 +318,28 @@ ngx-sonner-toaster,
   --status-rejected: #fca5a5;
   --status-other: #67e8f9;
 }
+
+/* The same mark stays visible when the navigation collapses to icons. */
+.group[data-collapsible='icon'] app-brand .brand-wordmark {
+  display: none;
+}
+
+.loading-exit {
+  pointer-events: none;
+  animation: loading-fade-out 300ms ease-out forwards;
+}
+
+@keyframes loading-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-exit {
+    animation-duration: 1ms;
+  }
+}

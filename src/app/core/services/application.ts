@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { tap, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth';
 import {
@@ -147,6 +147,7 @@ export class ApplicationService {
         { params: httpParams }
       )
       .pipe(
+        timeout(45000),
         tap({
           next: (res) => {
             if (generation !== this.groupedGeneration || uid !== this.userId) return;

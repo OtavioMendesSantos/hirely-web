@@ -42,7 +42,7 @@ describe('HeaderComponent', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Hirely');
+    expect(compiled.querySelector('app-brand')?.getAttribute('aria-label')).toBe('Hirely');
     expect(compiled.textContent).toContain('Log In');
     expect(compiled.textContent).toContain('Sign Up');
   });
